@@ -6,10 +6,10 @@ import {
   Routes,
   Route,
 } from "react-router-dom";
-import Login from './pages/login.js';
-import Register from './pages/register.js';
+import Login from './pages/login';
+import Register from './pages/register';
 import Home from './pages/home.js';
-import Profile from './pages/profile.js'
+import Profile from './pages/profile'
 import './index.css'
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
