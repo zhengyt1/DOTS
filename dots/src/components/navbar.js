@@ -13,9 +13,6 @@ function Navbar() {
 				<Link to='/home'>
 					<img  className='icon' src="/asset/icon-home.png" alt="home"></img>
 				</Link>
-				<Link to='/home'>
-					<img  className='icon' src="/asset/icon-post.png" alt="post"></img>
-				</Link>
 				<Link to='/profile'>
 					<img  className='icon' src="/asset/icon-profile.png" alt="profile"></img>
 				</Link>
