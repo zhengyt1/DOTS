@@ -5,7 +5,7 @@ import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import AlternateEmailIcon from '@mui/icons-material/AlternateEmail';
 import { useContext, useRef, useState } from "react";
 import { Switch } from "@mui/material";
-
+import TextField from '@mui/material/TextField';
 
 function Share(props) {
 
@@ -57,10 +57,14 @@ function Share(props) {
               }
               alt=""
             />
-            <input
-              placeholder={"What's in your mind " + props.user.username + "?"}
+            <TextField
+              id="outlined-textarea"
+              placeholder={"What's in your mind, " + props.user.username + "?"}
               className="shareInput"
               ref={shareTextRef}
+              multiline
+              rows={2}
+              fullWidth
             />
           </div>
 
@@ -86,8 +90,8 @@ function Share(props) {
                   onChange={(e) => setFile(e.target.files[0])}
                 />
               </label>
-              <div className="shareOption" >
-                <AlternateEmailIcon htmlColor="#2196f3" className="shareIcon" onClick={TagInputAreaHandler}/>
+              <div className="shareOption" onClick={TagInputAreaHandler} >
+                <AlternateEmailIcon htmlColor="#2196f3" className="shareIcon"/>
                 <span className="shareOptionText">Tag</span>
               </div>
               <div className="shareOption" >
