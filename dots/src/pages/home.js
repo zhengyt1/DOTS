@@ -1,6 +1,9 @@
+import { Stack } from "@mui/material";
 import Navbar from "../components/navbar";
-import Post from "../components/post"
-import './home.css'
+import Rightbar from "../components/rightbar";
+import Feed from "../components/feed";
+import './home.css';
+import Share from "../components/share";
 
 function Home() {
   const postInfo = {
@@ -14,17 +17,30 @@ function Home() {
       createdTime: "",
   }
   const posts = [postInfo, postInfo, postInfo]
+
+  const suggestedUser = {
+    avatar: "/asset/photo.jpg",
+    username: "Yuting",
+  }
+  const suggestedUsers = [suggestedUser, suggestedUser, suggestedUser]
+
+  const currentUser = {
+    avatar: "/asset/photo.jpg",
+    username: "Joe Doe",
+  }
+
+
 	return (
 		<div>
       <Navbar />
-			<div>Home</div>
-      <ul>
-        {posts.map((item, key)=>(
-          <li key={key}>
-            <Post postInfo={item} />
-          </li>
-        ))}
-      </ul>
+			<Stack direction="row" spacing={2} justifyContent="space-between">
+        <Stack direction="column" spacing={2} justifyContent="space-between" flex={6}>
+          <Share user={currentUser} />
+          <Feed posts={posts} />
+        </Stack>
+        <Rightbar suggestedUsers={suggestedUsers} />
+      </Stack>
+      
 		</div>
 	);
 }
