@@ -3,7 +3,7 @@ import Button from '@mui/material/Button';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import Chip from '@mui/material/Chip';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { Cancel } from "@mui/icons-material";
 import './postDetail.css'
 
 function PostDetail(props) {
@@ -18,41 +18,52 @@ function PostDetail(props) {
   } = props.postInfo;
   const username = "Tony Danzy";
 
-  const handleCancel = () => {
-    console.info('You clicked the Cancek.');
+  const handleEdit = () => {
+    console.info('You clicked the edit icon.');
   };
 
   const handleDelete = () => {
     console.info('You clicked the delete icon.');
   };
 
+  const handleCancel = () => {
+    console.info('You clicked the cancel icon.');
+  }
+
+  const handlePost = () => {
+    console.info('Post ...')
+  }
+
   return (
-    <div className="detail-container">
-      <div className="left-part">
-        <img src={pic} alt="user-post" />
-      </div>
-      <div className="right-part">
-        <div className="user-info">
-          <Avatar />
-          <div className="username">{username}</div>
-          <Chip label="Delete" variant="outlined" onClick={handleDelete} />
-          <Chip label="Cancel" variant="outlined" onClick={handleCancel} />
+    <div className="post-background">
+      <Cancel onClick={handleCancel} />
+      <div className="detail-container">
+        <div className="left-part">
+          <img src={pic} alt="user-post" />
         </div>
-        <hr />
-        <div className="text">{text}</div>
-        <hr />
-        <div className="statistic">
-          <div className="icons">
-            <FavoriteBorderIcon />
-            <span></span>
-            <ChatBubbleOutlineIcon />
+        <div className="right-part">
+          <div className="user-info">
+            <Avatar />
+            <div className="username">{username}</div>
+            <Chip label="Edit" variant="outlined" onClick={handleEdit} />
+            <Chip label="Delete" variant="outlined" onClick={handleDelete} />
           </div>
-          <div className="like">{likes.length} likes</div>
-          <div className="time">{createdTime}</div>
-        </div>
-        <div className="comment">
-          <input className="comment-input" placeholder="Add a comment ..."></input>
-          <Button>Post</Button>
+          <hr />
+          <div className="text">{text}</div>
+          <hr />
+          <div className="statistic">
+            <div className="icons">
+              <FavoriteBorderIcon />
+              <span></span>
+              <ChatBubbleOutlineIcon />
+            </div>
+            <div className="like">{likes.length} likes</div>
+            <div className="time">{createdTime}</div>
+          </div>
+          <div className="comment">
+            <input className="comment-input" placeholder="Add a comment ..."></input>
+            <Button onClick={handlePost}>Post</Button>
+          </div>
         </div>
       </div>
     </div>

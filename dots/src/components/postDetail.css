@@ -1,16 +1,28 @@
+.post-background {
+  position: fixed;
+  top: 0;
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(78, 78, 78, 0.8);
+}
+
+.post-background > svg {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
 .detail-container {
   width: 70%;
   height: 751px;
   margin: auto;
   display: flex;
-  justify-content: center;
-  /* border: 1px solid; */
 }
 
 .left-part {
   width: 70%;
   background: black;
-  text-align: center;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -24,8 +36,8 @@
 }
 
 .right-part {
-  width: 30%;
-  max-width: 350px;
+  width: 350px;
+  background: #fff;
 }
 
 .user-info {
@@ -36,7 +48,11 @@
   background: #FFFFFF;
 }
 
-.user-info :nth-last-child(2) { 
+.user-info > :nth-last-child(2) { 
+  margin-left: 10%;
+}
+
+.user-info :nth-last-child(1) { 
   margin: auto;
 }
 
