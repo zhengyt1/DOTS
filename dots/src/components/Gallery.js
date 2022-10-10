@@ -5,7 +5,6 @@ import './PostThumbNail.css'
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ModeCommentIcon from '@mui/icons-material/ModeComment';
 const Gallery = () => {
-    const [isShown, setIsShown] = useState(false);
     return (
         <div style={{
             display: 'flex',
@@ -22,7 +21,7 @@ const Gallery = () => {
                             loading="lazy"
                         />
                         <div className="middle">
-                            <div className="text">
+                            <div className="postThumbNail-text">
                                 <FavoriteIcon /> 123
                                 <ModeCommentIcon /> 231
                             </div>
