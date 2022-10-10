@@ -1,28 +1,46 @@
 .detail-container {
   width: 70%;
+  height: 751px;
   margin: auto;
   display: flex;
   justify-content: center;
   /* border: 1px solid; */
 }
 
+.left-part {
+  width: 70%;
+  background: black;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.left-part img {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+}
+
 .right-part {
-  width: 350px;
+  width: 30%;
+  max-width: 350px;
 }
 
 .user-info {
-  padding: 20px 33px 0;
+  margin-top: 20px;
+  margin-left: 33px;
   display: flex;
   align-items: center;
   background: #FFFFFF;
 }
 
-hr {
-  border-bottom: 1px solid #CFCFCF;
-  margin: 20px 0;
+.user-info :nth-last-child(2) { 
+  margin: auto;
 }
 
-.username {
+.user-info .username {
   margin-left: 18px;
   font-family: 'Inter';
   font-style: normal;
@@ -32,9 +50,14 @@ hr {
   color: #000000;
 }
 
+.detail-container hr {
+  border-bottom: 1px solid #CFCFCF;
+  margin: 14px 0;
+}
+
 .right-part .text {
-  height: 526px;
-  padding: 13px;
+  height: 500px;
+  padding-left: 34px;
   font-family: 'Inter';
   font-style: normal;
   font-weight: 400;
@@ -51,6 +74,10 @@ hr {
 
 .icons span {
   margin: 9px;
+}
+
+.statistic {
+  padding-left: 20px;
 }
 
 .statistic .like {
