@@ -54,7 +54,7 @@ function Post(props) {
             <div className="icon-bar">
               <FavoriteBorderIcon />
               <div className="like">{likes.length}</div>
-              <Link to={`/post/${id}`} >
+              <Link to={`/post/${id}`} key={`${id}`} >
                 <ChatBubbleOutlineIcon />
               </Link>
               <input className="write-comment" placeholder="write a comment"></input>

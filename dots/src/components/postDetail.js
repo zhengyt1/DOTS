@@ -81,7 +81,6 @@ function PostDetail(props) {
       console.log(post);
 
       const userInfo = await getUser(post.owner);
-      console.log(userInfo);
       console.log(userInfo)
       setUsername(userInfo.username);
       setAvatar(userInfo.avatar);
