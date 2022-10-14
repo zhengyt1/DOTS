@@ -3,9 +3,12 @@ import "./share.css";
 import { Cancel } from "@mui/icons-material";
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import AlternateEmailIcon from '@mui/icons-material/AlternateEmail';
-import { useContext, useRef, useState } from "react";
+import MovieCreationIcon from '@mui/icons-material/MovieCreation';
+import { useRef, useState } from "react";
 import { Switch } from "@mui/material";
 import TextField from '@mui/material/TextField';
+import { createPost } from "../mockedAPI/mockedAPI";
+import { useSelector } from "react-redux";
 
 function Share(props) {
 
@@ -13,14 +16,49 @@ function Share(props) {
     const shareTextRef = useRef();
     const tagUsersRef = useRef();
     const [shareFile, setFile] = useState(null);
+    const [shareVideo, setVideo] = useState(null);
     const [showTagArea, setShowTagArea] = React.useState(false);
     const [isPrivate, setPrivate] = React.useState(false);
+    const userID = useSelector(state => state.userID.value);
 
     const submitHandler = async (e) => {
         e.preventDefault();
-        // console.log(shareTextRef.current.value);
         // console.log(tagUsersRef.current.value);
         // console.log(isPrivate);
+        // console.log(shareVideo);
+        // console.log(shareFile);
+
+        const newPost = {
+          text: shareTextRef.current.value,
+          pic: shareFile ? URL.createObjectURL(shareFile) : undefined,
+          videos: shareVideo ? [URL.createObjectURL(shareVideo)] : [],
+          owner: userID,
+          comments: [],
+          likes: [],
+          isPrivate: isPrivate,
+          createdTime: Date.now()
+        };
+
+        // if (shareFile) {
+        //   const imageData = new FormData();
+        //   const fileName = Date.now() + shareFile.name;
+        //   imageData.append("name", fileName);
+        //   imageData.append("file", shareFile);
+        //   newPost.pic = fileName;
+        //   // upload imageData to DB /images
+        // }
+
+        // if (shareVideo) {
+        //   const videoData = new FormData();
+        //   const fileName = Date.now() + shareVideo.name;
+        //   videoData.append("name", fileName);
+        //   videoData.append("file", shareVideo);
+        //   newPost.videos = [fileName];
+        //   // upload videoData to DB /videos
+        // }
+
+        await createPost(newPost);
+        window.location.reload();
     };
 
     const TagInputAreaHandler = () => {
@@ -61,7 +99,7 @@ function Share(props) {
               id="outlined-textarea"
               placeholder={"What's in your mind, " + props.user.username + "?"}
               className="shareInput"
-              ref={shareTextRef}
+              inputRef={shareTextRef}
               multiline
               rows={2}
               fullWidth
@@ -77,17 +115,38 @@ function Share(props) {
               <Cancel className="shareCancelImg" onClick={() => setFile(null)} />
             </div>
           )}
+          {shareVideo && (
+            <div className="shareVideoContainer">
+              <video className="shareVideo" alt="" controls>
+                <source src={URL.createObjectURL(shareVideo)} type="video/mp4" />
+                <source src={URL.createObjectURL(shareVideo)} type="video/ogg" />
+                <source src={URL.createObjectURL(shareVideo)} type="video/webm" />
+              </video>
+              <Cancel className="shareCancelImg" onClick={() => setVideo(null)} />
+            </div>
+          )}
           <form className="shareBottom" onSubmit={submitHandler}>
             <div className="shareOptions">
               <label htmlFor="file" className="shareOption">
                 <AddPhotoAlternateIcon htmlColor="#ff1744" className="shareIcon" />
-                <span className="shareOptionText">Photo or Video</span>
+                <span className="shareOptionText">Photo</span>
                 <input
                   style={{ display: "none" }}
                   type="file"
                   id="file"
                   accept=".png,.jpeg,.jpg"
                   onChange={(e) => setFile(e.target.files[0])}
+                />
+              </label>
+              <label htmlFor="video" className="shareOption">
+                <MovieCreationIcon htmlColor="#ff1744" className="shareIcon" />
+                <span className="shareOptionText">Video</span>
+                <input
+                  style={{ display: "none" }}
+                  type="file"
+                  id="video"
+                  accept=".mp4,.ogg,.webm"
+                  onChange={(e) => setVideo(e.target.files[0])}
                 />
               </label>
               <div className="shareOption" onClick={TagInputAreaHandler} >
