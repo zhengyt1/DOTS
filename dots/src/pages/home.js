@@ -4,20 +4,14 @@ import Rightbar from "../components/rightbar";
 import Feed from "../components/feed";
 import './home.css';
 import Share from "../components/share";
+import { getUser, getPosts, getFeed, getPostsByUserID } from "../mockedAPI/mockedAPI";
+import { useEffect, useState, useRef } from "react";
+import { useSelector } from "react-redux";
+import { Link } from "react-router-dom"
 
 function Home() {
-  const postInfo = {
-      text: "It’s finally here! Catch our latest summer collection, “Juniper Valley,” and use code BELLEJUNI to get 10% off your first order. alalalalalalalalallalalala, It’s finally here! Catch our latest summer collection, “Juniper Valley,” and use code BELLEJUNI to get 10% off your first order. alalalalalalalalallalalalaIt’s finally here! Catch our latest summer collection, “Juniper Valley,” and use code BELLEJUNI to get 10% off your first order. alalalalalalalalallalalalaIt’s finally here! Catch our latest summer collection, “Juniper Valley,” and use code BELLEJUNI to get 10% off your first order. alalalalalalalalallalalala",
-      // pic: "https://source.unsplash.com/random",
-      pic: "/asset/photo.jpg",
-      video: "",
-      owner: "1",
-      comments: [{user: "yuting", comment: "Love your Post!"},{user: "shuyue", comment: "hhhh"}],
-      likes: [],
-      createdTime: "",
-  }
-  const posts = [postInfo, postInfo, postInfo]
-
+  const userID = useSelector(state => state.userID.value);
+  console.log(userID);
   const suggestedUser = {
     avatar: "/asset/photo.jpg",
     username: "Yuting",
@@ -29,19 +23,46 @@ function Home() {
     username: "Joe Doe",
   }
 
+  const [posts, setPosts] = useState([]);
+  const loadFeed = useRef(false);
+
+  useEffect(() => {
+
+    async function fetchFeed() {
+      const data = await getFeed(userID);
+      setPosts(data);
+    }
+    if (userID === "") {
+      window.alert("userID is empty, need to loggin first. Go back to /.")
+    }
+    if (loadFeed.current === false && userID !== "") {
+      console.log("loadFeed");
+      fetchFeed();
+      loadFeed.current = true;
+    }
+  });
 
 	return (
-		<div>
-      <Navbar />
-			<Stack direction="row" spacing={2} justifyContent="space-between">
-        <Stack direction="column" spacing={2} justifyContent="space-between" flex={6}>
-          <Share user={currentUser} />
-          <Feed posts={posts} />
+    <>
+      {userID === "" ? (
+      <Link to="/">
+        <div>Login error, click to login.</div>
+      </Link>
+      ):(
+      <div>
+        <Navbar userID={userID} ></Navbar>
+        <Stack direction="row" spacing={2} justifyContent="space-between">
+          <Stack direction="column" spacing={2} justifyContent="space-between" flex={6}>
+            <Share user={currentUser} ></Share>
+            <Feed posts={posts} />
+          </Stack>
+          <Rightbar suggestedUsers={suggestedUsers} />
         </Stack>
-        <Rightbar suggestedUsers={suggestedUsers} />
-      </Stack>
-      
-		</div>
+        
+      </div>
+
+      )}
+    </>
 	);
 }
   

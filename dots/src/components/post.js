@@ -2,9 +2,14 @@ import { Avatar } from "@mui/material";
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import './post.css'
+import { useState, useEffect, useRef } from "react";
+import { Link } from 'react-router-dom';
+import PostDetail from "./postDetail";
+import { getUser, getPosts, getFeed, getPostsByUserID } from "../mockedAPI/mockedAPI";
 
 function Post(props) {
-  const {
+  let {
+    id,
     text,
     pic,
     video,
@@ -14,35 +19,56 @@ function Post(props) {
     createdTime,
   } = props.postInfo;
 
-  const username = "Tony Danzy";
-  // const avatar = "url(https://source.unsplash.com/random)"
-  const avatar = ""
+  const [username, setUsername] = useState("");
+  const [avatar, setAvatar] = useState("");
+  const loadData = useRef(true);
+  useEffect(() => {
+    async function fetchData() {
+      const data = await getUser(owner);
+      // console.log("post data: ", data);
+      if (data !== undefined) {
+        setUsername(data.username);
+        setAvatar(data.avatar)
+      }
+    }
+    // only load data on the first rendering 
+    if (loadData.current === true) {
+      loadData.current = false;
+      fetchData();
+    }
+  })
 
-  console.log("in post")
-
-  console.log(text)
   return (
     <div className="post-container">
-      <div className="post">
-        <div className="person-info">
-          <Avatar 
-            sx={{ width: 40, height: 40}}
-            src = {avatar}
-          />
-          <div className="name">{username}</div>
-        </div>
-        <div>
-          <div className="text">{text}</div>
-          <img src={pic} alt='post-pic'></img>
-          <div className="icon-bar">
-            <FavoriteBorderIcon />
-            <div className="like">{likes.length}</div>
-            <ChatBubbleOutlineIcon />
-            <input className="write-comment" placeholder="write a comment"></input>
+        <div className="post" >
+          <div className="person-info">
+            <Avatar 
+              sx={{ width: 40, height: 40}}
+              src = {avatar}
+            />
+            <div className="name">{username}</div>
+          </div>
+          <div className="display-container">
+            <div className="text">{text}</div>
+            {pic && (
+              <img src={pic} alt='post-pic'></img>
+            )}
+            {video && (
+              <video controls>
+                <source src={video} type="video/mp4"></source>
+              </video>
+            )}
+            <div className="icon-bar">
+              <FavoriteBorderIcon />
+              <div className="like">{likes.length}</div>
+              <Link to={`/post/${id}`} key={`${id}`} >
+                <ChatBubbleOutlineIcon />
+              </Link>
+              <input className="write-comment" placeholder="write a comment"></input>
+            </div>
           </div>
         </div>
-      </div>
-      <ol className="comment-container">
+      {/* <ol className="comment-container">
         {comments.map((item, key) => (
           <li key={key}>
             <Avatar />
@@ -50,7 +76,7 @@ function Post(props) {
             <div className="username">{item.comment}</div>
           </li>
         ))}
-      </ol>
+      </ol> */}
     </div>
   )
 }

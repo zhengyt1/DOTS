@@ -11,7 +11,7 @@
 .post {
   /* position: absolute; */
   padding-left: 63px;
-  border-bottom: 0.5px solid #F5F5F5;
+  /* border-bottom: 0.5px solid #F5F5F5; */
 }
 
 .person-info {
@@ -30,7 +30,7 @@
 }
 
 .post-container .text {
-  height: 50px;
+  max-height: 50px;
   margin-bottom: 20px;
   max-width: 85%;
   font-family: 'Commissioner';
@@ -43,14 +43,22 @@
   /* text-overflow: ellipsis; */
 }
 
-img {
+.display-container > img {
   width: 460px;
+}
+
+.display-container > video {
+  width: 460px
 }
 
 .icon-bar {
   margin: 32px 0 42px;
   display: flex;
   align-items: center;
+}
+
+.post-container svg {
+  color: black;
 }
 
 .like {
