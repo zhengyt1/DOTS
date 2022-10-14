@@ -9,6 +9,8 @@ import { Switch } from "@mui/material";
 import TextField from '@mui/material/TextField';
 import { createPost } from "../mockedAPI/mockedAPI";
 import { useSelector } from "react-redux";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { firebaseStorage } from "../firebase/firebase";
 
 function Share(props) {
 
@@ -24,14 +26,11 @@ function Share(props) {
     const submitHandler = async (e) => {
         e.preventDefault();
         // console.log(tagUsersRef.current.value);
-        // console.log(isPrivate);
-        // console.log(shareVideo);
-        // console.log(shareFile);
 
         const newPost = {
           text: shareTextRef.current.value,
-          pic: shareFile ? URL.createObjectURL(shareFile) : undefined,
-          videos: shareVideo ? [URL.createObjectURL(shareVideo)] : [],
+          pic: "",
+          video: "",
           owner: userID,
           comments: [],
           likes: [],
@@ -39,26 +38,30 @@ function Share(props) {
           createdTime: Date.now()
         };
 
-        // if (shareFile) {
-        //   const imageData = new FormData();
-        //   const fileName = Date.now() + shareFile.name;
-        //   imageData.append("name", fileName);
-        //   imageData.append("file", shareFile);
-        //   newPost.pic = fileName;
-        //   // upload imageData to DB /images
-        // }
-
-        // if (shareVideo) {
-        //   const videoData = new FormData();
-        //   const fileName = Date.now() + shareVideo.name;
-        //   videoData.append("name", fileName);
-        //   videoData.append("file", shareVideo);
-        //   newPost.videos = [fileName];
-        //   // upload videoData to DB /videos
-        // }
-
-        await createPost(newPost);
-        window.location.reload();
+        if (shareFile) {
+          const imageRef = ref(firebaseStorage, `images/${shareFile.name + Date.now()}`);
+          uploadBytes(imageRef, shareFile).then(async (snapshot) => {
+            getDownloadURL(snapshot.ref).then(async (url) => {
+              // add url to newPost
+              newPost.pic = url;
+              await createPost(newPost);
+              window.location.reload();
+            });
+          });
+        } else if (shareVideo) {
+          const videoRef = ref(firebaseStorage, `videos/${shareVideo.name + Date.now()}`);
+          uploadBytes(videoRef, shareVideo).then(async (snapshot) => {
+            getDownloadURL(snapshot.ref).then(async (url) => {
+              // add url to newPost
+              newPost.video = url;
+              await createPost(newPost);
+              window.location.reload();
+            });
+          });
+        } else {
+          await createPost(newPost);
+          window.location.reload();
+        }
     };
 
     const TagInputAreaHandler = () => {

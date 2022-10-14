@@ -20,7 +20,7 @@ function Home() {
 
   const currentUser = {
     avatar: "/asset/photo.jpg",
-    username: "Joe Doe"
+    username: "Joe Doe",
   }
 
   const [posts, setPosts] = useState([]);
