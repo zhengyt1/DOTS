@@ -1,13 +1,14 @@
-import { Camera, ExpandMore, FolderSpecial, InsertPhoto } from "@mui/icons-material";
-import { Avatar, Button, ButtonGroup, IconButton } from "@mui/material";
+import { ExpandMore } from "@mui/icons-material";
+import { Avatar, Button, IconButton } from "@mui/material";
 import React from "react";
 
 function ProfileOverview(props) {
+    const selfID = "1"
+    const profileID = "2"
     const name = "Remy Sharp";
     const numOfPosts = 4;
     const numOfFollowers = 4;
     const numOfFollowings = 4;
-
 
     return (
         <div>
@@ -33,10 +34,15 @@ function ProfileOverview(props) {
                         <div style={{ marginRight: 30, height: 40, lineHeight: "40px", display: "inline-block", verticalAlign: "middle" }}>
                             <h2>{name}</h2>
                         </div>
-                        <Button variant="contained" size="small">Follow</Button>
-                        <IconButton>
+                        {
+                            selfID === profileID ?
+                                (<Button variant="contained" size="small">Follow</Button>)
+                                : (<Button variant="outlined" size="small">Unfollow</Button>)}
+                        < IconButton >
                             <ExpandMore />
                         </IconButton>
+
+
                     </div>
                     <div style={{
                         display: "flex",
@@ -47,32 +53,10 @@ function ProfileOverview(props) {
                         <h5>{numOfFollowers} follows</h5>
                         <h5>{numOfFollowings} followers</h5>
                     </div>
-                    <div>
-                        <h5>real name</h5>
-                        <h5>About me: sssssss</h5>
-                    </div>
                 </div>
 
             </div>
-            <div style={{
-                display: "flex",
-                justifyContent: 'center'
 
-            }}>
-                <div style={{
-                    borderTop: "1px solid black",
-                    margin: "0px 10px"
-                }}>
-                    <Button endIcon={<Camera />}>Posts</Button>
-                </div>
-                <div style={{
-                    borderTop: "1px solid black",
-                    margin: "0px 10px"
-                }}>
-                    <Button endIcon={<FolderSpecial />}>Saved</Button>
-                </div>
-
-            </div>
 
         </div >
     )
