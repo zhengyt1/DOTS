@@ -8,7 +8,7 @@ import PostDetail from "./postDetail";
 import { getUser, getPosts, getFeed, getPostsByUserID } from "../mockedAPI/mockedAPI";
 
 function Post(props) {
-  const {
+  let {
     id,
     text,
     pic,
@@ -48,9 +48,16 @@ function Post(props) {
             />
             <div className="name">{username}</div>
           </div>
-          <div>
+          <div className="display-container">
             <div className="text">{text}</div>
-            <img src={pic} alt='post-pic'></img>
+            {pic && (
+              <img src={pic} alt='post-pic'></img>
+            )}
+            {video && (
+              <video controls>
+                <source src={video} type="video/mp4"></source>
+              </video>
+            )}
             <div className="icon-bar">
               <FavoriteBorderIcon />
               <div className="like">{likes.length}</div>
