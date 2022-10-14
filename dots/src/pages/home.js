@@ -7,6 +7,7 @@ import Share from "../components/share";
 import { getUser, getPosts, getFeed, getPostsByUserID } from "../mockedAPI/mockedAPI";
 import { useEffect, useState, useRef } from "react";
 import { useSelector } from "react-redux";
+import { Link } from "react-router-dom"
 
 function Home() {
   const userID = useSelector(state => state.userID.value);
@@ -31,7 +32,10 @@ function Home() {
       const data = await getFeed(userID);
       setPosts(data);
     }
-    if (loadFeed.current === false) {
+    if (userID === "") {
+      window.alert("userID is empty, need to loggin first. Go back to /.")
+    }
+    if (loadFeed.current === false && userID !== "") {
       console.log("loadFeed");
       fetchFeed();
       loadFeed.current = true;
@@ -39,17 +43,26 @@ function Home() {
   });
 
 	return (
-		<div>
-      <Navbar userID={userID} ></Navbar>
-			<Stack direction="row" spacing={2} justifyContent="space-between">
-        <Stack direction="column" spacing={2} justifyContent="space-between" flex={6}>
-          <Share user={currentUser} ></Share>
-          <Feed posts={posts} />
+    <>
+      {userID === "" ? (
+      <Link to="/">
+        <div>Login error, click to login.</div>
+      </Link>
+      ):(
+      <div>
+        <Navbar userID={userID} ></Navbar>
+        <Stack direction="row" spacing={2} justifyContent="space-between">
+          <Stack direction="column" spacing={2} justifyContent="space-between" flex={6}>
+            <Share user={currentUser} ></Share>
+            <Feed posts={posts} />
+          </Stack>
+          <Rightbar suggestedUsers={suggestedUsers} />
         </Stack>
-        <Rightbar suggestedUsers={suggestedUsers} />
-      </Stack>
-      
-		</div>
+        
+      </div>
+
+      )}
+    </>
 	);
 }
   
