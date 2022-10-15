@@ -35,7 +35,7 @@ function Share(props) {
           likes: [],
           isPrivate: isPrivate,
           createdTime: Date.now(),
-          mentions: tagUsersRef.current.value.split(", ")
+          mentions: tagUsersRef.current !== undefined ? tagUsersRef.current.value.split(", ") : []
         };
 
         if (shareFile) {
@@ -45,7 +45,6 @@ function Share(props) {
               // add url to newPost
               newPost.pic = url;
               await createPost(newPost);
-              window.location.reload();
             });
           });
         } else if (shareVideo) {
@@ -55,13 +54,17 @@ function Share(props) {
               // add url to newPost
               newPost.video = url;
               await createPost(newPost);
-              window.location.reload();
             });
           });
         } else {
           await createPost(newPost);
-          window.location.reload();
         }
+        shareTextRef.current.value = '';
+        tagUsersRef.current.value = '';
+        setFile(null);
+        setVideo(null);
+        setPrivate(false);
+        setShowTagArea(false);
     };
 
     const TagInputAreaHandler = () => {
