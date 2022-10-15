@@ -25,7 +25,6 @@ function Share(props) {
 
     const submitHandler = async (e) => {
         e.preventDefault();
-        // console.log(tagUsersRef.current.value);
 
         const newPost = {
           text: shareTextRef.current.value,
@@ -35,7 +34,8 @@ function Share(props) {
           comments: [],
           likes: [],
           isPrivate: isPrivate,
-          createdTime: Date.now()
+          createdTime: Date.now(),
+          mentions: tagUsersRef.current.value.split(", ")
         };
 
         if (shareFile) {
@@ -72,17 +72,6 @@ function Share(props) {
         }
     };
 
-    const TagInputArea = () => (
-        <div className="shareTags">
-            <hr className="shareHr" />
-            <input
-                placeholder={"Tag other users, input usernames separated by comma: "}
-                className="shareInput"
-                ref={tagUsersRef}
-            />
-        </div>
-    );
-
     const privacyHandler = (event) => {
         setPrivate(event.target.checked);
     };
@@ -109,7 +98,16 @@ function Share(props) {
             />
           </div>
 
-          {showTagArea ? <TagInputArea /> : null}
+          {showTagArea && (
+            <div className="shareTags">
+              <hr className="shareHr" />
+              <input
+                  placeholder={"Tag other users, input usernames separated by comma: "}
+                  className="shareInput"
+                  ref={tagUsersRef}
+              />
+            </div>
+          )}
           
           <hr className="shareHr" />
           {shareFile && (
