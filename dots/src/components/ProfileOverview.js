@@ -1,14 +1,83 @@
 import { ExpandMore } from "@mui/icons-material";
 import { Avatar, Button, IconButton } from "@mui/material";
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { getFollowings, updateUser, getFollowers } from '../mockedAPI/mockedAPI';
 
 function ProfileOverview(props) {
-    const selfID = "1"
-    const profileID = "2"
-    const name = "Remy Sharp";
-    const numOfPosts = 4;
-    const numOfFollowers = 4;
-    const numOfFollowings = 4;
+    const selfID = props.selfID
+    const profileID = props.profileID
+    const [isFollowing, SetIsFollowing] = useState(false);
+    const [selfFollowingList, SetSelfFollowingList] = useState([]);
+    const [profileFollowerList, SetProfileFollowerList] = useState([]);
+    const loadData = useRef(true);
+    useEffect(() => {
+        async function fetchData() {
+            const followingList = await getFollowings(selfID);
+            if (followingList !== undefined) {
+                console.log([...followingList, "33",]);
+                SetSelfFollowingList(followingList);
+                if (followingList.includes(profileID)) {
+                    SetIsFollowing(true);
+                }
+            }
+            const followersList = await getFollowers(profileID);
+            if (followersList !== undefined) {
+                SetProfileFollowerList(followersList);
+            }
+
+        }
+        if (loadData.current === true) {
+            loadData.current = false;
+            fetchData();
+        }
+    })
+    async function handleUnfollowClick() {
+        // We can change this logic to backend and add a new api: FollowerUser
+
+        SetIsFollowing(false);
+        const newFollowingList = selfFollowingList.filter((
+            value, index, l
+        ) => {
+            return value !== profileID;
+        });
+        const newFollowerList = profileFollowerList.filter((
+            value, index, l
+        ) => {
+            return value !== selfID;
+        });
+        SetSelfFollowingList(newFollowingList);
+
+        SetProfileFollowerList(newFollowerList);
+
+        await updateUser(selfID,
+            "followings",
+            newFollowingList
+        )
+
+        await updateUser(profileID,
+            "followers",
+            newFollowerList
+        )
+    }
+
+    async function handleFollowClick() {
+        // We can change this logic to backend and add a new api: UnFollowerUser
+        SetIsFollowing(true);
+
+        const newFollowingList = [...selfFollowingList, profileID,];
+        const newFollowerList = [...profileFollowerList, selfID,]
+
+        SetSelfFollowingList(newFollowingList);
+        SetProfileFollowerList(newFollowerList);
+
+        await updateUser(selfID,
+            "followings",
+            newFollowingList)
+        console.log(typeof profileFollowerList)
+        await updateUser(profileID,
+            "followers",
+            newFollowerList)
+    }
 
     return (
         <div>
@@ -20,8 +89,8 @@ function ProfileOverview(props) {
             }}>
                 <div style={{ margin: 10 }}>
                     <Avatar
-                        alt={name}
-                        src=""
+                        alt={props.username}
+                        src={props.userAvatar}
                         sx={{ width: 100, height: 100 }}
                     />
                 </div>
@@ -32,12 +101,16 @@ function ProfileOverview(props) {
 
                     }}>
                         <div style={{ marginRight: 30, height: 40, lineHeight: "40px", display: "inline-block", verticalAlign: "middle" }}>
-                            <h2>{name}</h2>
+                            <h2>{props.username}</h2>
                         </div>
                         {
-                            selfID === profileID ?
-                                (<Button variant="contained" size="small">Follow</Button>)
-                                : (<Button variant="outlined" size="small">Unfollow</Button>)}
+                            selfID !== profileID ?
+                                (
+                                    isFollowing ?
+                                        (<Button variant="outlined" size="small" onClick={handleUnfollowClick} sx={{ width: "100px" }}>Unfollow</Button>) :
+                                        (<Button variant="contained" size="small" onClick={handleFollowClick} sx={{ width: "100px" }} > Follow</Button>)
+                                )
+                                : (<Button variant="outlined" size="small">Settings</Button>)}
                         < IconButton >
                             <ExpandMore />
                         </IconButton>
@@ -49,9 +122,12 @@ function ProfileOverview(props) {
                         justifyContent: "space-between",
                         margin: "10px 0px"
                     }}>
-                        <h5>{numOfPosts} posts</h5>
-                        <h5>{numOfFollowers} follows</h5>
-                        <h5>{numOfFollowings} followers</h5>
+                        <h5>{props.numOfPosts} posts</h5>
+                        <h5>{props.numOfFollowings} followings</h5>
+                        <h5>{profileFollowerList.length} followers</h5>
+                    </div>
+                    <div>
+                        <h5>About me: {props.description}</h5>
                     </div>
                 </div>
 
