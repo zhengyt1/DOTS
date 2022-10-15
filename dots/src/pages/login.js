@@ -14,6 +14,9 @@ import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getUserByEmail } from '../mockedAPI/mockedAPI';
+import { useSelector, useDispatch } from 'react-redux'
+import { userLogin,  } from '../reducers';
 
 function Copyright(props) {
   return (
@@ -31,22 +34,30 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function Login() {
-  const [isConnected, setIsConnected] = useState(false)
+  const userID = useSelector(state => state.userID.value);
+  console.log("userID: ", userID);
+  const dispatch = useDispatch()
+
+  const [isConnected, setIsConnected] = useState(true)
   let navigate = useNavigate()
   // console.log("route: ", route)
   
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    setIsConnected(true);
+    // setIsConnected(true);
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-      isConnected: isConnected,
-    });
-    // if success
-    if (isConnected === true) {
-      navigate('/home')
+    // console.log({
+    //   email: data.get('email'),
+    //   password: data.get('password'),
+    //   isConnected: isConnected,
+    // });
+
+    const user = await getUserByEmail(data.get("email"));
+    console.log("user: ", user);
+    if (user.length === 1) {
+      dispatch(userLogin(user[0].id));
+      console.log(userID);
+      navigate('/home');
     }
   };
 

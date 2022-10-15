@@ -34,10 +34,23 @@ export const getUsers = async () => {
 }
 
 // get user by id
-export const getUser = async (userID) => {
-    try {
+
+export const getUser = async (userID) =>{
+    try{
         const response = await axios.get(`${rootURL}/user/${userID}`);
-        return response.data;
+        console.log(userID, response);
+            return response.data;
+    }
+    catch(err){
+        console.error(err);
+    }
+}
+
+// get user by email
+export const getUserByEmail = async (email) =>{
+    try{
+            const response = await axios.get(`${rootURL}/user?email=${email}`);            
+            return response.data;
     }
     catch (err) {
         console.error(err);
@@ -99,6 +112,20 @@ export const deleteUser = async (userID) => {
     }
 }
 
+// get user's followings by userID
+export const getFollowings = async (userID) =>{
+    try{
+            const response = await axios.get(`${rootURL}/user/${userID}`);
+            return response.data.followings;
+            // the data is stored in the mockData
+            // field of the response
+    }
+    catch(err){
+        console.error(err);
+
+    }
+}
+
 // get all posts in the DB
 export const getPosts = async () => {
     try {
@@ -113,6 +140,26 @@ export const getPosts = async () => {
     }
 }
 
+export const getFeed = async (userID) =>{
+    try{
+            const followings = await getFollowings(userID);
+            const run = async () => {
+                return await Promise.all(
+                    followings.map(async id => {
+                        return await getPostsByUserID(id);
+                   })
+                );
+            }
+            const posts = await run();
+            
+            return posts.flat();
+    }
+    catch(err){
+        console.error(err);
+    }
+}
+
+
 // get post by id
 export const getPostByID = async (postID) => {
     try {
@@ -125,10 +172,12 @@ export const getPostByID = async (postID) => {
 }
 
 // get post by user ID => return array of posts
-export const getPostsByUserID = async (userID) => {
-    try {
-        const response = await axios.get(`${rootURL}/post?owner=${userID}`);
-        return response.data;
+
+export const getPostsByUserID = async (userID) =>{
+    try{
+            const response = await axios.get(`${rootURL}/post?owner=${userID}`);
+            // console.log("res: ",response);
+            return response.data;
     }
     catch (err) {
         console.error(err);

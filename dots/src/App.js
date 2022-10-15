@@ -2,7 +2,7 @@ import {
   Link,
 } from "react-router-dom";
 import Button from '@mui/material/Button';
-import PostDetail from './components/postDetail'
+
 
 function App() {
   const postInfo = {
@@ -30,7 +30,6 @@ function App() {
       <Link to='/profile'>
         <Button variant="outlined">profile</Button>
       </Link>
-      <PostDetail postInfo={postInfo} />
     </div>
   );
 }

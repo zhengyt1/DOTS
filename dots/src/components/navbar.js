@@ -1,9 +1,15 @@
 import {
   Link,
 } from "react-router-dom";
+import Profile from "../pages/profile";
 import './navbar.css'
+import { getUser } from "../mockedAPI/mockedAPI";
+import { userLogout,  } from '../reducers';
+import { useDispatch, useSelector } from "react-redux";
 
-function Navbar() {
+function Navbar(props) {
+	const userID = useSelector(state => state.userID.value);
+	const dispatch = useDispatch()
 	return (
 		<div className='nav-container'>
 			<div className='font'>
@@ -13,11 +19,11 @@ function Navbar() {
 				<Link to='/home'>
 					<img  className='icon' src="/asset/icon-home.png" alt="home"></img>
 				</Link>
-				<Link to='/profile'>
+				<Link to={`/profile/${userID}`} key={`${userID}`}>
 					<img  className='icon' src="/asset/icon-profile.png" alt="profile"></img>
 				</Link>
-				<Link to='/login'>
-					<div className="logout">
+				<Link to='/' onClick={dispatch(userLogout)}>
+					<div className="logout" >
 						Log Out
 					</div>
 				</Link>
