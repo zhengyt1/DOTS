@@ -1,6 +1,6 @@
 import Gallery from "../components/Gallery";
 import Navbar from "../components/navbar";
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 
 import ProfileOverview from "../components/ProfileOverview";
@@ -9,13 +9,11 @@ import React, { useEffect, useRef, useState } from "react";
 import { getUser, getPostsByUserID } from '../mockedAPI/mockedAPI';
 
 function Profile(props) {
-  const userID = useSelector(state => state.userID.value);
+	const selfID = useSelector(state => state.userID.value);
 	const location = useLocation();
-	const currProfile = location.pathname;
-	console.log(currProfile);
-  
-	const selfID = "2";
-	const profileID = "3";
+	const profileID = location.pathname.split("/")[2];
+	console.log(profileID, selfID);
+
 	const [username, SetUsername] = useState("");
 	const [userAvatar, SetAvatar] = useState("");
 	const [description, SetDescription] = useState("");

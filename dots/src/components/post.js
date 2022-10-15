@@ -21,14 +21,15 @@ function Post(props) {
 
   const [username, setUsername] = useState("");
   const [avatar, setAvatar] = useState("");
+  const [userID, setUserID] = useState("");
   const loadData = useRef(true);
   useEffect(() => {
     async function fetchData() {
       const data = await getUser(owner);
-      // console.log("post data: ", data);
       if (data !== undefined) {
         setUsername(data.username);
-        setAvatar(data.avatar)
+        setAvatar(data.avatar);
+        setUserID(data.id)
       }
     }
     // only load data on the first rendering 
@@ -40,34 +41,36 @@ function Post(props) {
 
   return (
     <div className="post-container">
-        <div className="post" >
-          <div className="person-info">
-            <Avatar 
-              sx={{ width: 40, height: 40}}
-              src = {avatar}
+      <div className="post" >
+        <div className="person-info">
+          <Link to={`/profile/${userID}`} key={`${userID}`} >
+            <Avatar
+              sx={{ width: 40, height: 40 }}
+              src={avatar}
             />
-            <div className="name">{username}</div>
-          </div>
-          <div className="display-container">
-            <div className="text">{text}</div>
-            {pic && (
-              <img src={pic} alt='post-pic'></img>
-            )}
-            {video && (
-              <video controls>
-                <source src={video} type="video/mp4"></source>
-              </video>
-            )}
-            <div className="icon-bar">
-              <FavoriteBorderIcon />
-              <div className="like">{likes.length}</div>
-              <Link to={`/post/${id}`} key={`${id}`} >
-                <ChatBubbleOutlineIcon />
-              </Link>
-              <input className="write-comment" placeholder="write a comment"></input>
-            </div>
+          </Link>
+          <div className="name">{username}</div>
+        </div>
+        <div className="display-container">
+          <div className="text">{text}</div>
+          {pic && (
+            <img src={pic} alt='post-pic'></img>
+          )}
+          {video && (
+            <video controls>
+              <source src={video} type="video/mp4"></source>
+            </video>
+          )}
+          <div className="icon-bar">
+            <FavoriteBorderIcon />
+            <div className="like">{likes.length}</div>
+            <Link to={`/post/${id}`} key={`${id}`} >
+              <ChatBubbleOutlineIcon />
+            </Link>
+            <input className="write-comment" placeholder="write a comment"></input>
           </div>
         </div>
+      </div>
       {/* <ol className="comment-container">
         {comments.map((item, key) => (
           <li key={key}>

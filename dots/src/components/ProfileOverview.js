@@ -14,7 +14,6 @@ function ProfileOverview(props) {
         async function fetchData() {
             const followingList = await getFollowings(selfID);
             if (followingList !== undefined) {
-                console.log([...followingList, "33",]);
                 SetSelfFollowingList(followingList);
                 if (followingList.includes(profileID)) {
                     SetIsFollowing(true);
