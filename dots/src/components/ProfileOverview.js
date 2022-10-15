@@ -33,20 +33,21 @@ function ProfileOverview(props) {
     })
     async function handleUnfollowClick() {
         // We can change this logic to backend and add a new api: FollowerUser
-
         SetIsFollowing(false);
+
         const newFollowingList = selfFollowingList.filter((
             value, index, l
         ) => {
             return value !== profileID;
         });
+
         const newFollowerList = profileFollowerList.filter((
             value, index, l
         ) => {
             return value !== selfID;
         });
-        SetSelfFollowingList(newFollowingList);
 
+        SetSelfFollowingList(newFollowingList);
         SetProfileFollowerList(newFollowerList);
 
         await updateUser(selfID,
@@ -73,7 +74,7 @@ function ProfileOverview(props) {
         await updateUser(selfID,
             "followings",
             newFollowingList)
-        console.log(typeof profileFollowerList)
+
         await updateUser(profileID,
             "followers",
             newFollowerList)
