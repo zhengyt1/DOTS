@@ -9,7 +9,7 @@ function Feed(props) {
         <Box className="feed" 
             flex={6}>
             <List className="feedList">
-                {props.posts.map((item, key)=>(    
+                {props.posts?.map((item, key)=>(    
                     <ListItem key={key}>
                         <Post postInfo={item} />
                     </ListItem>
