@@ -17,73 +17,76 @@ useEffect(() => {
 });
 */
 //mockAPI URL 
-const rootURL ='https://63446bd6dcae733e8fdeff41.mockapi.io/api';
+const rootURL = 'https://63446bd6dcae733e8fdeff41.mockapi.io/api';
 
 // get all users in the DB
-export const getUsers = async () =>{
-    try{
-            const response = await axios.get(`${rootURL}/user`);
-            return response.data;
-            // the data is stored in the mockData
-            // field of the response
+export const getUsers = async () => {
+    try {
+        const response = await axios.get(`${rootURL}/user`);
+        return response.data;
+        // the data is stored in the mockData
+        // field of the response
     }
-    catch(err){
+    catch (err) {
         console.error(err);
 
     }
 }
 
 // get user by id
-export const getUser = async (userID) =>{
-    try{
+
+export const getUser = async (userID) => {
+    try {
         const response = await axios.get(`${rootURL}/user/${userID}`);
         console.log(userID, response);
-            return response.data;
+        return response.data;
     }
-    catch(err){
+    catch (err) {
         console.error(err);
     }
 }
 
 // get user by email
-export const getUserByEmail = async (email) =>{
-    try{
-            const response = await axios.get(`${rootURL}/user?email=${email}`);            
-            return response.data;
+export const getUserByEmail = async (email) => {
+    try {
+        const response = await axios.get(`${rootURL}/user?email=${email}`);
+        return response.data;
     }
-    catch(err){
+    catch (err) {
         console.error(err);
     }
 }
 
 // get user by username => return array of users
-export const getUsersByUsername = async (username) =>{
-    try{
-            const response = await axios.get(`${rootURL}/user?username=${username}`);
-            return response.data;
+export const getUsersByUsername = async (username) => {
+    try {
+        const response = await axios.get(`${rootURL}/user?username=${username}`);
+        return response.data;
     }
-    catch(err){
+    catch (err) {
         console.error(err);
     }
 }
 
 // update user field by value
 export const updateUser = async (userID, field, value) => {
-    try{
+    const payload = {};
+    payload[field] = value;
+    try {
         const response = await axios.put(
             `${rootURL}/user/${userID}`,
-            `${field}=${value}`
+            payload
         );
         return response.data;
     }
-    catch(err){
+    catch (err) {
         console.error(err);
     }
 }
 
 // create user
 export const createUser = async (userObject) => {
-    try{
+    try {
         // const response = await axios.post(
         //     `${rootURL}/user`,
         //     `username=${userObject.username}&password=${userObject.password}&
@@ -95,233 +98,245 @@ export const createUser = async (userObject) => {
         );
         return response.data;
     }
-    catch(err){
+    catch (err) {
         console.error(err);
     }
 }
 
 // delete user
 export const deleteUser = async (userID) => {
-    try{
+    try {
         const response = await axios.delete(`${rootURL}/user/${userID}`);
         return response.data;
     }
-    catch(err){
+    catch (err) {
         console.error(err);
     }
 }
 
 // get user's followings by userID
-export const getFollowings = async (userID) =>{
-    try{
-            const response = await axios.get(`${rootURL}/user/${userID}`);
-            return response.data.followings;
-            // the data is stored in the mockData
-            // field of the response
+export const getFollowings = async (userID) => {
+    try {
+        const response = await axios.get(`${rootURL}/user/${userID}`);
+        return response.data.followings;
+        // the data is stored in the mockData
+        // field of the response
     }
-    catch(err){
+    catch (err) {
         console.error(err);
 
     }
 }
 
 // get all posts in the DB
-export const getPosts = async () =>{
-    try{
-            const response = await axios.get(`${rootURL}/post`);
-            return response.data;
-            // the data is stored in the mockData
-            // field of the response
+export const getPosts = async () => {
+    try {
+        const response = await axios.get(`${rootURL}/post`);
+        return response.data;
+        // the data is stored in the mockData
+        // field of the response
     }
-    catch(err){
+    catch (err) {
         console.error(err);
 
     }
 }
 
-export const getFeed = async (userID) =>{
-    try{
-            const followings = await getFollowings(userID);
-            const run = async () => {
-                return await Promise.all(
-                    followings.map(async id => {
-                        return await getPostsByUserID(id);
-                   })
-                );
-            }
-            const posts = await run();
-            
-            return posts.flat();
+export const getFeed = async (userID) => {
+    try {
+        const followings = await getFollowings(userID);
+        const run = async () => {
+            return await Promise.all(
+                followings.map(async id => {
+                    return await getPostsByUserID(id);
+                })
+            );
+        }
+        const posts = await run();
+
+        return posts.flat();
     }
-    catch(err){
+    catch (err) {
         console.error(err);
     }
 }
 
 
 // get post by id
-export const getPostByID = async (postID) =>{
-    try{
-            const response = await axios.get(`${rootURL}/post/${postID}`);
-            return response.data;
+export const getPostByID = async (postID) => {
+    try {
+        const response = await axios.get(`${rootURL}/post/${postID}`);
+        return response.data;
     }
-    catch(err){
+    catch (err) {
         console.error(err);
     }
 }
 
 // get post by user ID => return array of posts
-export const getPostsByUserID = async (userID) =>{
-    try{
-            const response = await axios.get(`${rootURL}/post?owner=${userID}`);
-            // console.log("res: ",response);
-            return response.data;
+
+export const getPostsByUserID = async (userID) => {
+    try {
+        const response = await axios.get(`${rootURL}/post?owner=${userID}`);
+        // console.log("res: ",response);
+        return response.data;
     }
-    catch(err){
+    catch (err) {
         console.error(err);
     }
 }
 
 // update post field by value
 export const updatePost = async (postID, field, value) => {
-    try{
+    try {
         const response = await axios.put(
             `${rootURL}/post/${postID}`,
             `${field}=${value}`
         );
         return response.data;
     }
-    catch(err){
+    catch (err) {
         console.error(err);
     }
 }
 
 // create user
 export const createPost = async (postObject) => {
-    try{
+    try {
         const response = await axios.post(
             `${rootURL}/post`, postObject
         );
         return response.data;
     }
-    catch(err){
+    catch (err) {
         console.error(err);
     }
 }
 
 // delete post
 export const deletePost = async (postID) => {
-    try{
+    try {
         const response = await axios.delete(`${rootURL}/post/${postID}`);
         return response.data;
     }
-    catch(err){
+    catch (err) {
         console.error(err);
     }
 }
 
 // get comment by id
-export const getCommentByID = async (commentID) =>{
-    try{
-            const response = await axios.get(`${rootURL}/comment/${commentID}`);
-            return response.data;
+export const getCommentByID = async (commentID) => {
+    try {
+        const response = await axios.get(`${rootURL}/comment/${commentID}`);
+        return response.data;
     }
-    catch(err){
+    catch (err) {
         console.error(err);
     }
 }
 
 // get comments by post ID
 export const getCommentsByPostID = async (postID) => {
-    try{
+    try {
         const response = await axios.get(`${rootURL}/comment?post=${postID}`);
         return response.data;
     }
-    catch(err){
+    catch (err) {
         console.error(err);
     }
 }
 
 // update comment field by value
 export const updateComment = async (commentID, field, value) => {
-    try{
+    try {
         const response = await axios.put(
             `${rootURL}/comment/${commentID}`,
             `${field}=${value}`
         );
         return response.data;
     }
-    catch(err){
+    catch (err) {
         console.error(err);
     }
 }
 
 // create comment
 export const createComment = async (commentObject) => {
-    try{
+    try {
         const response = await axios.post(
             `${rootURL}/comment`, commentObject
         );
         return response.data;
     }
-    catch(err){
+    catch (err) {
         console.error(err);
     }
 }
 
 // delete comment
 export const deleteComment = async (commentID) => {
-    try{
+    try {
         const response = await axios.delete(`${rootURL}/comment/${commentID}`);
         return response.data;
     }
-    catch(err){
+    catch (err) {
         console.error(err);
     }
 }
 
 // get like by id
-export const getLikeByID = async (likeID) =>{
-    try{
-            const response = await axios.get(`${rootURL}/like/${likeID}`);
-            return response.data;
+export const getLikeByID = async (likeID) => {
+    try {
+        const response = await axios.get(`${rootURL}/like/${likeID}`);
+        return response.data;
     }
-    catch(err){
+    catch (err) {
         console.error(err);
     }
 }
 
 // get likes by post ID
 export const getLikesByPostID = async (postID) => {
-    try{
+    try {
         const response = await axios.get(`${rootURL}/like?post=${postID}`);
         return response.data;
     }
-    catch(err){
+    catch (err) {
         console.error(err);
     }
 }
 
 // create like
 export const createLike = async (likeObject) => {
-    try{
+    try {
         const response = await axios.post(
             `${rootURL}/like`, likeObject
         );
         return response.data;
     }
-    catch(err){
+    catch (err) {
         console.error(err);
     }
 }
 
 // delete comment
 export const deleteLike = async (likeID) => {
-    try{
+    try {
         const response = await axios.delete(`${rootURL}/like/${likeID}`);
         return response.data;
     }
-    catch(err){
+    catch (err) {
+        console.error(err);
+    }
+}
+
+
+export const getFollowers = async (userID) => {
+    try {
+        const response = await axios.get(`${rootURL}/user/${userID}`);
+        return response.data.followers;
+    }
+    catch (err) {
         console.error(err);
     }
 }

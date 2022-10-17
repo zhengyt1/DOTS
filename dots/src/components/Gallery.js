@@ -1,23 +1,28 @@
-import { Button, ImageList, ImageListItem } from "@mui/material";
-import { Stack } from "@mui/system";
+import { Button, ImageList } from "@mui/material";
 import React, { useState } from "react";
 import './Gallery.css'
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ModeCommentIcon from '@mui/icons-material/ModeComment';
 import { Camera, FolderSpecial } from "@mui/icons-material";
 const Gallery = (props) => {
+
     const [galleryNav, SetGalleryNav] = useState("posts") // posts and sved
-    const numOfLikes = 2;
-    const numOfComments = 2;
     const handlePostsNavClick = () => {
         if (galleryNav !== "posts") { SetGalleryNav("posts") }
     }
     const handleSavedNavClick = () => {
         if (galleryNav !== "saved") { SetGalleryNav("saved") }
     }
-    const itemData = Array(12).fill({
-        img: 'https://source.unsplash.com/random'
-    });
+
+    /* Justify whether to show posts or saved */
+    let toShow;
+    if (galleryNav === "posts") {
+        toShow = props.posts;
+    }
+    else if (galleryNav === "saved") {
+        toShow = props.saved;
+    }
+
     return (
         <div>
             <div style={{
@@ -49,18 +54,18 @@ const Gallery = (props) => {
                 justifyContent: 'center'
             }}>
                 <ImageList sx={{ width: 816 }} cols={3}>
-                    {itemData.map((item) => (
-                        <div key={item.img}>
+                    {toShow.map((item) => (
+                        <div key={item.id}>
                             <div className="middle">
                                 <div className="postThumbNail-text">
-                                    <FavoriteIcon /> {numOfLikes}
-                                    <ModeCommentIcon /> {numOfComments}
+                                    <FavoriteIcon /> {item.likes.length}
+                                    <ModeCommentIcon /> {item.comments.length}
                                 </div>
                             </div>
                             <img
-                                src={`${item.img}?w=260&h=260&fit=crop&auto=format`}
-                                srcSet={`${item.img}?w=260&h=260&fit=crop&auto=format&dpr=2 2x`}
-                                alt="post"
+                                // src={`${item.img}?w=260&h=260&fit=crop&auto=format`}
+                                // If this is a post with no picture, we generate random picture as its thumbnail
+                                src={item.pic ? (item.pic) : "https://source.unsplash.com/random"}
                                 loading="lazy"
                                 style={{
                                     width: "260px",
@@ -70,9 +75,6 @@ const Gallery = (props) => {
                             />
 
                         </div>
-                        // <ImageListItem >
-
-                        // </ImageListItem>
                     ))}
                 </ImageList>
 
