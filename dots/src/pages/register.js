@@ -13,6 +13,9 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
+import { createUser } from '../mockedAPI/mockedAPI';
+import { userLogin } from '../reducers';
+import { useDispatch } from 'react-redux';
 
 function Copyright(props) {
   return (
@@ -31,14 +34,20 @@ const theme = createTheme();
 
 export default function Register() {
 	const navigate = useNavigate();
-  const handleSubmit = (event) => {
+  const dispatch = useDispatch();
+  const handleSubmit = async(event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
+    const user = await createUser({
       email: data.get('email'),
       password: data.get('password'),
-    });
-		navigate('/home');
+    })
+    
+    if (user.id) {
+      dispatch(userLogin(user.id));
+      navigate('/home');
+    }
+
   };
 
   return (
