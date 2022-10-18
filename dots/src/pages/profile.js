@@ -1,8 +1,8 @@
 import Gallery from "../components/Gallery";
 import Navbar from "../components/navbar";
 import { useSelector } from 'react-redux';
-import { useLocation } from 'react-router-dom';
-
+import { useLocation, useParams } from 'react-router-dom';
+import { Link } from "react-router-dom";
 import ProfileOverview from "../components/ProfileOverview";
 
 import React, { useEffect, useRef, useState } from "react";
@@ -11,9 +11,11 @@ import { getUser, getPostsByUserID } from '../mockedAPI/mockedAPI';
 function Profile(props) {
 	const selfID = useSelector(state => state.userID.value);
 	const location = useLocation();
-	const profileID = location.pathname.split("/")[2];
-	console.log(profileID, selfID);
+	const p = useParams();
 
+	console.log(p, location, location.pathname.split("/")[2])
+	const profileID = p.userId;
+	console.log(profileID, selfID);
 	const [username, SetUsername] = useState("");
 	const [userAvatar, SetAvatar] = useState("");
 	const [description, SetDescription] = useState("");
@@ -39,28 +41,33 @@ function Profile(props) {
 			}
 		}
 
-		if (loadData.current === true) {
-			loadData.current = false;
-			fetchData();
-		}
+		fetchData();
 
-	}, [])
+	}, [p.userId])
 
 
 	return (
-		<div>
-			<Navbar />
-			<ProfileOverview
-				selfID={selfID}
-				profileID={profileID}
-				username={username}
-				userAvatar={userAvatar}
-				description={description}
-				numOfFollowers={followers.length}
-				numOfFollowings={followings.length}
-				numOfPosts={posts.length} />
-			<Gallery posts={posts} saved={[]} />
-		</div>
+		<>
+		{selfID === "" ? (
+      <Link to="/">
+        <div>Login error, click to login.</div>
+      </Link>
+      ):(
+			<div>
+				<Navbar />
+				<ProfileOverview
+					selfID={selfID}
+					profileID={profileID}
+					username={username}
+					userAvatar={userAvatar}
+					description={description}
+					numOfFollowers={followers.length}
+					numOfFollowings={followings.length}
+					numOfPosts={posts.length} />
+				<Gallery posts={posts} saved={[]} />
+			</div>
+		)}
+		</>
 	);
 }
 

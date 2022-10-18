@@ -12,11 +12,8 @@ import { Link } from "react-router-dom"
 function Home() {
   const userID = useSelector(state => state.userID.value);
   console.log(userID);
-  const suggestedUser = {
-    avatar: "/asset/photo.jpg",
-    username: "Yuting",
-  }
-  const suggestedUsers = [suggestedUser, suggestedUser, suggestedUser]
+  const suggestedUsers = ["2", "3", "6", "7"]
+  // const suggestedUsers = [suggestedUser, suggestedUser, suggestedUser]
 
   const currentUser = {
     avatar: "/asset/photo.jpg",

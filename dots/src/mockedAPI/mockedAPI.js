@@ -33,8 +33,20 @@ export const getUsers = async () => {
     }
 }
 
-// get user by id
+export const getUsersByIds = async (useIds) => {
+    try {
+        return Promise.all(
+            useIds.map(async id => {
+                return await getUser(id);
+            })
+        )
+    }
+    catch (err) {
+        console.error(err);
+    }
+}
 
+// get user by id
 export const getUser = async (userID) => {
     try {
         const response = await axios.get(`${rootURL}/user/${userID}`);

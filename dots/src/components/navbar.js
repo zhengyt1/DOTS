@@ -19,7 +19,7 @@ function Navbar(props) {
 				<Link to='/home'>
 					<img  className='icon' src="/asset/icon-home.png" alt="home"></img>
 				</Link>
-				<Link to={`/profile/${userID}`} key={`${userID}`}>
+				<Link to={`/profile/${userID}`} key={`/profile/${userID}`}>
 					<img  className='icon' src="/asset/icon-profile.png" alt="profile"></img>
 				</Link>
 				<Link to='/' onClick={dispatch(userLogout)}>
