@@ -54,7 +54,7 @@ export default function Login() {
 
     const user = await getUserByEmail(data.get("email"));
     console.log("user: ", user);
-    if (user.length === 1) {
+    if (user.length >= 1) {
       dispatch(userLogin(user[0].id));
       console.log(userID);
       navigate('/home');
