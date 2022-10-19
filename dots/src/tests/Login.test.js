@@ -11,7 +11,9 @@ import { createMemoryHistory } from 'history';
 import Login from "../pages/login"
 import Home from "../pages/home"
 import Register from "../pages/register"
-
+import Profile from '../pages/profile';
+import Post from '../components/post';
+import PostDetail from '../components/postDetail';
 
 const user = {
   "username": "Brook6",
@@ -26,9 +28,7 @@ const user = {
     "5",
     "6"
   ],
-  "posts": [
-    "1"
-  ],
+  "posts": [],
   "id": "2"
 }
 const mockedNavigate = jest.fn();
@@ -96,12 +96,12 @@ describe("My app", () => {
           <Route path="/" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/home" element={<Home />} />
-          {/* <Route path="/profile" element={<Profile />} > 
+          <Route path="/profile" element={<Profile />} > 
             <Route path=":userId" element={<></>} ></Route>
           </Route>
           <Route path="/post" element={<PostDetail />} >
             <Route path=":postId" element={<></>} />
-          </Route> */}
+          </Route>
           <Route path="*" element={
             <div style={{ padding: "1rem" }}>
               <p>There's nothing here!</p>
