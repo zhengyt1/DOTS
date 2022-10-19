@@ -1,36 +1,35 @@
 import {
-  Link,
+  BrowserRouter as Router,
+  Routes,
+  Route,
 } from "react-router-dom";
-import Button from '@mui/material/Button';
-
+import Login from './pages/login';
+import Register from './pages/register';
+import Home from './pages/home.js';
+import Profile from './pages/profile'
+import PostDetail from './components/postDetail';
 
 function App() {
-  const postInfo = {
-    text: "It’s finally here! Catch our latest summer collection, “Juniper Valley,” and use code BELLEJUNI to get 10% off your first order. alalalalalalalalallalalala, It’s finally here! Catch our latest summer collection, “Juniper Valley,” and use code BELLEJUNI to get 10% off your first order. alalalalalalalalallalalalaIt’s finally here! Catch our latest summer collection, “Juniper Valley,” and use code BELLEJUNI to get 10% off your first order. alalalalalalalalallalalalaIt’s finally here! Catch our latest summer collection, “Juniper Valley,” and use code BELLEJUNI to get 10% off your first order. alalalalalalalalallalalala",
-    // pic: "https://source.unsplash.com/random",
-    pic: "/asset/photo.jpg",
-    video: "",
-    owner: "1",
-    comments: [{user: "yuting", comment: "Love your Post!"},{user: "shuyue", comment: "hhhh"}],
-    likes: [],
-    createdTime: "March 19",
-  };
   return (
-    <div>
-      <h1>in App</h1>
-      <Link to='/home'>
-        <Button variant="outlined">Home</Button>
-      </Link>
-      <Link to='/login'>
-        <Button variant="outlined">login</Button>
-      </Link>
-      <Link to='/register'>
-        <Button variant="outlined">register</Button>
-      </Link>
-      <Link to='/profile'>
-        <Button variant="outlined">profile</Button>
-      </Link>
-    </div>
+    <Router>
+        <Routes>
+          {/* <Route path="/" element={<App />} /> */}
+          <Route path="/" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/home" element={<Home />} />
+          <Route path="/profile" element={<Profile />} > 
+            <Route path=":userId" element={<></>} ></Route>
+          </Route>
+          <Route path="/post" element={<PostDetail />} >
+            <Route path=":postId" element={<></>} />
+          </Route>
+          <Route path="*" element={
+            <div style={{ padding: "1rem" }}>
+              <p>There's nothing here!</p>
+            </div>
+          }></Route>
+        </Routes>
+      </Router>
   );
 }
 
