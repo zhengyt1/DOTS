@@ -17,7 +17,7 @@ function Share(props) {
 
     const shareTextRef = useRef();
     const tagUsersRef = useRef();
-    const [shareFile, setFile] = useState(null);
+    const [shareImage, setImage] = useState(null);
     const [shareVideo, setVideo] = useState(null);
     const [showTagArea, setShowTagArea] = React.useState(false);
     const [isPrivate, setPrivate] = React.useState(false);
@@ -38,9 +38,9 @@ function Share(props) {
           mentions: tagUsersRef.current !== undefined ? tagUsersRef.current.value.split(", ") : []
         };
 
-        if (shareFile) {
-          const imageRef = ref(firebaseStorage, `images/${shareFile.name + Date.now()}`);
-          uploadBytes(imageRef, shareFile).then(async (snapshot) => {
+        if (shareImage) {
+          const imageRef = ref(firebaseStorage, `images/${shareImage.name + Date.now()}`);
+          uploadBytes(imageRef, shareImage).then(async (snapshot) => {
             getDownloadURL(snapshot.ref).then(async (url) => {
               // add url to newPost
               newPost.pic = url;
@@ -57,11 +57,11 @@ function Share(props) {
             });
           });
         } else {
-          await createPost(newPost);
+          window.alert("Please share with an Image or Video");
         }
         shareTextRef.current.value = '';
         tagUsersRef.current.value = '';
-        setFile(null);
+        setImage(null);
         setVideo(null);
         setPrivate(false);
         setShowTagArea(false);
@@ -113,10 +113,10 @@ function Share(props) {
           )}
           
           <hr className="shareHr" />
-          {shareFile && (
+          {shareImage && (
             <div className="shareImgContainer">
-              <img className="shareImg" src={URL.createObjectURL(shareFile)} alt="" />
-              <Cancel className="shareCancelImg" onClick={() => setFile(null)} />
+              <img className="shareImg" src={URL.createObjectURL(shareImage)} alt="" />
+              <Cancel className="shareCancelImg" onClick={() => setImage(null)} />
             </div>
           )}
           {shareVideo && (
@@ -139,7 +139,7 @@ function Share(props) {
                   type="file"
                   id="file"
                   accept=".png,.jpeg,.jpg"
-                  onChange={(e) => setFile(e.target.files[0])}
+                  onChange={(e) => setImage(e.target.files[0])}
                 />
               </label>
               <label htmlFor="video" className="shareOption">
