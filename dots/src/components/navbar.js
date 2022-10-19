@@ -1,13 +1,11 @@
 import {
   Link,
 } from "react-router-dom";
-import Profile from "../pages/profile";
 import './navbar.css'
-import { getUser } from "../mockedAPI/mockedAPI";
 import { userLogout,  } from '../reducers';
 import { useDispatch, useSelector } from "react-redux";
 
-function Navbar(props) {
+function Navbar() {
 	const userID = useSelector(state => state.userID.value);
 	const dispatch = useDispatch()
 	return (

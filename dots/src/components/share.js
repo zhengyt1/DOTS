@@ -4,15 +4,15 @@ import { Cancel } from "@mui/icons-material";
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import AlternateEmailIcon from '@mui/icons-material/AlternateEmail';
 import MovieCreationIcon from '@mui/icons-material/MovieCreation';
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { Switch } from "@mui/material";
 import TextField from '@mui/material/TextField';
-import { createPost } from "../mockedAPI/mockedAPI";
+import { createPost, getUser } from "../mockedAPI/mockedAPI";
 import { useSelector } from "react-redux";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { firebaseStorage } from "../firebase/firebase";
 
-function Share(props) {
+function Share() {
 
 
     const shareTextRef = useRef();
@@ -22,6 +22,24 @@ function Share(props) {
     const [showTagArea, setShowTagArea] = React.useState(false);
     const [isPrivate, setPrivate] = React.useState(false);
     const userID = useSelector(state => state.userID.value);
+
+    const [username, setUsername] = useState("");
+    const [avatar, setAvatar] = useState("");
+    const loadData = useRef(true);
+    useEffect(() => {
+      async function fetchData() {
+        const data = await getUser(userID);
+        if (data !== undefined) {
+          setUsername(data.username);
+          setAvatar(data.avatar);
+        }
+      }
+      // only load data on the first rendering 
+      if (loadData.current === true) {
+        loadData.current = false;
+        fetchData();
+      }
+    })
 
     const submitHandler = async (e) => {
         e.preventDefault();
@@ -86,13 +104,13 @@ function Share(props) {
             <img
               className="shareProfileImg"
               src={
-                props.user.avatar
+                avatar
               }
               alt=""
             />
             <TextField
               id="outlined-textarea"
-              placeholder={"What's in your mind, " + props.user.username + "?"}
+              placeholder={"What's in your mind, " + username + "?"}
               className="shareInput"
               inputRef={shareTextRef}
               multiline

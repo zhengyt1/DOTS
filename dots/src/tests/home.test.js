@@ -1,8 +1,9 @@
 import React from 'react';
 // import testing library functions
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import Feed from '../components/feed';
 import Home from '../pages/home';
+import Share from '../components/share';
 import {BrowserRouter as Router} from 'react-router-dom';
 
 const mockDispatch = jest.fn();
@@ -12,14 +13,6 @@ jest.mock('react-redux', () => ({
     }),
     useDispatch: () => mockDispatch
 }));
-
-export default function TestHome() {
-    return (
-        <Router>
-         <Home />
-        </Router>
-    );
-};
 
 describe('Testing Home Page Components Rendering', () => {
 
@@ -48,4 +41,14 @@ describe('Testing Home Page Components Rendering', () => {
             <Router><Feed posts={posts}/></Router>
         );
     }) 
+    it('Shows Share Post', () => {
+
+        render(
+            <Router>
+                <Share />
+            </Router>
+        );
+        expect(screen.getByRole('button').textContent).toBe('Share');
+
+    });
 });
