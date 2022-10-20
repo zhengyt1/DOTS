@@ -156,7 +156,8 @@ export const getPosts = async () => {
 
 export const getFeed = async (userID) => {
     try {
-        const followings = await getFollowings(userID);
+        let followings = await getFollowings(userID);
+        followings.push(userID);
         const run = async () => {
             return await Promise.all(
                 followings.map(async id => {

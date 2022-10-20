@@ -48,12 +48,15 @@ function Rightbar(props) {
     const [suggestFollowings, setSuggestFollowings] = useState([]);
     useEffect(() => {
         async function fetchData() {
-            const data = await getUsersByIds(props.suggestedUsers);
+            const response = await getUsersByIds(props.suggestedUsers);
+            const data = response.filter(function( element ) {
+                return element !== undefined;
+             });
             setSuggestFollowings(data)
             console.log("suggestFollowings: ", data)
         }
         fetchData();
-    }, [])
+    }, [props.suggestedUsers])
     return (
         <Box className="rightbar" 
             flex={2} p={2} bgcolor="#f5f5f5">
