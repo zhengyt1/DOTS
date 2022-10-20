@@ -7,7 +7,6 @@ import {
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from '@testing-library/user-event';
 import renderer from 'react-test-renderer';
-import { createMemoryHistory } from 'history';
 import Login from "../pages/login"
 import Home from "../pages/home"
 import Register from "../pages/register"

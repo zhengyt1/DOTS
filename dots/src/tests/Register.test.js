@@ -7,7 +7,6 @@ import {
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from '@testing-library/user-event';
 import renderer, { act } from 'react-test-renderer';
-import { createMemoryHistory } from 'history';
 import Login from "../pages/login"
 import Home from "../pages/home"
 import Register from "../pages/register"
@@ -38,9 +37,9 @@ jest.mock('react-router-dom', () => ({
   useNavigate: () => mockedNavigate
 }));
 
-// jest.mock('../mockedAPI/mockedAPI', () => ({
-//   createUser: () => user,
-// }))
+jest.mock('../mockedAPI/mockedAPI', () => ({
+  createUser: () => user,
+}))
 
 const mockDispatch = jest.fn();
 jest.mock('react-redux', () => ({
@@ -77,11 +76,11 @@ describe('test register page', () => {
         <Register />
       </Router>
     )
-    const mock = new MockAdapter(axios);
+    // const mock = new MockAdapter(axios);
 
     // This sets the mock adapter on the default instance
     // mock.onGet(`${BASE_URL}/users`).networkErrorOnce();
-    mock.onPost('https://63446bd6dcae733e8fdeff41.mockapi.io/api/user/2').reply(200, user);
+    // mock.onPost('https://63446bd6dcae733e8fdeff41.mockapi.io/api/user/2').reply(200, user);
 
     const button = screen.getByRole('button');
     await waitFor(() => {
