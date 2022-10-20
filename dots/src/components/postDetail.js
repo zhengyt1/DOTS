@@ -7,31 +7,28 @@ import { Cancel } from "@mui/icons-material";
 import Modal from '@mui/material/Modal';
 import './postDetail.css'
 import { useEffect, useState, useRef } from "react";
-import { Link, useNavigate, useLocation, } from 'react-router-dom';
+import { Link, useNavigate, useParams, } from 'react-router-dom';
 import { getPostByID, getUser } from "../mockedAPI/mockedAPI";
 import { maxWidth } from "@mui/system";
 
 function PostDetail(props) {
-  const location = useLocation();
-  const postID = location.pathname.split("/")[2];
+  let postID = useParams()
+
   console.log(postID);
+  postID = postID.postId;
   
   const navigate = useNavigate()
 
   const handleEdit = () => {
-    console.info('You clicked the edit icon.');
+    // console.info('You clicked the edit icon.');
   };
 
   const handleDelete = () => {
-    console.info('You clicked the delete icon.');
+    // console.info('You clicked the delete icon.');
   };
 
-  const handleCancel = () => {
-    console.info('You clicked the cancel icon.');
-  }
-
   const handlePost = () => {
-    console.info('Post ...')
+    // console.info('Post ...')
   }
 
   const handleClose = () => {
@@ -39,7 +36,6 @@ function PostDetail(props) {
     // navigate(`/${location.state.from}`)
   }
   const [maxWidth, setMaxWidth] = useState("none");
-  const loadData = useRef(true);
   const [text, setText] = useState("");
   const [pic, setPic] = useState("");
   const [video, setVideo] = useState("");
@@ -68,14 +64,11 @@ function PostDetail(props) {
       console.log(userInfo)
       setUsername(userInfo.username);
       setAvatar(userInfo.avatar);
-    
+     
     }
+    getData();
 
-    if (loadData.current === true) {
-      loadData.current = false;
-      getData();
-    }
-  })
+  }, [])
 
   return (
     // <div className="post-background">
@@ -99,7 +92,7 @@ function PostDetail(props) {
               )}
             </div>
           )}
-          <div className="right-part" style={{"max-width": `${maxWidth}`}}>
+          <div className="right-part" style={{"maxWidth": `${maxWidth}`}}>
             <div className="user-info">
               <Avatar src={avatar} />
               <div className="username">{username}</div>

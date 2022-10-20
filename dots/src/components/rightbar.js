@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Box } from "@mui/system";
 import { Avatar, List, ListItem, ListItemAvatar, ListItemText, Typography } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
 import InputBase from '@mui/material/InputBase';
 import { styled } from '@mui/material/styles';
+import { getUsersByIds } from "../mockedAPI/mockedAPI";
+import { Link } from "react-router-dom";
 
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -43,7 +45,15 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 function Rightbar(props) {
-
+    const [suggestFollowings, setSuggestFollowings] = useState([]);
+    useEffect(() => {
+        async function fetchData() {
+            const data = await getUsersByIds(props.suggestedUsers);
+            setSuggestFollowings(data)
+            console.log("suggestFollowings: ", data)
+        }
+        fetchData();
+    }, [])
     return (
         <Box className="rightbar" 
             flex={2} p={2} bgcolor="#f5f5f5">
@@ -63,18 +73,20 @@ function Rightbar(props) {
                 alignItems="center"
                 justifyContent="center">
                 <List className="suggestUsersList">
-                    {props.suggestedUsers.map((item, key)=>(    
-                        <ListItem key={key}>
-                            <ListItemAvatar>
-                                <Avatar
-                                    src={item.avatar}
-                                    sx={{ width: 30, height: 30 }}
-                                />
-                            </ListItemAvatar>
-                            <ListItemText>
-                                {item.username}
-                            </ListItemText>
-                        </ListItem>
+                    {suggestFollowings.map((item, key)=>(   
+                        <Link to={`/profile/${item.id}`} key={`/profile/${item.id}`}>
+                            <ListItem key={key}>
+                                <ListItemAvatar>
+                                    <Avatar
+                                        src={item.avatar}
+                                        sx={{ width: 30, height: 30 }}
+                                    />
+                                </ListItemAvatar>
+                                <ListItemText>
+                                    {item.username}
+                                </ListItemText>
+                            </ListItem>
+                        </Link> 
                     ))}
                 </List>
             </Box>
