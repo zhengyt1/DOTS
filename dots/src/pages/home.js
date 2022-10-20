@@ -4,7 +4,7 @@ import Rightbar from "../components/rightbar";
 import Feed from "../components/feed";
 import './home.css';
 import Share from "../components/share";
-import { getUser, getPosts, getFeed, getPostsByUserID } from "../mockedAPI/mockedAPI";
+import { getFeed } from "../mockedAPI/mockedAPI";
 import { useEffect, useState, useRef } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom"
@@ -14,11 +14,6 @@ function Home() {
   console.log(userID);
   const suggestedUsers = ["2", "3", "6", "7"]
   // const suggestedUsers = [suggestedUser, suggestedUser, suggestedUser]
-
-  const currentUser = {
-    avatar: "/asset/photo.jpg",
-    username: "Joe Doe",
-  }
 
   const [posts, setPosts] = useState([]);
   const loadFeed = useRef(false);
@@ -47,10 +42,10 @@ function Home() {
       </Link>
       ):(
       <div>
-        <Navbar userID={userID} ></Navbar>
+        <Navbar />
         <Stack direction="row" spacing={2} justifyContent="space-between">
           <Stack direction="column" spacing={2} justifyContent="space-between" flex={6}>
-            <Share user={currentUser} ></Share>
+            <Share />
             <Feed posts={posts} />
           </Stack>
           <Rightbar suggestedUsers={suggestedUsers} />
