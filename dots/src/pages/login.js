@@ -12,7 +12,6 @@ import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getUserByEmail } from '../mockedAPI/mockedAPI';
 import { useSelector, useDispatch } from 'react-redux'
@@ -38,7 +37,6 @@ export default function Login() {
   console.log("userID: ", userID);
   const dispatch = useDispatch()
 
-  const [isConnected, setIsConnected] = useState(true)
   let navigate = useNavigate()
   // console.log("route: ", route)
   
