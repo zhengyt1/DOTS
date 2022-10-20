@@ -1,7 +1,7 @@
 import {
   Link,
 } from "react-router-dom";
-import './navbar.css'
+import './navbar.css';
 import { userLogout,  } from '../reducers';
 import { useDispatch, useSelector } from "react-redux";
 

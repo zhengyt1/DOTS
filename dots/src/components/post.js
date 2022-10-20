@@ -4,8 +4,7 @@ import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import './post.css'
 import { useState, useEffect, useRef } from "react";
 import { Link } from 'react-router-dom';
-import PostDetail from "./postDetail";
-import { getUser, getPosts, getFeed, getPostsByUserID } from "../mockedAPI/mockedAPI";
+import { getUser } from "../mockedAPI/mockedAPI";
 
 function Post(props) {
   let {
@@ -14,9 +13,9 @@ function Post(props) {
     pic,
     video,
     owner,
-    comments,
+    // comments,
     likes,
-    createdTime,
+    // createdTime,
   } = props.postInfo;
 
   const [username, setUsername] = useState("");
