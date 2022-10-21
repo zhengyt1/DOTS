@@ -1,49 +1,10 @@
 import { 
   BrowserRouter as Router,
-  Route,
-  Routes,
-  MemoryRouter,
  } from 'react-router-dom';
-import { render, screen, waitFor } from "@testing-library/react";
-import renderer from 'react-test-renderer';
-import userEvent from '@testing-library/user-event';
-import Home from "../pages/home"
+import { render, screen } from "@testing-library/react"
 import PostDetail from "../components/postDetail"
-import axios from "axios";
-import MockAdapter from "axios-mock-adapter";
 
 
-const post = {
-  "createdTime": "2022-10-13T15:40:12.039Z",
-  "text": "Cumque eos quia dicta non velit repellendus maxime quaerat. Magnam pariatur illum esse. Aut et sed beatae molestiae et repellendus dolore rem hic.",
-  "pic": "http://loremflickr.com/640/480/nature",
-  "video": "",
-  "owner": "2",
-  "comments": [],
-  "likes": [],
-  "isPrivate": true,
-  "mentions": [],
-  "id": "1"
-}
-
-const user = {
-  "username": "Brook6",
-  "avatar": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/340.jpg",
-  "password": "yZOaHI4siqpg_jb",
-  "email": "zhengyt1@gmail.com",
-  "description": "description 2",
-  "followers": [],
-  "followings": [
-    "3",
-    "4",
-    "5",
-    "6"
-  ],
-  "posts": [
-    "1"
-  ],
-  "id": "2"
-}
 
 // const postParam = {
 //   "postId": "2",

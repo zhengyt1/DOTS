@@ -4,7 +4,7 @@ import { Avatar, List, ListItem, ListItemAvatar, ListItemText, Typography } from
 import SearchIcon from '@mui/icons-material/Search';
 import InputBase from '@mui/material/InputBase';
 import { styled } from '@mui/material/styles';
-import { getUsersByIds } from "../mockedAPI/mockedAPI";
+import { getUsers } from "../mockedAPI/mockedAPI";
 import { Link } from "react-router-dom";
 
 const Search = styled('div')(({ theme }) => ({
@@ -48,10 +48,7 @@ function Rightbar(props) {
     const [suggestFollowings, setSuggestFollowings] = useState([]);
     useEffect(() => {
         async function fetchData() {
-            const response = await getUsersByIds(props.suggestedUsers);
-            const data = response.filter(function( element ) {
-                return element !== undefined;
-             });
+            const data = await getUsers();
             setSuggestFollowings(data)
             console.log("suggestFollowings: ", data)
         }
