@@ -53,7 +53,7 @@ function Rightbar(props) {
             console.log("suggestFollowings: ", data)
         }
         fetchData();
-    }, [])
+    }, [props.suggestedUsers])
     return (
         <Box className="rightbar" 
             flex={2} p={2} bgcolor="#f5f5f5">
