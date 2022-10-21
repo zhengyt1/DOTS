@@ -63,10 +63,10 @@ const Gallery = (props) => {
                                 </div>
                             </div>
                             <img
-                                // src={`${item.img}?w=260&h=260&fit=crop&auto=format`}
                                 // If this is a post with no picture, we generate random picture as its thumbnail
                                 src={item.pic ? (item.pic) : "https://source.unsplash.com/random"}
                                 loading="lazy"
+                                alt={item.text}
                                 style={{
                                     width: "260px",
                                     height: "260px"
