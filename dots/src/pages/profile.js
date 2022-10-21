@@ -43,30 +43,30 @@ function Profile(props) {
 
 		fetchData();
 
-	}, [p.userId])
+	}, [profileID, selfID])
 
 
 	return (
 		<>
-		{selfID === "" ? (
-      <Link to="/">
-        <div>Login error, click to login.</div>
-      </Link>
-      ):(
-			<div>
-				<Navbar />
-				<ProfileOverview
-					selfID={selfID}
-					profileID={profileID}
-					username={username}
-					userAvatar={userAvatar}
-					description={description}
-					numOfFollowers={followers.length}
-					numOfFollowings={followings.length}
-					numOfPosts={posts.length} />
-				<Gallery posts={posts} saved={[]} />
-			</div>
-		)}
+			{selfID === "" ? (
+				<Link to="/">
+					<div>Login error, click to login.</div>
+				</Link>
+			) : (
+				<div>
+					<Navbar />
+					<ProfileOverview
+						selfID={selfID}
+						profileID={profileID}
+						username={username}
+						userAvatar={userAvatar}
+						description={description}
+						numOfFollowers={followers.length}
+						numOfFollowings={followings.length}
+						numOfPosts={posts.length} />
+					<Gallery posts={posts} saved={[]} />
+				</div>
+			)}
 		</>
 	);
 }

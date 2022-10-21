@@ -9,8 +9,10 @@ function ProfileOverview(props) {
     const [isFollowing, SetIsFollowing] = useState(false);
     const [selfFollowingList, SetSelfFollowingList] = useState([]);
     const [profileFollowerList, SetProfileFollowerList] = useState([]);
-    const loadData = useRef(true);
     useEffect(() => {
+        console.log("entern use effect of profile id", profileID)
+        console.log("out of get: followerList of", profileID, "is", profileFollowerList);
+
         async function fetchData() {
             const followingList = await getFollowings(selfID);
             if (followingList !== undefined) {
@@ -18,18 +20,19 @@ function ProfileOverview(props) {
                 if (followingList.includes(profileID)) {
                     SetIsFollowing(true);
                 }
+                console.log("followingList of", selfID, "is", selfFollowingList);
             }
             const followersList = await getFollowers(profileID);
             if (followersList !== undefined) {
+
                 SetProfileFollowerList(followersList);
+                console.log("followerList of", profileID, "is", profileFollowerList);
             }
 
+
         }
-        if (loadData.current === true) {
-            loadData.current = false;
-            fetchData();
-        }
-    })
+        fetchData();
+    }, [profileID])
     async function handleUnfollowClick() {
         // We can change this logic to backend and add a new api: FollowerUser
         SetIsFollowing(false);
