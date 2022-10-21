@@ -53,7 +53,8 @@ function Share() {
           likes: [],
           isPrivate: isPrivate,
           createdTime: Date.now(),
-          mentions: tagUsersRef.current !== undefined ? tagUsersRef.current.value.split(", ") : []
+          mentions: tagUsersRef.current !== undefined && tagUsersRef.current !== null 
+                                            ? tagUsersRef.current.value.split(", ") : []
         };
 
         if (shareImage) {
@@ -77,8 +78,12 @@ function Share() {
         } else {
           window.alert("Please share with an Image or Video");
         }
-        shareTextRef.current.value = '';
-        tagUsersRef.current.value = '';
+        if (shareTextRef.current !== undefined && shareTextRef.current !== null) {
+          shareTextRef.current.value = "";
+        }
+        if (tagUsersRef.current !== undefined && tagUsersRef.current !== null) {
+          tagUsersRef.current.value = "";
+        }
         setImage(null);
         setVideo(null);
         setPrivate(false);
