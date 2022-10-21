@@ -7,12 +7,10 @@ import {
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from '@testing-library/user-event';
 import renderer from 'react-test-renderer';
-import { createMemoryHistory } from 'history';
 import Login from "../pages/login"
 import Home from "../pages/home"
 import Register from "../pages/register"
 import Profile from '../pages/profile';
-import Post from '../components/post';
 import PostDetail from '../components/postDetail';
 
 const user = {
@@ -79,10 +77,10 @@ describe('test login page', () => {
     )
     
     const button = screen.getByRole('button');
+    userEvent.click(button);
     await waitFor(() => {
-      userEvent.click(button);
+      expect(mockedNavigate).toHaveBeenCalledWith('/home');
     })
-    expect(mockedNavigate).toHaveBeenCalledWith('/home');
     
   });
 
