@@ -1,16 +1,14 @@
 import React from 'react';
-import { render } from '@testing-library/react';
-import renderer from 'react-test-renderer';
+import { render, screen } from '@testing-library/react';
+import { toHaveStyle } from '@testing-library/jest-dom'
+import userEvent from '@testing-library/user-event';
 import Profile from '../pages/profile';
 import Gallery from '../components/Gallery';
 import {
-    BrowserRouter as Router,
-    Route,
-    Routes,
-    MemoryRouter,
+    BrowserRouter as Router
 } from 'react-router-dom';
-import axios from "axios";
-import MockAdapter from "axios-mock-adapter";
+import ProfileOverview from '../components/ProfileOverview';
+
 
 const mockDispatch = jest.fn();
 jest.mock('react-redux', () => ({
@@ -52,15 +50,7 @@ jest.mock('../mockedAPI/mockedAPI', () => ({
 }))
 
 describe('Testing Profile Page Rendering', () => {
-    const posts = [postInfo1, postInfo2];
 
-    it('Shows Gallery', () => {
-        render(
-            <Router>
-                <Gallery posts={posts} saved={[]} />
-            </Router>
-        );
-    });
     it('Shows Profile', () => {
         render(
             <Router>
@@ -70,3 +60,74 @@ describe('Testing Profile Page Rendering', () => {
     });
 
 });
+
+describe('test Gallery component', () => {
+    const posts = [postInfo1, postInfo2];
+
+    it('Shows Gallery', () => {
+        render(
+            <Router>
+                <Gallery posts={posts} saved={[]} />
+            </Router>
+        );
+    });
+
+    it('Click Posts', async () => {
+        render(
+            <Router>
+                <Gallery posts={posts} saved={[]} />
+            </Router>
+        );
+        const div = screen.getByText('Posts').parentNode;
+        userEvent.click(div);
+        expect(div).toHaveStyle('borderTop: 1px solid black');
+    });
+
+    it('Click Saved', async () => {
+        render(
+            <Router>
+                <Gallery posts={posts} saved={[]} />
+            </Router>
+        );
+        const div = screen.getByText('Saved').parentNode;
+        userEvent.click(div);
+        expect(div).toHaveStyle('borderTop: 1px solid black');
+    });
+});
+
+describe('test ProfileOverview component', () => {
+    it('Show Self ProfileOverview', () => {
+        render(
+            <Router>
+                <ProfileOverview
+                    selfID={"2"}
+                    profileID={"2"}
+                    username={"user2"}
+                    userAvatar={""}
+                    description={"description 2"}
+                    numOfFollowers={3}
+                    numOfFollowings={2}
+                    numOfPosts={2} />
+            </Router>
+        );
+        const SettingElement = screen.getByText("Settings");
+        expect(SettingElement).toBeInTheDocument();
+    });
+
+    it('Show Other ProfileOverview', async () => {
+        render(
+            <Router>
+                <ProfileOverview
+                    selfID={"2"}
+                    profileID={"3"}
+                    username={"user3"}
+                    userAvatar={""}
+                    description={"description 3"}
+                    numOfFollowings={2}
+                    numOfPosts={2} />
+            </Router>
+        );
+        const button = screen.getAllByRole('button')[0];
+        expect(button.text).not.toBe("Settings");
+    })
+})
