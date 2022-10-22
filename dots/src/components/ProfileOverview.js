@@ -1,6 +1,6 @@
 import { ExpandMore } from "@mui/icons-material";
 import { Avatar, Button, IconButton } from "@mui/material";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { getFollowings, updateUser, getFollowers } from '../mockedAPI/mockedAPI';
 
 function ProfileOverview(props) {
@@ -9,7 +9,6 @@ function ProfileOverview(props) {
     const [isFollowing, SetIsFollowing] = useState(false);
     const [selfFollowingList, SetSelfFollowingList] = useState([]);
     const [profileFollowerList, SetProfileFollowerList] = useState([]);
-    const loadData = useRef(true);
     useEffect(() => {
         async function fetchData() {
             const followingList = await getFollowings(selfID);
@@ -21,15 +20,15 @@ function ProfileOverview(props) {
             }
             const followersList = await getFollowers(profileID);
             if (followersList !== undefined) {
+
                 SetProfileFollowerList(followersList);
             }
 
+
         }
-        if (loadData.current === true) {
-            loadData.current = false;
-            fetchData();
-        }
-    })
+        fetchData();
+        // eslint-disable-next-line
+    }, [profileID, selfID])
     async function handleUnfollowClick() {
         // We can change this logic to backend and add a new api: FollowerUser
         SetIsFollowing(false);
