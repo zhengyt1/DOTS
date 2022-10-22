@@ -11,7 +11,7 @@ import { Link } from "react-router-dom"
 
 function Home() {
   const userID = useSelector(state => state.userID.value);
-  console.log(userID);
+  // console.log(userID);
   const suggestedUsers = ["2", "3", "6", "7"]
 
   const [posts, setPosts] = useState([]);
@@ -27,7 +27,7 @@ function Home() {
       window.alert("userID is empty, need to loggin first. Go back to /.")
     }
     if (loadFeed.current === false && userID !== "") {
-      console.log("loadFeed");
+      // console.log("loadFeed");
       fetchFeed();
       loadFeed.current = true;
     }

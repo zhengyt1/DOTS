@@ -50,7 +50,7 @@ export const getUsersByIds = async (useIds) => {
 export const getUser = async (userID) => {
     try {
         const response = await axios.get(`${rootURL}/user/${userID}`);
-        console.log(userID, response);
+        // console.log(userID, response);
         return response.data;
     }
     catch (err) {
@@ -70,15 +70,15 @@ export const getUserByEmail = async (email) => {
 }
 
 // get user by username => return array of users
-export const getUsersByUsername = async (username) => {
-    try {
-        const response = await axios.get(`${rootURL}/user?username=${username}`);
-        return response.data;
-    }
-    catch (err) {
-        console.error(err);
-    }
-}
+// export const getUsersByUsername = async (username) => {
+//     try {
+//         const response = await axios.get(`${rootURL}/user?username=${username}`);
+//         return response.data;
+//     }
+//     catch (err) {
+//         console.error(err);
+//     }
+// }
 
 // update user field by value
 export const updateUser = async (userID, field, value) => {
@@ -116,15 +116,15 @@ export const createUser = async (userObject) => {
 }
 
 // delete user
-export const deleteUser = async (userID) => {
-    try {
-        const response = await axios.delete(`${rootURL}/user/${userID}`);
-        return response.data;
-    }
-    catch (err) {
-        console.error(err);
-    }
-}
+// export const deleteUser = async (userID) => {
+//     try {
+//         const response = await axios.delete(`${rootURL}/user/${userID}`);
+//         return response.data;
+//     }
+//     catch (err) {
+//         console.error(err);
+//     }
+// }
 
 // get user's followings by userID
 export const getFollowings = async (userID) => {
@@ -141,23 +141,22 @@ export const getFollowings = async (userID) => {
 }
 
 // get all posts in the DB
-export const getPosts = async () => {
-    try {
-        const response = await axios.get(`${rootURL}/post`);
-        return response.data;
-        // the data is stored in the mockData
-        // field of the response
-    }
-    catch (err) {
-        console.error(err);
+// export const getPosts = async () => {
+//     try {
+//         const response = await axios.get(`${rootURL}/post`);
+//         return response.data;
+//         // the data is stored in the mockData
+//         // field of the response
+//     }
+//     catch (err) {
+//         console.error(err);
 
-    }
-}
+//     }
+// }
 
 export const getFeed = async (userID) => {
     try {
-        let followings = await getFollowings(userID);
-        followings.push(userID);
+        const followings = await getFollowings(userID);
         const run = async () => {
             return await Promise.all(
                 followings.map(async id => {
@@ -200,18 +199,18 @@ export const getPostsByUserID = async (userID) => {
 }
 
 // update post field by value
-export const updatePost = async (postID, field, value) => {
-    try {
-        const response = await axios.put(
-            `${rootURL}/post/${postID}`,
-            `${field}=${value}`
-        );
-        return response.data;
-    }
-    catch (err) {
-        console.error(err);
-    }
-}
+// export const updatePost = async (postID, field, value) => {
+//     try {
+//         const response = await axios.put(
+//             `${rootURL}/post/${postID}`,
+//             `${field}=${value}`
+//         );
+//         return response.data;
+//     }
+//     catch (err) {
+//         console.error(err);
+//     }
+// }
 
 // create user
 export const createPost = async (postObject) => {
@@ -227,121 +226,121 @@ export const createPost = async (postObject) => {
 }
 
 // delete post
-export const deletePost = async (postID) => {
-    try {
-        const response = await axios.delete(`${rootURL}/post/${postID}`);
-        return response.data;
-    }
-    catch (err) {
-        console.error(err);
-    }
-}
+// export const deletePost = async (postID) => {
+//     try {
+//         const response = await axios.delete(`${rootURL}/post/${postID}`);
+//         return response.data;
+//     }
+//     catch (err) {
+//         console.error(err);
+//     }
+// }
 
 // get comment by id
-export const getCommentByID = async (commentID) => {
-    try {
-        const response = await axios.get(`${rootURL}/comment/${commentID}`);
-        return response.data;
-    }
-    catch (err) {
-        console.error(err);
-    }
-}
+// export const getCommentByID = async (commentID) => {
+//     try {
+//         const response = await axios.get(`${rootURL}/comment/${commentID}`);
+//         return response.data;
+//     }
+//     catch (err) {
+//         console.error(err);
+//     }
+// }
 
 // get comments by post ID
-export const getCommentsByPostID = async (postID) => {
-    try {
-        const response = await axios.get(`${rootURL}/comment?post=${postID}`);
-        return response.data;
-    }
-    catch (err) {
-        console.error(err);
-    }
-}
+// export const getCommentsByPostID = async (postID) => {
+//     try {
+//         const response = await axios.get(`${rootURL}/comment?post=${postID}`);
+//         return response.data;
+//     }
+//     catch (err) {
+//         console.error(err);
+//     }
+// }
 
 // update comment field by value
-export const updateComment = async (commentID, field, value) => {
-    try {
-        const response = await axios.put(
-            `${rootURL}/comment/${commentID}`,
-            `${field}=${value}`
-        );
-        return response.data;
-    }
-    catch (err) {
-        console.error(err);
-    }
-}
+// export const updateComment = async (commentID, field, value) => {
+//     try {
+//         const response = await axios.put(
+//             `${rootURL}/comment/${commentID}`,
+//             `${field}=${value}`
+//         );
+//         return response.data;
+//     }
+//     catch (err) {
+//         console.error(err);
+//     }
+// }
 
 // create comment
-export const createComment = async (commentObject) => {
-    try {
-        const response = await axios.post(
-            `${rootURL}/comment`, commentObject
-        );
-        return response.data;
-    }
-    catch (err) {
-        console.error(err);
-    }
-}
+// export const createComment = async (commentObject) => {
+//     try {
+//         const response = await axios.post(
+//             `${rootURL}/comment`, commentObject
+//         );
+//         return response.data;
+//     }
+//     catch (err) {
+//         console.error(err);
+//     }
+// }
 
 // delete comment
-export const deleteComment = async (commentID) => {
-    try {
-        const response = await axios.delete(`${rootURL}/comment/${commentID}`);
-        return response.data;
-    }
-    catch (err) {
-        console.error(err);
-    }
-}
+// export const deleteComment = async (commentID) => {
+//     try {
+//         const response = await axios.delete(`${rootURL}/comment/${commentID}`);
+//         return response.data;
+//     }
+//     catch (err) {
+//         console.error(err);
+//     }
+// }
 
 // get like by id
-export const getLikeByID = async (likeID) => {
-    try {
-        const response = await axios.get(`${rootURL}/like/${likeID}`);
-        return response.data;
-    }
-    catch (err) {
-        console.error(err);
-    }
-}
+// export const getLikeByID = async (likeID) => {
+//     try {
+//         const response = await axios.get(`${rootURL}/like/${likeID}`);
+//         return response.data;
+//     }
+//     catch (err) {
+//         console.error(err);
+//     }
+// }
 
 // get likes by post ID
-export const getLikesByPostID = async (postID) => {
-    try {
-        const response = await axios.get(`${rootURL}/like?post=${postID}`);
-        return response.data;
-    }
-    catch (err) {
-        console.error(err);
-    }
-}
+// export const getLikesByPostID = async (postID) => {
+//     try {
+//         const response = await axios.get(`${rootURL}/like?post=${postID}`);
+//         return response.data;
+//     }
+//     catch (err) {
+//         console.error(err);
+//     }
+// }
 
 // create like
-export const createLike = async (likeObject) => {
-    try {
-        const response = await axios.post(
-            `${rootURL}/like`, likeObject
-        );
-        return response.data;
-    }
-    catch (err) {
-        console.error(err);
-    }
-}
+// export const createLike = async (likeObject) => {
+//     try {
+//         const response = await axios.post(
+//             `${rootURL}/like`, likeObject
+//         );
+//         return response.data;
+//     }
+//     catch (err) {
+//         console.error(err);
+//     }
+// }
 
 // delete comment
-export const deleteLike = async (likeID) => {
-    try {
-        const response = await axios.delete(`${rootURL}/like/${likeID}`);
-        return response.data;
-    }
-    catch (err) {
-        console.error(err);
-    }
-}
+// export const deleteLike = async (likeID) => {
+//     try {
+//         const response = await axios.delete(`${rootURL}/like/${likeID}`);
+//         return response.data;
+//     }
+//     catch (err) {
+//         console.error(err);
+//     }
+// }
 
 
 export const getFollowers = async (userID) => {

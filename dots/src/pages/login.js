@@ -14,7 +14,7 @@ import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import { getUserByEmail } from '../mockedAPI/mockedAPI';
-import { useSelector, useDispatch } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { userLogin,  } from '../reducers';
 
 function Copyright(props) {
@@ -33,8 +33,8 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function Login() {
-  const userID = useSelector(state => state.userID.value);
-  console.log("userID: ", userID);
+  // const userID = useSelector(state => state.userID.value);
+  // console.log("userID: ", userID);
   const dispatch = useDispatch()
 
   let navigate = useNavigate()
@@ -51,10 +51,10 @@ export default function Login() {
     // });
 
     const user = await getUserByEmail(data.get("email"));
-    console.log("user: ", user);
+    // console.log("user: ", user);
     if (user.length >= 1) {
       dispatch(userLogin(user[0].id));
-      console.log(userID);
+      // console.log(userID);
       navigate('/home');
     }
   };
