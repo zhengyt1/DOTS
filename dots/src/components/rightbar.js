@@ -50,7 +50,7 @@ function Rightbar(props) {
         async function fetchData() {
             const data = await getUsers();
             setSuggestFollowings(data)
-            console.log("suggestFollowings: ", data)
+            // console.log("suggestFollowings: ", data)
         }
         fetchData();
     }, [props.suggestedUsers])

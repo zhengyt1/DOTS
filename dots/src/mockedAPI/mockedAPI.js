@@ -50,7 +50,7 @@ export const getUsersByIds = async (useIds) => {
 export const getUser = async (userID) => {
     try {
         const response = await axios.get(`${rootURL}/user/${userID}`);
-        console.log(userID, response);
+        // console.log(userID, response);
         return response.data;
     }
     catch (err) {

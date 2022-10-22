@@ -12,7 +12,7 @@ import { getPostByID, getUser } from "../mockedAPI/mockedAPI";
 function PostDetail() {
   let postID = useParams()
 
-  console.log(postID);
+  // console.log(postID);
   postID = postID.postId;
   
   const navigate = useNavigate()
@@ -53,9 +53,9 @@ function PostDetail() {
       // setComments(post.comments);
       setLikes(post.likes);
       setCreatTime(post.createdTime);
-      console.log(post);
+      // console.log(post);
       const userInfo = await getUser(post.owner);
-      console.log(userInfo)
+      // console.log(userInfo)
       setUsername(userInfo.username);
       setAvatar(userInfo.avatar);
      
