@@ -4,6 +4,7 @@ import './Gallery.css'
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ModeCommentIcon from '@mui/icons-material/ModeComment';
 import { Camera, FolderSpecial } from "@mui/icons-material";
+import { Link } from "react-router-dom";
 const Gallery = (props) => {
 
     const [galleryNav, SetGalleryNav] = useState("posts") // posts and sved
@@ -55,26 +56,29 @@ const Gallery = (props) => {
             }}>
                 <ImageList sx={{ width: 816 }} cols={3}>
                     {toShow.map((item) => (
-                        <div key={item.id}>
-                            <div className="middle">
-                                <div className="postThumbNail-text">
-                                    <FavoriteIcon /> {item.likes.length}
-                                    <ModeCommentIcon /> {item.comments.length}
-                                </div>
-                            </div>
-                            <img
-                                // If this is a post with no picture, we generate random picture as its thumbnail
-                                src={item.pic ? (item.pic) : "https://source.unsplash.com/random"}
-                                loading="lazy"
-                                alt={item.text}
-                                style={{
-                                    width: "260px",
-                                    height: "260px"
-                                }}
-                                className="postThumbNail-image"
-                            />
+                        <Link to={`/post/${item.id}`} key={item.id}>
 
-                        </div>
+                            <div key={item.id}>
+                                <div className="middle">
+                                    <div className="postThumbNail-text">
+                                        <FavoriteIcon /> {item.likes.length}
+                                        <ModeCommentIcon /> {item.comments.length}
+                                    </div>
+                                </div>
+                                <img
+                                    // If this is a post with no picture, we generate random picture as its thumbnail
+                                    src={item.pic ? (item.pic) : "https://source.unsplash.com/random"}
+                                    loading="lazy"
+                                    alt={item.text}
+                                    style={{
+                                        width: "260px",
+                                        height: "260px"
+                                    }}
+                                    className="postThumbNail-image"
+                                />
+
+                            </div>
+                        </Link>
                     ))}
                 </ImageList>
 
