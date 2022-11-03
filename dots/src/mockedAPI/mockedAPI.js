@@ -199,18 +199,20 @@ export const getPostsByUserID = async (userID) => {
 }
 
 // update post field by value
-// export const updatePost = async (postID, field, value) => {
-//     try {
-//         const response = await axios.put(
-//             `${rootURL}/post/${postID}`,
-//             `${field}=${value}`
-//         );
-//         return response.data;
-//     }
-//     catch (err) {
-//         console.error(err);
-//     }
-// }
+export const updatePost = async (postID, field, value) => {
+    const payload = {};
+    payload[field] = value;
+    try {
+        const response = await axios.put(
+            `${rootURL}/post/${postID}`,
+            payload
+        );
+        return response.data;
+    }
+    catch (err) {
+        console.error(err);
+    }
+}
 
 // create user
 export const createPost = async (postObject) => {
