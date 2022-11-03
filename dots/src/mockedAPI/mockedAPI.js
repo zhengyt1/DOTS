@@ -212,6 +212,21 @@ export const getPostsByUserID = async (userID) => {
 //     }
 // }
 
+export const updatePost = async (postID, field, value) => {
+    const payload = {};
+    payload[field] = value;
+    try {
+        const response = await axios.put(
+            `${rootURL}/post/${postID}`,
+            payload
+        );
+        return response.data;
+    }
+    catch (err) {
+        console.error(err);
+    }
+}
+
 // create user
 export const createPost = async (postObject) => {
     try {

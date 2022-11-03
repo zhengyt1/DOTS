@@ -22,7 +22,7 @@
 
 .person-info .name {
   margin-left: 21px;
-  font-family:'Courier New', Courier, monospace;
+  font-family: 'Courier New', Courier, monospace;
   font-style: normal;
   font-weight: 400;
   font-size: 18px;
@@ -43,11 +43,11 @@
   /* text-overflow: ellipsis; */
 }
 
-.display-container > img {
+.display-container>img {
   width: 460px;
 }
 
-.display-container > video {
+.display-container>video {
   width: 460px
 }
 
@@ -70,6 +70,7 @@
   font-size: 10px;
   /* color: #C0C0C0; */
 }
+
 .write-comment {
   margin-left: 8px;
   padding-left: 8px;
@@ -96,7 +97,7 @@
   margin-top: 20px;
 }
 
-.comment-container li .username{
+.comment-container li .username {
   margin-left: 20px;
   font-family: 'Inter';
   font-style: normal;
@@ -105,7 +106,8 @@
   align-items: center;
   color: #000000;
 }
-.comment-container li .comment{
+
+.comment-container li .comment {
   margin-left: 20px;
   font-family: 'Inter';
   font-style: normal;
@@ -113,4 +115,12 @@
   font-size: 14px;
   align-items: center;
   color: #000000;
+}
+
+.favIcon:hover {
+  cursor: pointer !important;
+}
+
+.notFavIcon:hover {
+  cursor: pointer !important;
 }
