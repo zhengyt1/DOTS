@@ -11,7 +11,11 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams, } from 'react-router-dom';
 import { getPostByID, getUser, updatePost } from "../mockedAPI/mockedAPI";
 
+
 function PostDetail() {
+  const userID = useSelector(state => state.userID.value);
+  // console.log(userID);
+
   let postID = useParams()
 
   // console.log(postID);
@@ -52,8 +56,8 @@ function PostDetail() {
   const [text, setText] = useState("");
   const [pic, setPic] = useState("");
   const [video, setVideo] = useState("");
-  // const [owner, setOwner] = useState("");
-  // const [comments, setComments] = useState([]);
+  const [owner, setOwner] = useState("");
+  const [comments, setComments] = useState([]);
   const [likes, setLikes] = useState([]);
   const [createdTime, setCreatTime] = useState("");
   const [username, setUsername] = useState("");
@@ -63,9 +67,9 @@ function PostDetail() {
       const post = await getPostByID(postID);
       setText(post.text);
       setPic(post.pic);
-      // setOwner(post.owner);
+      setOwner(post.owner);
       setVideo(post.video);
-      // setComments(post.comments);
+      setComments(post.comments);
       setLikes(post.likes);
       setCreatTime(post.createdTime);
       // console.log(post);
@@ -78,7 +82,7 @@ function PostDetail() {
     getData();
 
   }, [postID])
-
+  console.log(userID, owner)
   return (
     // <div className="post-background">
     //   <Cancel onClick={handleCancel} />
@@ -98,36 +102,52 @@ function PostDetail() {
             <img src={pic} alt="user-post" />
           )}
         </div>
-        <div className="right-part" >
-          <div className="user-info">
-            <Avatar src={avatar} />
-            <div className="username">{username}</div>
-            <span></span>
-            <Chip label="Edit" variant="outlined" onClick={handleEdit} />
-            <span></span>
-            <Chip label="Delete" variant="outlined" onClick={handleDelete} />
-            <span></span>
-          </div>
-          <hr />
-          <div className="middle-part">
-            <div className="text">{text}</div>
-          </div>
-          <div className="bottom">
-            <hr />
-            <div className="statistic">
-              <div className="icons">
+          <div className="right-part" >
+              <div>
+                <div className="user-info">
+                  <Avatar src={avatar} />
+                  <div className="username">{username}</div>
+                  <span></span>
+                  {owner === userID && (
+                    <div>
+                      <Chip label="Edit" variant="outlined" onClick={handleEdit} />
+                      <span></span>
+                      <Chip label="Delete" variant="outlined" onClick={handleDelete} />
+                      <span></span>
+                    </div>  
+                  )}
+                </div>
+                <div className="text">{text}</div>
+              </div>
+              {/* <hr /> */}
+            <div className="middle-part">
+              {comments.map((item, key) => (
+                <div key={key} className="comment-container">
+                  <Avatar src={item.avatar} />
+                  <div className="comment">
+                    <div className="comment-text">{item.comment}</div>
+                    <div className="time">{item.createdTime}</div>
+                  </div>
+                </div>
+              )
+              )}
+            </div>
+            <div className="bottom">
+              <hr />
+              <div className="statistic">
+                <div className="icons">
                 {
                   likes.includes(selfID) ? (<FavoriteIcon onClick={handleLikeClick} className={"favIcon"} />) : (<FavoriteBorderIcon onClick={handleUnlikeClick} className={"notFavIcon"} />)
                 }
-                <span></span>
-                <ChatBubbleOutlineIcon />
+                  <span></span>
+                  <ChatBubbleOutlineIcon />
+                </div>
+                <div className="like">{likes.length} likes</div>
+                <div className="time">{createdTime}</div>
               </div>
-              <div className="like">{likes.length} likes</div>
-              <div className="time">{createdTime}</div>
-            </div>
-            <div className="comment">
-              <input className="comment-input" placeholder="Add a comment ..."></input>
-              <Button onClick={handlePost}>Post</Button>
+              <div className="post-comment">
+                <input className="comment-input" placeholder="Add a comment ..."></input>
+                <Button onClick={handlePost}>Post</Button>
             </div>
           </div>
         </div>

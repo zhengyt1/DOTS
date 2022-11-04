@@ -12,7 +12,6 @@ import { Link } from "react-router-dom"
 function Home() {
   const userID = useSelector(state => state.userID.value);
   // console.log(userID);
-  const suggestedUsers = ["2", "3", "6", "7"]
 
   const [posts, setPosts] = useState([]);
   const loadFeed = useRef(false);
@@ -47,7 +46,7 @@ function Home() {
             <Share />
             <Feed posts={posts} />
           </Stack>
-          <Rightbar suggestedUsers={suggestedUsers} />
+          <Rightbar userID={userID} />
         </Stack>
         
       </div>

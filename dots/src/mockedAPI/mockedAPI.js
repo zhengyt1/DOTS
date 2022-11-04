@@ -367,3 +367,26 @@ export const getFollowers = async (userID) => {
         console.error(err);
     }
 }
+
+export const getSuggestedFollowings = async (userID) => {
+    try {
+        const users = await getUsers();
+        const myFollowings = await getFollowings(userID);
+        let suggestedList = [];
+
+        for(let i = 0; i < users.length; i++) {
+            if (users[i].followings.length > 0 && users[i].id !== userID) {
+                let intersection = myFollowings.filter(x => users[i].followings.includes(x));
+
+                // include users with >=3 common followings, exclude already followed users
+                if (intersection.length >= 3 && !myFollowings.includes(users[i].id)) {
+                    suggestedList.push(users[i]);
+                }
+            }
+        }
+        return suggestedList;
+    }
+    catch (err) {
+        console.error(err);
+    }
+}

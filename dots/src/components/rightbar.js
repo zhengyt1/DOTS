@@ -4,7 +4,7 @@ import { Avatar, List, ListItem, ListItemAvatar, ListItemText, Typography } from
 import SearchIcon from '@mui/icons-material/Search';
 import InputBase from '@mui/material/InputBase';
 import { styled } from '@mui/material/styles';
-import { getUsers } from "../mockedAPI/mockedAPI";
+import { getSuggestedFollowings, getUsers } from "../mockedAPI/mockedAPI";
 import { Link } from "react-router-dom";
 
 const Search = styled('div')(({ theme }) => ({
@@ -46,19 +46,57 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 function Rightbar(props) {
     const [suggestFollowings, setSuggestFollowings] = useState([]);
+    const [usersList, setUsersList] = useState([]);
+    const [searchText, setSearchText] = useState("");
+
+    const handleFilterTextChange = (e) => {
+        setSearchText(e.target.value);
+    };
+
+    const makeRows = () => {
+        const rows = [];
+        usersList.forEach((item, key) => {
+            if (!searchText.length) {
+                return;
+            } else {
+                if (!item.username.toLowerCase().startsWith(searchText.toLowerCase())) {
+                    return;
+                }
+                rows.push(
+                    <Link to={`/profile/${item.id}`} key={`/profile/${item.id}`}>
+                        <ListItem key={key}>
+                            <ListItemAvatar>
+                                <Avatar
+                                    src={item.avatar}
+                                    sx={{ width: 30, height: 30 }}
+                                />
+                            </ListItemAvatar>
+                            <ListItemText>
+                                {item.username}
+                            </ListItemText>
+                        </ListItem>
+                    </Link> 
+                );
+            }
+        });
+        return rows;
+    };
+
     useEffect(() => {
         async function fetchData() {
-            const data = await getUsers();
-            setSuggestFollowings(data)
-            // console.log("suggestFollowings: ", data)
+            const suggestedList = await getSuggestedFollowings(props.userID);
+            setSuggestFollowings(suggestedList);
+            const allUsers = await getUsers();
+            setUsersList(allUsers);
         }
         fetchData();
-    }, [props.suggestedUsers])
+    }, [props.userID])
+
     return (
         <Box className="rightbar" 
             flex={2} p={2} bgcolor="#f5f5f5">
             <Typography variant="h6" fontWeight={100} align="center">
-                Suggested Following
+                Search Results
             </Typography>
             <Search>
                 <SearchIconWrapper>
@@ -67,8 +105,19 @@ function Rightbar(props) {
                 <StyledInputBase
                 placeholder="Search…"
                 inputProps={{ 'aria-label': 'search' }}
+                onChange={handleFilterTextChange}
                 />
             </Search>
+            <Box className="searchResultBox"
+                alignItems="center"
+                justifyContent="center">
+                <List className="searchResultList">
+                    {makeRows()}
+                </List>
+            </Box>
+            <Typography variant="h6" fontWeight={100} margin-top={20} align="center">
+                Suggested Followings
+            </Typography>
             <Box className="suggestUsersBox"
                 alignItems="center"
                 justifyContent="center">
