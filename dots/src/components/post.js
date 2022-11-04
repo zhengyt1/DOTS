@@ -43,7 +43,7 @@ function Post(props) {
       loadData.current = false;
       fetchData();
     }
-  }, [isLike, totalLikes])
+  })
 
   const handleLikeClick = async () => {
     // Cancel like.
