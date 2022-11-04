@@ -1,16 +1,18 @@
 import { Avatar, Popper } from "@mui/material";
 import Button from '@mui/material/Button';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import Chip from '@mui/material/Chip';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 import Modal from '@mui/material/Modal';
 import './postDetail.css'
+
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams, } from 'react-router-dom';
 import { getPostByID, getUser, updatePost } from "../mockedAPI/mockedAPI";
 import { useSelector } from "react-redux";
 import { Fragment } from "react";
-import { async } from "@firebase/util";
+
 
 // function EditComment(props) {
 //   const [open, setOpen] = useState(false);
@@ -66,7 +68,7 @@ function PostDetail() {
 
   // console.log(postID);
   postID = postID.postId;
-  
+  const selfID = useSelector(state => state.userID.value);
   const navigate = useNavigate()
 
   const handleEdit = () => {
@@ -153,6 +155,19 @@ function PostDetail() {
     comment.current = (e.target.value);
   }
 
+  const handleLikeClick = async () => {
+    // Cancel like.
+    let newLikes = likes.filter((x) => x !== selfID);
+    setLikes(newLikes);
+    await updatePost(postID, "likes", newLikes);
+  }
+
+  const handleUnlikeClick = async () => {
+    let newLikes = [...likes, selfID];
+    setLikes(newLikes);
+    await updatePost(postID, "likes", newLikes);
+  }
+
   useEffect(() => {
     console.log('in useEffect')
     async function getData() {
@@ -170,6 +185,7 @@ function PostDetail() {
       // console.log(userInfo)
       setUsername(userInfo.username);
       setAvatar(userInfo.avatar);
+
       const loggedInUser = await getUser(userID);
       setLoggedInUserAvatar(loggedInUser.avatar);
     }
@@ -181,22 +197,22 @@ function PostDetail() {
   return (
     // <div className="post-background">
     //   <Cancel onClick={handleCancel} />
-      <Modal
-        open={true}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <div className="detail-container">
-          <div className="left-part">
-            {video ? (
-              <video controls>
-                <source src={video} type="video/mp4"></source>
-              </video>
-            ) : (
-              <img src={pic} alt="user-post" />
-            )}
-          </div>
+    <Modal
+      open={true}
+      onClose={handleClose}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
+      <div className="detail-container">
+        <div className="left-part">
+          {video ? (
+            <video controls>
+              <source src={video} type="video/mp4"></source>
+            </video>
+          ) : (
+            <img src={pic} alt="user-post" />
+          )}
+        </div>
           <div className="right-part" >
             <div className="middle-part">
               <div>
@@ -257,7 +273,9 @@ function PostDetail() {
               <hr />
               <div className="statistic">
                 <div className="icons">
-                  <FavoriteBorderIcon />
+                {
+                  likes.includes(selfID) ? (<FavoriteIcon onClick={handleLikeClick} className={"favIcon"} />) : (<FavoriteBorderIcon onClick={handleUnlikeClick} className={"notFavIcon"} />)
+                }
                   <span></span>
                   <ChatBubbleOutlineIcon />
                 </div>
@@ -267,11 +285,11 @@ function PostDetail() {
               <div className="post-comment">
                 <input id="comment-input" className="comment-input" placeholder="Add a comment ..." onChange={handleComment}></input>
                 <Button onClick={handlePost}>Post</Button>
-              </div>
             </div>
           </div>
         </div>
-      </Modal>
+      </div>
+    </Modal>
     // </div> 
   )
 }
