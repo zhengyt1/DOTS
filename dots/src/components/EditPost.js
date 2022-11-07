@@ -26,7 +26,7 @@ function EditPost(props) {
         await updatePost(props.post.id, "text", text);
 
         if (picChanged && pic) {
-            setPicChanged(false);
+            //setPicChanged(false);
             const imageRef = ref(firebaseStorage, `images/${pic.name + Date.now()}`);
             uploadBytes(imageRef, pic).then(async (snapshot) => {
                 getDownloadURL(snapshot.ref).then(async (url) => {
@@ -34,7 +34,7 @@ function EditPost(props) {
                 });
             });
         } else if (videoChanged && video) {
-            setVideoChanged(false);
+            //setVideoChanged(false);
             const videoRef = ref(firebaseStorage, `videos/${video.name + Date.now()}`);
             uploadBytes(videoRef, video).then(async (snapshot) => {
                 getDownloadURL(snapshot.ref).then(async (url) => {
@@ -116,7 +116,7 @@ function EditPost(props) {
                             type="file"
                             id="file"
                             accept=".png,.jpeg,.jpg"
-                            onChange={(e) => setPic(e.target.files[0])}
+                            onChange={(e) => {setPicChanged(true); e.target.files.length && setPic(e.target.files[0]);}}
                             />
                         </label>
                         <label htmlFor="video" className="shareOption">
@@ -127,10 +127,10 @@ function EditPost(props) {
                             type="file"
                             id="video"
                             accept=".mp4,.ogg,.webm"
-                            onChange={(e) => setVideo(e.target.files[0])}
+                            onChange={(e) => {setVideoChanged(true); e.target.files.length && setVideo(e.target.files[0]);}}
                             />
                         </label>
-                        <Button onClick={handlePost}>Post</Button>
+                        <Button onClick={handlePost}>Update Post</Button>
                     </div>
                 </div>
             </div></>
