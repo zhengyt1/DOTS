@@ -11,43 +11,7 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams, } from 'react-router-dom';
 import { getPostByID, getUser, updatePost } from "../mockedAPI/mockedAPI";
 import { useSelector } from "react-redux";
-import { Fragment } from "react";
 
-
-// function EditComment(props) {
-//   const [open, setOpen] = useState(false);
-//   const comment = useRef("");
-//   const handleOpen = () => {
-//     setOpen(true);
-//   };
-//   const handleCloseEdit = async(e) => {
-//     setOpen(false);
-
-//     if (e.target.textContent === "Save") {
-     
-//     }
-//   };
-
-//   return (
-//     <Fragment>
-//       <Button onClick={handleOpen}>Edit</Button>
-//       <Modal
-//         hideBackdrop
-//         open={open}
-//         onClose={handleCloseEdit}
-//         aria-labelledby="child-modal-title"
-//         aria-describedby="child-modal-description"
-//       >
-//         <div className="commentEdit-container">
-//           <h2 id="child-modal-title">Edit your comment</h2>
-//           {/* <input id="comment-input" className="comment-input" placeholder="Add a comment ..." onChange={handleComment}></input> */}
-//           <Button onClick={handleCloseEdit}>Close</Button>
-//           <Button onClick={handleCloseEdit}>Save</Button>
-//         </div>
-//       </Modal>
-//     </Fragment>
-//   )
-// }
 function PostDetail() {
   const userID = useSelector(state => state.userID.value);
   const comment = useRef("");
@@ -65,6 +29,7 @@ function PostDetail() {
   const [loggedInUserAvatar, setLoggedInUserAvatar] = useState("");
   const [isEditComments, setIsEditComments] = useState([]);
   let postID = useParams();
+  console.log(userID, owner)
 
   // console.log(postID);
   postID = postID.postId;
@@ -132,8 +97,12 @@ function PostDetail() {
       [...comments, newComment]
     )
     setIsEditComments([...isEditComments, false])
-    const data = await updatePost(postID, "comments", [...comments, newComment])
-    console.log( [...comments, newComment], data)
+    try {
+      await updatePost(postID, "comments", [...comments, newComment])
+    }
+    catch (error) {
+      console.log(error)
+    }
     comment.current = ""
     document.getElementById("comment-input").value = ""
   }
@@ -171,25 +140,30 @@ function PostDetail() {
   useEffect(() => {
     console.log('in useEffect')
     async function getData() {
-      const post = await getPostByID(postID);
-      setText(post.text);
-      setPic(post.pic);
-      setOwner(post.owner);
-      setVideo(post.video);
-      setComments(post.comments);
-      setIsEditComments(Array.apply(null, Array(post.comments.length)).map(function (x, i) { return false; }))
-      setLikes(post.likes);
-      setCreatTime(post.createdTime);
-      // console.log(post);
-      const userInfo = await getUser(post.owner);
-      // console.log(userInfo)
-      setUsername(userInfo.username);
-      setAvatar(userInfo.avatar);
-
-      const loggedInUser = await getUser(userID);
-      setLoggedInUserAvatar(loggedInUser.avatar);
+      try {
+        const post = await getPostByID(postID);
+        setText(post.text);
+        setPic(post.pic);
+        setOwner(post.owner);
+        setVideo(post.video);
+        setComments(post.comments);
+        setIsEditComments(Array.apply(null, Array(post.comments.length)).map(function (x, i) { return false; }))
+        setLikes(post.likes);
+        setCreatTime(post.createdTime);
+        // console.log(post);
+        const userInfo = await getUser(post.owner);
+        // console.log(userInfo)
+        setUsername(userInfo.username);
+        setAvatar(userInfo.avatar);
+  
+        const loggedInUser = await getUser(userID);
+        setLoggedInUserAvatar(loggedInUser.avatar);
+      }
+      catch (error) {
+        console.log(error);
+      }
     }
-    getData();
+    getData()
 
   }, [postID, userID])
   console.log("miao", isEditComments)
@@ -243,7 +217,7 @@ function PostDetail() {
                         {userID === item.ownerID ? (
                           <div className="comment-operators">
                             <div className="time">{item.createdTime}</div>
-                              <div className="comment-edit" onClick={() => handleEditComment(key, 'confirm')} >Confirm</div>
+                              <div data-testid={`confirm-${key}`} className="comment-edit" onClick={() => handleEditComment(key, 'confirm')} >Confirm</div>
                               <div className="comment-edit" onClick={() => handleEditComment(key, 'cancel')} >Cancel</div>
                           </div>
                         ):(
@@ -256,7 +230,7 @@ function PostDetail() {
                         {userID === item.ownerID ? (
                           <div className="comment-operators">
                             <div className="time">{item.createdTime}</div>
-                              <div className="comment-edit" onClick={() => handleEditComment(key, 'open')} >Edit</div>
+                              <div data-testid={`edit-${key}`} className="comment-edit" onClick={() => handleEditComment(key, 'open')} >Edit</div>
                               <div className="comment-edit" onClick={() => handleDeleteComment(key)} >Delete</div>
                           </div>
                         ):(
@@ -283,7 +257,7 @@ function PostDetail() {
                 <div className="time">{createdTime}</div>
               </div>
               <div className="post-comment">
-                <input id="comment-input" className="comment-input" placeholder="Add a comment ..." onChange={handleComment}></input>
+                <input id="comment-input" data-testid="comment-input" className="comment-input" placeholder="Add a comment ..." onChange={handleComment}></input>
                 <Button onClick={handlePost}>Post</Button>
             </div>
           </div>
