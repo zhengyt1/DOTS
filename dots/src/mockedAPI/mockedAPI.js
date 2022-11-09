@@ -199,18 +199,20 @@ export const getPostsByUserID = async (userID) => {
 }
 
 // update post field by value
-// export const updatePost = async (postID, field, value) => {
-//     try {
-//         const response = await axios.put(
-//             `${rootURL}/post/${postID}`,
-//             `${field}=${value}`
-//         );
-//         return response.data;
-//     }
-//     catch (err) {
-//         console.error(err);
-//     }
-// }
+export const updatePost = async (postID, field, value) => {
+    const payload = {};
+    payload[field] = value;
+    try {
+        const response = await axios.put(
+            `${rootURL}/post/${postID}`,
+            payload
+        );
+        return response.data;
+    }
+    catch (err) {
+        console.error(err);
+    }
+}
 
 // create user
 export const createPost = async (postObject) => {
@@ -226,15 +228,15 @@ export const createPost = async (postObject) => {
 }
 
 // delete post
-// export const deletePost = async (postID) => {
-//     try {
-//         const response = await axios.delete(`${rootURL}/post/${postID}`);
-//         return response.data;
-//     }
-//     catch (err) {
-//         console.error(err);
-//     }
-// }
+export const deletePost = async (postID) => {
+    try {
+        const response = await axios.delete(`${rootURL}/post/${postID}`);
+        return response.data;
+    }
+    catch (err) {
+        console.error(err);
+    }
+}
 
 // get comment by id
 // export const getCommentByID = async (commentID) => {

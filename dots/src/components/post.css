@@ -170,3 +170,11 @@
 .mentions__suggestions__item--focused {
   background-color: #cee4e5;
 }
+
+.favIcon:hover {
+  cursor: pointer !important;
+}
+
+.notFavIcon:hover {
+  cursor: pointer !important;
+}
