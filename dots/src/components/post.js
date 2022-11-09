@@ -4,7 +4,8 @@ import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import './post.css'
 import { useState, useEffect, useRef } from "react";
 import { Link } from 'react-router-dom';
-import { getUser } from "../mockedAPI/mockedAPI";
+import { getUser, getUsers } from "../mockedAPI/mockedAPI";
+import { Mention, MentionsInput } from "react-mentions";
 
 function Post(props) {
   let {
@@ -17,10 +18,17 @@ function Post(props) {
     likes,
     // createdTime,
   } = props.postInfo;
-
+  // const users = [
+  //   {
+  //     id: "isaac",
+  //     display: "Isaac Newton",
+  //   }
+  // ];
+  // const [users, setUsers] = useState([]);
   const [username, setUsername] = useState("");
   const [avatar, setAvatar] = useState("");
   const [userID, setUserID] = useState("");
+  const [commentValue, setCommentValue] = useState("");
   const loadData = useRef(true);
   useEffect(() => {
     async function fetchData() {
@@ -30,14 +38,29 @@ function Post(props) {
         setAvatar(data.avatar);
         setUserID(data.id)
       }
+      // const allUsers = await getUsers();
+      // if (allUsers !== undefined) {
+      //   setUsers(allUsers.map(function (u) { return { id: u.id, display: u.username } }));
+      // }
     }
+
     // only load data on the first rendering 
     if (loadData.current === true) {
       loadData.current = false;
       fetchData();
     }
   })
-
+  const fetchMentionUsers = async (query, callBack) => {
+    const allUsers = await getUsers();
+    const transformedAllUsers = allUsers.map(function (u) { return { id: u.id, display: u.username } });
+    if (!query) {
+      callBack(transformedAllUsers);
+    }
+    else {
+      const filteredUsers = transformedAllUsers.filter((user) => user.display.toLowerCase().includes(query.toLowerCase()));
+      callBack(filteredUsers);
+    }
+  }
   return (
     <div className="post-container">
       <div className="post" >
@@ -66,7 +89,19 @@ function Post(props) {
             <Link to={`/post/${id}`} key={`${id}`} >
               <ChatBubbleOutlineIcon />
             </Link>
-            <input className="write-comment" placeholder="write a comment"></input>
+            <MentionsInput
+              singleLine
+              className="mentions"
+              value={commentValue}
+              onChange={(e) => setCommentValue(e.target.value)}
+              placeholder="Mention people using @">
+              <Mention data={fetchMentionUsers} trigger="@"
+                markup="@@@____id__^^^____display__@@@^^^"
+                appendSpaceOnAdd={true}
+                style={{ backgroundColor: "#cee4e5" }}
+              />
+            </MentionsInput>
+            {/* <input className="write-comment" placeholder="write a comment"></input> */}
           </div>
         </div>
       </div>
@@ -79,7 +114,7 @@ function Post(props) {
           </li>
         ))}
       </ol> */}
-    </div>
+    </div >
   )
 }
 
