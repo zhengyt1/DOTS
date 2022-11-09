@@ -49,13 +49,16 @@ export default function Login() {
     //   password: data.get('password'),
     //   isConnected: isConnected,
     // });
-
-    const user = await getUserByEmail(data.get("email"));
-    // console.log("user: ", user);
-    if (user.length >= 1) {
-      dispatch(userLogin(user[0].id));
-      // console.log(userID);
-      navigate('/home');
+    try {
+      const user = await getUserByEmail(data.get("email"));
+      // console.log("user: ", user);
+      if (user.length >= 1) {
+        dispatch(userLogin(user[0].id));
+        // console.log(userID);
+        navigate('/home');
+      }
+    } catch (e) {
+      console.log(e);
     }
   };
 
