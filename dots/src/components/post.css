@@ -140,6 +140,10 @@
   border: 1px solid rgba(0, 0, 0, 0.15);
 }
 
+.mentions .mentions__suggestions {
+  top: -200px;
+}
+
 .mentions--multiLine .mentions__control {
   font-family: monospace;
   font-size: 11pt;

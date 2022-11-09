@@ -6,10 +6,11 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import Modal from '@mui/material/Modal';
 import './postDetail.css'
+import { Mention, MentionsInput } from "react-mentions";
 
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams, } from 'react-router-dom';
-import { deletePost, getPostByID, getUser, updatePost } from "../mockedAPI/mockedAPI";
+import { deletePost, getPostByID, getUser, updatePost, getUsers } from "../mockedAPI/mockedAPI";
 import { useSelector } from "react-redux";
 import { Fragment } from "react";
 import EditPost from "./EditPost";
@@ -25,7 +26,7 @@ import EditPost from "./EditPost";
 //     setOpen(false);
 
 //     if (e.target.textContent === "Save") {
-     
+
 //     }
 //   };
 
@@ -53,7 +54,7 @@ function PostDetail() {
   const userID = useSelector(state => state.userID.value);
   const comment = useRef("");
   const newComment = useRef("");
-
+  const [commentValue, setCommentValue] = useState("");
   const [text, setText] = useState("");
   const [pic, setPic] = useState("");
   const [video, setVideo] = useState("");
@@ -77,7 +78,7 @@ function PostDetail() {
   const handleEdit = () => {
     setEditingPost(true);
   };
-  const handleEditComment = async(index, status) => {
+  const handleEditComment = async (index, status) => {
     let new_isEditComments;
     switch (status) {
       case "open":
@@ -118,9 +119,9 @@ function PostDetail() {
     navigate(-1);
   };
 
-  const handlePost = async() => {
+  const handlePost = async () => {
     console.info('Post ...')
-    if (comment.current === "") {
+    if (commentValue === "") {
       alert('Please enter a comment.');
       return;
     }
@@ -128,21 +129,21 @@ function PostDetail() {
     const newComment = {
       "ownerID": userID,
       "avatar": loggedInUserAvatar,
-      "comment": comment.current,
+      "comment": commentValue,
       "createdTime": new Date(Date.now()).toISOString(),
     }
     console.log(newComment["createdTime"])
-    setComments( comments =>
+    setComments(comments =>
       [...comments, newComment]
     )
     setIsEditComments([...isEditComments, false])
     const data = await updatePost(postID, "comments", [...comments, newComment])
-    console.log( [...comments, newComment], data)
-    comment.current = ""
-    document.getElementById("comment-input").value = ""
+    console.log([...comments, newComment], data)
+    setCommentValue("");
+    // document.getElementById("comment-input").value = ""
   }
 
-  const handleDeleteComment = async(index) => {
+  const handleDeleteComment = async (index) => {
     const new_isEditComments = isEditComments.slice(0, index).concat(isEditComments.slice(index + 1));
     setIsEditComments(new_isEditComments);
     const new_comments = comments.slice(0, index).concat(comments.slice(index + 1));
@@ -170,6 +171,18 @@ function PostDetail() {
     let newLikes = [...likes, selfID];
     setLikes(newLikes);
     await updatePost(postID, "likes", newLikes);
+  }
+
+  const fetchMentionUsers = async (query, callBack) => {
+    const allUsers = await getUsers();
+    const transformedAllUsers = allUsers.map(function (u) { return { id: u.id, display: u.username } });
+    if (!query) {
+      callBack(transformedAllUsers);
+    }
+    else {
+      const filteredUsers = transformedAllUsers.filter((user) => user.display.toLowerCase().includes(query.toLowerCase()));
+      callBack(filteredUsers);
+    }
   }
 
   useEffect(() => {
@@ -206,7 +219,7 @@ function PostDetail() {
   return (
     // <div className="post-background">
     //   <Cancel onClick={handleCancel} />
-    
+
     <Modal
       open={true}
       onClose={handleClose}
@@ -215,7 +228,7 @@ function PostDetail() {
     >
       <div className="detail-container">
         {!editingPost ? (
-        <><div className="left-part">
+          <><div className="left-part">
             {video ? (
               <video controls>
                 <source src={video} type="video/mp4"></source>
@@ -291,7 +304,19 @@ function PostDetail() {
                   <div className="time">{createdTime}</div>
                 </div>
                 <div className="post-comment">
-                  <input id="comment-input" className="comment-input" placeholder="Add a comment ..." onChange={handleComment}></input>
+                  <MentionsInput
+                    singleLine
+                    className="comment-input"
+                    value={commentValue}
+                    onChange={(e) => setCommentValue(e.target.value)}
+                    forceSuggestionsAboveCursor={true}
+                    placeholder="Mention people using @">
+                    <Mention data={fetchMentionUsers} trigger="@"
+                      appendSpaceOnAdd={true}
+                      style={{ backgroundColor: "#cee4e5" }}
+                    />
+                  </MentionsInput>
+                  {/* <input id="comment-input" className="comment-input" placeholder="Add a comment ..." onChange={handleComment}></input> */}
                   <Button onClick={handlePost}>Post</Button>
                 </div>
               </div>
@@ -301,7 +326,7 @@ function PostDetail() {
         )}
       </div>
     </Modal>
-    
+
     // </div> 
   )
 }

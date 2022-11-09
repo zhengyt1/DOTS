@@ -21,7 +21,7 @@ function Post(props) {
     // createdTime,
   } = props.postInfo;
   const selfID = useSelector(state => state.userID.value);
-
+  const [commentValue, setCommentValue] = useState("");
   const [username, setUsername] = useState("");
   const [avatar, setAvatar] = useState("");
   const [userID, setUserID] = useState("");
