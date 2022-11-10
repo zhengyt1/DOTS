@@ -7,13 +7,13 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import Modal from '@mui/material/Modal';
 import './postDetail.css'
 import { Mention, MentionsInput } from "react-mentions";
-
 import { useEffect, useRef, useState } from "react";
-import { useNavigate, useParams, } from 'react-router-dom';
+import { Link, useNavigate, useParams, } from 'react-router-dom';
 import { deletePost, getPostByID, getUser, updatePost, getUsers } from "../mockedAPI/mockedAPI";
 import { useSelector } from "react-redux";
 import { Fragment } from "react";
 import EditPost from "./EditPost";
+import { fontWeight } from "@mui/system";
 
 
 // function EditComment(props) {
@@ -68,6 +68,7 @@ function PostDetail() {
   const [isEditComments, setIsEditComments] = useState([]);
   const [postToEdit, setPostToEdit] = useState(null);
   const [editingPost, setEditingPost] = useState(false);
+  const [newCommentValue, setNewCommentValue] = useState("");
   let postID = useParams();
 
   // console.log(postID);
@@ -89,6 +90,7 @@ function PostDetail() {
       case "cancel":
         new_isEditComments = isEditComments.slice(0, index).concat(false).concat(isEditComments.slice(index + 1));
         setIsEditComments(new_isEditComments);
+        setNewCommentValue("");
         break;
       case "confirm":
         if (newComment.current === "") {
@@ -105,6 +107,7 @@ function PostDetail() {
           "createdTime": comments[index].createdTime
         };
         newComment.current = "";
+        setNewCommentValue("");
         const new_comments = comments.slice(0, index).concat(new_comment).concat(comments.slice(index + 1));
         setComments(new_comments);
         await updatePost(postID, "comments", new_comments);
@@ -140,7 +143,6 @@ function PostDetail() {
     const data = await updatePost(postID, "comments", [...comments, newComment])
     console.log([...comments, newComment], data)
     setCommentValue("");
-    // document.getElementById("comment-input").value = ""
   }
 
   const handleDeleteComment = async (index) => {
@@ -216,6 +218,17 @@ function PostDetail() {
   }, [postID, userID])
   console.log("miao", isEditComments)
   console.log(comments)
+
+  function mapComment(i) {
+    console.log(i);
+    if (i.includes("^^^")) {
+      return <Link to={`/profile/${i.split("^^^")[0]}`}>@{i.split("^^^__")[1]}</Link>;
+    }
+    else {
+      return i;
+    }
+  }
+
   return (
     // <div className="post-background">
     //   <Cancel onClick={handleCancel} />
@@ -261,8 +274,25 @@ function PostDetail() {
                     <div className="comment">
                       {isEditComments[key] ? (
                         <div>
-                          {/* <div className="comment-text">{item.comment}</div> */}
-                          <input className="comment-text" defaultValue={item.comment} onChange={(e) => newComment.current = e.target.value}></input>
+                          <MentionsInput
+                            className="edit-comment-input"
+                            value={newCommentValue === "" ? item.comment : newCommentValue}
+                            forceSuggestionsAboveCursor={true}
+                            onChange={(e) => { setNewCommentValue(e.target.value); newComment.current = e.target.value }}
+
+                          >
+                            <Mention
+                              data={fetchMentionUsers}
+                              displayTransform={
+                                (id, display) => "@" + (display)
+                              }
+                              trigger="@"
+                              markup="@@@____id__^^^____display__@@@__"
+                              appendSpaceOnAdd={true}
+                              style={{ backgroundColor: "#cee4e5", fontWeight: "normal" }}
+                            />
+                          </MentionsInput>
+                          {/* <input className="comment-text" defaultValue={item.comment} onChange={(e) => newComment.current = e.target.value}></input> */}
                           {userID === item.ownerID ? (
                             <div className="comment-operators">
                               <div className="time">{item.createdTime}</div>
@@ -275,7 +305,14 @@ function PostDetail() {
                         </div>
                       ) : (
                         <div>
-                          <div className="comment-text">{item.comment}</div>
+                          <div className="comment-text" id="comment-text-nonInput">
+                            {
+                              item.comment.split("@@@__").map(
+                                (i) => (mapComment(i))
+                              )
+                            }
+                          </div>
+
                           {userID === item.ownerID ? (
                             <div className="comment-operators">
                               <div className="time">{item.createdTime}</div>
@@ -311,12 +348,17 @@ function PostDetail() {
                     onChange={(e) => setCommentValue(e.target.value)}
                     forceSuggestionsAboveCursor={true}
                     placeholder="Mention people using @">
-                    <Mention data={fetchMentionUsers} trigger="@"
+                    <Mention
+                      data={fetchMentionUsers}
+                      displayTransform={
+                        (id, display) => "@" + (display)
+                      }
+                      trigger="@"
+                      markup="@@@____id__^^^____display__@@@__"
                       appendSpaceOnAdd={true}
-                      style={{ backgroundColor: "#cee4e5" }}
+                      style={{ backgroundColor: "#cee4e5", fontWeight: "normal" }}
                     />
                   </MentionsInput>
-                  {/* <input id="comment-input" className="comment-input" placeholder="Add a comment ..." onChange={handleComment}></input> */}
                   <Button onClick={handlePost}>Post</Button>
                 </div>
               </div>
@@ -325,7 +367,7 @@ function PostDetail() {
           <EditPost post={postToEdit} avatar={avatar} username={username} />
         )}
       </div>
-    </Modal>
+    </Modal >
 
     // </div> 
   )
