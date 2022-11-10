@@ -13,7 +13,6 @@ import { deletePost, getPostByID, getUser, updatePost, getUsers } from "../mocke
 import { useSelector } from "react-redux";
 import { Fragment } from "react";
 import EditPost from "./EditPost";
-import { fontWeight } from "@mui/system";
 
 
 // function EditComment(props) {
@@ -83,7 +82,17 @@ function PostDetail() {
     let new_isEditComments;
     switch (status) {
       case "open":
+        console.log(isEditComments);
+        let otherCommmentIsEditing = false;
+        isEditComments.forEach(element => {
+          otherCommmentIsEditing ||= element;
+        });
+        if (otherCommmentIsEditing) {
+          alert("You are editing other comment.");
+          break;
+        }
         newComment.current = comments[index].comment;
+
         new_isEditComments = isEditComments.slice(0, index).concat(true).concat(isEditComments.slice(index + 1));
         setIsEditComments(new_isEditComments);
         break;
