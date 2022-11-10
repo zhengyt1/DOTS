@@ -176,14 +176,20 @@ function PostDetail() {
   }
 
   const fetchMentionUsers = async (query, callBack) => {
-    const allUsers = await getUsers();
-    const transformedAllUsers = allUsers.map(function (u) { return { id: u.id, display: u.username } });
-    if (!query) {
-      callBack(transformedAllUsers);
+    try {
+      const allUsers = await getUsers();
+      const transformedAllUsers = allUsers.map(function (u) { return { id: u.id, display: u.username } });
+      if (!query) {
+        callBack(transformedAllUsers);
+      }
+      else {
+        const filteredUsers = transformedAllUsers.filter((user) => user.display.toLowerCase().includes(query.toLowerCase()));
+        callBack(filteredUsers);
+      }
     }
-    else {
-      const filteredUsers = transformedAllUsers.filter((user) => user.display.toLowerCase().includes(query.toLowerCase()));
-      callBack(filteredUsers);
+    catch (error) {
+      console.log(error);
+      return;
     }
   }
 
@@ -292,7 +298,6 @@ function PostDetail() {
                               style={{ backgroundColor: "#cee4e5", fontWeight: "normal" }}
                             />
                           </MentionsInput>
-                          {/* <input className="comment-text" defaultValue={item.comment} onChange={(e) => newComment.current = e.target.value}></input> */}
                           {userID === item.ownerID ? (
                             <div className="comment-operators">
                               <div className="time">{item.createdTime}</div>
