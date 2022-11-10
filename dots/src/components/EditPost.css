@@ -1,0 +1,130 @@
+.detail-container {
+    width: 70%;
+    height: 751px;
+    max-height: 100vh;
+    /* margin: auto; */
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+}
+  
+.left-part .shareImgContainer{
+    width: 100%;
+    height: 100%;
+    padding-bottom: 0;
+    flex-grow: 1;
+    background: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+  
+.left-part img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+}
+  
+.left-part video {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+}
+  
+.right-part {
+    /* position: relative; */
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    width: 100%;
+    max-width: 350px;
+    background: #fff;
+}
+  
+.user-info {
+    margin-top: 20px;
+    margin-left: 14px;
+    display: flex;
+    align-items: center;
+    background: #FFFFFF;
+}
+  
+.user-info span {
+    margin: 5px;
+}
+  
+.user-info .username {
+    margin-left: 18px;
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 22px;
+    color: #000000;
+}
+  
+.detail-container hr {
+    margin: 14px 0;
+}
+  
+.bottom {
+    /* position: absolute; */
+    bottom: 0;
+    width: 100%;
+}
+  
+.middle-part {
+    overflow-y: scroll;
+    }::-webkit-scrollbar {
+    display: none;
+}
+  
+.right-part .text {
+    padding: 14px 0 14px 14px;
+    max-height: 120px;
+    justify-self: start;
+    border-bottom:  #8F8F8F 1px solid;
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 22px;
+    color: #000000;
+}
+
+  
+.icons {
+    display: flex;
+    align-items: center;
+}
+  
+.icons span {
+    margin: 9px;
+}
+
+  
+.detail-container .time {
+    margin-bottom: 8px;
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 15px;
+    display: flex;
+    align-items: center;
+
+    color: #B0B0B0;
+}
+
+.shareCancelImg{
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    cursor: pointer;
+    opacity: 0.7;
+    color: rgb(0, 187, 255);
+}

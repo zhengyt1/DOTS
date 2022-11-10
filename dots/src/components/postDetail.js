@@ -1,4 +1,4 @@
-import { Avatar, Popper } from "@mui/material";
+import { Avatar } from "@mui/material";
 import Button from '@mui/material/Button';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import Chip from '@mui/material/Chip';
@@ -9,8 +9,9 @@ import './postDetail.css'
 
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams, } from 'react-router-dom';
-import { getPostByID, getUser, updatePost } from "../mockedAPI/mockedAPI";
+import { deletePost, getPostByID, getUser, updatePost } from "../mockedAPI/mockedAPI";
 import { useSelector } from "react-redux";
+import EditPost from "./EditPost";
 
 function PostDetail() {
   const userID = useSelector(state => state.userID.value);
@@ -28,6 +29,8 @@ function PostDetail() {
   const [avatar, setAvatar] = useState("");
   const [loggedInUserAvatar, setLoggedInUserAvatar] = useState("");
   const [isEditComments, setIsEditComments] = useState([]);
+  const [postToEdit, setPostToEdit] = useState(null);
+  const [editingPost, setEditingPost] = useState(false);
   let postID = useParams();
   console.log(userID, owner)
 
@@ -37,7 +40,7 @@ function PostDetail() {
   const navigate = useNavigate()
 
   const handleEdit = () => {
-    // console.info('You clicked the edit icon.');
+    setEditingPost(true);
   };
   const handleEditComment = async(index, status) => {
     let new_isEditComments;
@@ -75,8 +78,9 @@ function PostDetail() {
     }
   };
 
-  const handleDelete = () => {
-    // console.info('You clicked the delete icon.');
+  const handleDelete = async () => {
+    await deletePost(postID);
+    navigate(-1);
   };
 
   const handlePost = async() => {
@@ -142,6 +146,7 @@ function PostDetail() {
     async function getData() {
       try {
         const post = await getPostByID(postID);
+        setPostToEdit(post);
         setText(post.text);
         setPic(post.pic);
         setOwner(post.owner);
@@ -155,12 +160,11 @@ function PostDetail() {
         // console.log(userInfo)
         setUsername(userInfo.username);
         setAvatar(userInfo.avatar);
-  
+
         const loggedInUser = await getUser(userID);
         setLoggedInUserAvatar(loggedInUser.avatar);
-      }
-      catch (error) {
-        console.log(error);
+      } catch (e) {
+        console.log(e);
       }
     }
     getData()
@@ -171,6 +175,7 @@ function PostDetail() {
   return (
     // <div className="post-background">
     //   <Cancel onClick={handleCancel} />
+    
     <Modal
       open={true}
       onClose={handleClose}
@@ -178,92 +183,97 @@ function PostDetail() {
       aria-describedby="modal-modal-description"
     >
       <div className="detail-container">
-        <div className="left-part">
-          {video ? (
-            <video controls>
-              <source src={video} type="video/mp4"></source>
-            </video>
-          ) : (
-            <img src={pic} alt="user-post" />
-          )}
-        </div>
-          <div className="right-part" >
-            <div className="middle-part">
-              <div>
-                <div className="user-info">
-                  <Avatar src={avatar} />
-                  <div className="username">{username}</div>
-                  <span></span>
-                  {owner === userID && (
-                    <div>
-                      <Chip label="Edit" variant="outlined" onClick={handleEdit} />
-                      <span></span>
-                      <Chip label="Delete" variant="outlined" onClick={handleDelete} />
-                      <span></span>
-                    </div>  
-                  )}
-                </div>
-                <div className="text">{text}</div>
-              </div>
-              {/* <hr /> */}
-              {comments.map((item, key) => (
-                <div key={key} className="comment-container">
-                  <Avatar src={item.avatar} />
-                  <div className="comment">
-                    {isEditComments[key] ? (
+        {!editingPost ? (
+          <>
+            <div className="left-part">
+              {video ? (
+                <video controls>
+                  <source src={video} type="video/mp4"></source>
+                </video>
+              ) : (
+                <img src={pic} alt="user-post" />
+              )}
+            </div>
+            <div className="right-part">
+              <div className="middle-part">
+                <div>
+                  <div className="user-info">
+                    <Avatar src={avatar} />
+                    <div className="username">{username}</div>
+                    <span></span>
+                    {owner === userID && (
                       <div>
-                        {/* <div className="comment-text">{item.comment}</div> */}
-                        <input className="comment-text" defaultValue={item.comment} onChange={(e) => newComment.current = e.target.value}></input>
-                        {userID === item.ownerID ? (
-                          <div className="comment-operators">
-                            <div className="time">{item.createdTime}</div>
-                              <div data-testid={`confirm-${key}`} className="comment-edit" onClick={() => handleEditComment(key, 'confirm')} >Confirm</div>
-                              <div className="comment-edit" onClick={() => handleEditComment(key, 'cancel')} >Cancel</div>
-                          </div>
-                        ):(
-                          <div className="time">{item.createdTime}</div>
-                        )}
-                      </div>
-                    ) : (
-                      <div>
-                        <div className="comment-text">{item.comment}</div>
-                        {userID === item.ownerID ? (
-                          <div className="comment-operators">
-                            <div className="time">{item.createdTime}</div>
-                              <div data-testid={`edit-${key}`} className="comment-edit" onClick={() => handleEditComment(key, 'open')} >Edit</div>
-                              <div className="comment-edit" onClick={() => handleDeleteComment(key)} >Delete</div>
-                          </div>
-                        ):(
-                          <div className="time">{item.createdTime}</div>
-                        )}
+                        <Chip label="Edit" variant="outlined" onClick={handleEdit} />
+                        <span></span>
+                        <Chip label="Delete" variant="outlined" onClick={handleDelete} />
+                        <span></span>
                       </div>
                     )}
                   </div>
+                  <div className="text">{text}</div>
                 </div>
-              )
-              )}
-            </div>
-            <div className="bottom">
-              <hr />
-              <div className="statistic">
-                <div className="icons">
-                {
-                  likes.includes(selfID) ? (<FavoriteIcon onClick={handleLikeClick} className={"favIcon"} />) : (<FavoriteBorderIcon onClick={handleUnlikeClick} className={"notFavIcon"} />)
-                }
-                  <span></span>
-                  <ChatBubbleOutlineIcon />
-                </div>
-                <div className="like">{likes.length} likes</div>
-                <div className="time">{createdTime}</div>
+                {/* <hr /> */}
+                {comments.map((item, key) => (
+                  <div key={key} className="comment-container">
+                    <Avatar src={item.avatar} />
+                    <div className="comment">
+                      {isEditComments[key] ? (
+                        <div>
+                          {/* <div className="comment-text">{item.comment}</div> */}
+                          <input className="comment-text" defaultValue={item.comment} onChange={(e) => newComment.current = e.target.value}></input>
+                          {userID === item.ownerID ? (
+                            <div className="comment-operators">
+                              <div className="time">{item.createdTime}</div>
+                              <div className="comment-edit" onClick={() => handleEditComment(key, 'confirm')}>Confirm</div>
+                              <div className="comment-edit" onClick={() => handleEditComment(key, 'cancel')}>Cancel</div>
+                            </div>
+                          ) : (
+                            <div className="time">{item.createdTime}</div>
+                          )}
+                        </div>
+                      ) : (
+                        <div>
+                          <div className="comment-text">{item.comment}</div>
+                          {userID === item.ownerID ? (
+                            <div className="comment-operators">
+                              <div className="time">{item.createdTime}</div>
+                              <div className="comment-edit" onClick={() => handleEditComment(key, 'open')}>Edit</div>
+                              <div className="comment-edit" onClick={() => handleDeleteComment(key)}>Delete</div>
+                            </div>
+                          ) : (
+                            <div className="time">{item.createdTime}</div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )
+                )}
               </div>
-              <div className="post-comment">
-                <input id="comment-input" data-testid="comment-input" className="comment-input" placeholder="Add a comment ..." onChange={handleComment}></input>
-                <Button onClick={handlePost}>Post</Button>
+              <div className="bottom">
+                <hr />
+                <div className="statistic">
+                  <div className="icons">
+                    {likes.includes(selfID) ? (<FavoriteIcon onClick={handleLikeClick} className={"favIcon"} />) : (<FavoriteBorderIcon onClick={handleUnlikeClick} className={"notFavIcon"} />)}
+                    <span></span>
+                    <ChatBubbleOutlineIcon />
+                  </div>
+                  <div className="like">{likes.length} likes</div>
+                  <div className="time">{createdTime}</div>
+                </div>
+                <div className="post-comment">
+                  <input id="comment-input" data-testid="comment-input" className="comment-input" placeholder="Add a comment ..." onChange={handleComment}></input>
+                  <Button onClick={handlePost}>Post</Button>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
+          </>
+        ) : (
+          <EditPost post={postToEdit} avatar={avatar} username={username} />
+        )}
       </div>
     </Modal>
+    
     // </div> 
   )
 }

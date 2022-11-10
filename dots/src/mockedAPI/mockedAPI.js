@@ -228,15 +228,15 @@ export const createPost = async (postObject) => {
 }
 
 // delete post
-// export const deletePost = async (postID) => {
-//     try {
-//         const response = await axios.delete(`${rootURL}/post/${postID}`);
-//         return response.data;
-//     }
-//     catch (err) {
-//         console.error(err);
-//     }
-// }
+export const deletePost = async (postID) => {
+    try {
+        const response = await axios.delete(`${rootURL}/post/${postID}`);
+        return response.data;
+    }
+    catch (err) {
+        console.error(err);
+    }
+}
 
 // get comment by id
 // export const getCommentByID = async (commentID) => {
