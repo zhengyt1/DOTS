@@ -343,6 +343,7 @@ function PostDetail() {
                   <MentionsInput
                     singleLine
                     data-testid="comment-input"
+                    id="comment-input"
                     className="comment-input"
                     value={commentValue}
                     onChange={(e) => setCommentValue(e.target.value)}
