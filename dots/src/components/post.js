@@ -6,7 +6,8 @@ import './post.css'
 import { useSelector } from 'react-redux';
 import { useState, useEffect, useRef } from "react";
 import { Link } from 'react-router-dom';
-import { getUser, updatePost } from "../mockedAPI/mockedAPI";
+import { getUser, getUsers, updatePost } from "../mockedAPI/mockedAPI";
+import { Mention, MentionsInput } from "react-mentions";
 
 function Post(props) {
   let {
@@ -20,7 +21,7 @@ function Post(props) {
     // createdTime,
   } = props.postInfo;
   const selfID = useSelector(state => state.userID.value);
-
+  const [commentValue, setCommentValue] = useState("");
   const [username, setUsername] = useState("");
   const [avatar, setAvatar] = useState("");
   const [userID, setUserID] = useState("");
@@ -37,13 +38,35 @@ function Post(props) {
         setAvatar(data.avatar);
         setUserID(data.id)
       }
+      // const allUsers = await getUsers();
+      // if (allUsers !== undefined) {
+      //   setUsers(allUsers.map(function (u) { return { id: u.id, display: u.username } }));
+      // }
     }
+
     // only load data on the first rendering 
     if (loadData.current === true) {
       loadData.current = false;
       fetchData();
     }
   })
+  const fetchMentionUsers = async (query, callBack) => {
+    try {
+      const allUsers = await getUsers();
+      const transformedAllUsers = allUsers.map(function (u) { return { id: u.id, display: u.username } });
+      if (!query) {
+        callBack(transformedAllUsers);
+      }
+      else {
+        const filteredUsers = transformedAllUsers.filter((user) => user.display.toLowerCase().includes(query.toLowerCase()));
+        callBack(filteredUsers);
+      }
+    }
+    catch (error) {
+      console.log(error);
+      return;
+    }
+  }
 
   const handleLikeClick = async () => {
     // Cancel like.
@@ -90,7 +113,19 @@ function Post(props) {
             <Link to={`/post/${id}`} key={`${id}`} >
               <ChatBubbleOutlineIcon />
             </Link>
-            <input className="write-comment" placeholder="write a comment"></input>
+            <MentionsInput
+              singleLine
+              className="mentions"
+              value={commentValue}
+              onChange={(e) => setCommentValue(e.target.value)}
+              placeholder="Mention people using @">
+              <Mention data={fetchMentionUsers} trigger="@"
+
+                appendSpaceOnAdd={true}
+                style={{ backgroundColor: "#cee4e5" }}
+              />
+            </MentionsInput>
+            {/* <input className="write-comment" placeholder="write a comment"></input> */}
           </div>
         </div>
       </div>
@@ -103,7 +138,7 @@ function Post(props) {
           </li>
         ))}
       </ol> */}
-    </div>
+    </div >
   )
 }
 

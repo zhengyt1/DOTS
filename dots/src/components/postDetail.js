@@ -6,10 +6,10 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import Modal from '@mui/material/Modal';
 import './postDetail.css'
-
+import { Mention, MentionsInput } from "react-mentions";
 import { useEffect, useRef, useState } from "react";
-import { useNavigate, useParams, } from 'react-router-dom';
-import { deletePost, getPostByID, getUser, updatePost } from "../mockedAPI/mockedAPI";
+import { Link, useNavigate, useParams, } from 'react-router-dom';
+import { deletePost, getPostByID, getUser, updatePost, getUsers } from "../mockedAPI/mockedAPI";
 import { useSelector } from "react-redux";
 import EditPost from "./EditPost";
 
@@ -17,7 +17,7 @@ function PostDetail() {
   const userID = useSelector(state => state.userID.value);
   const comment = useRef("");
   const newComment = useRef("");
-
+  const [commentValue, setCommentValue] = useState("");
   const [text, setText] = useState("");
   const [pic, setPic] = useState("");
   const [video, setVideo] = useState("");
@@ -31,6 +31,7 @@ function PostDetail() {
   const [isEditComments, setIsEditComments] = useState([]);
   const [postToEdit, setPostToEdit] = useState(null);
   const [editingPost, setEditingPost] = useState(false);
+  const [newCommentValue, setNewCommentValue] = useState("");
   let postID = useParams();
   console.log(userID, owner)
 
@@ -42,17 +43,28 @@ function PostDetail() {
   const handleEdit = () => {
     setEditingPost(true);
   };
-  const handleEditComment = async(index, status) => {
+  const handleEditComment = async (index, status) => {
     let new_isEditComments;
     switch (status) {
       case "open":
+        console.log(isEditComments);
+        let otherCommmentIsEditing = false;
+        isEditComments.forEach(element => {
+          otherCommmentIsEditing ||= element;
+        });
+        if (otherCommmentIsEditing) {
+          alert("You are editing other comment.");
+          break;
+        }
         newComment.current = comments[index].comment;
+
         new_isEditComments = isEditComments.slice(0, index).concat(true).concat(isEditComments.slice(index + 1));
         setIsEditComments(new_isEditComments);
         break;
       case "cancel":
         new_isEditComments = isEditComments.slice(0, index).concat(false).concat(isEditComments.slice(index + 1));
         setIsEditComments(new_isEditComments);
+        setNewCommentValue("");
         break;
       case "confirm":
         if (newComment.current === "") {
@@ -69,6 +81,7 @@ function PostDetail() {
           "createdTime": comments[index].createdTime
         };
         newComment.current = "";
+        setNewCommentValue("");
         const new_comments = comments.slice(0, index).concat(new_comment).concat(comments.slice(index + 1));
         setComments(new_comments);
         await updatePost(postID, "comments", new_comments);
@@ -83,9 +96,9 @@ function PostDetail() {
     navigate(-1);
   };
 
-  const handlePost = async() => {
+  const handlePost = async () => {
     console.info('Post ...')
-    if (comment.current === "") {
+    if (commentValue === "") {
       alert('Please enter a comment.');
       return;
     }
@@ -93,14 +106,15 @@ function PostDetail() {
     const newComment = {
       "ownerID": userID,
       "avatar": loggedInUserAvatar,
-      "comment": comment.current,
+      "comment": commentValue,
       "createdTime": new Date(Date.now()).toISOString(),
     }
     console.log(newComment["createdTime"])
-    setComments( comments =>
+    setComments(comments =>
       [...comments, newComment]
     )
     setIsEditComments([...isEditComments, false])
+
     try {
       await updatePost(postID, "comments", [...comments, newComment])
     }
@@ -108,10 +122,11 @@ function PostDetail() {
       console.log(error)
     }
     comment.current = ""
-    document.getElementById("comment-input").value = ""
+    setCommentValue("");
+    document.getElementById("comment-input").value = "" //TODO: no comment-input?
   }
 
-  const handleDeleteComment = async(index) => {
+  const handleDeleteComment = async (index) => {
     const new_isEditComments = isEditComments.slice(0, index).concat(isEditComments.slice(index + 1));
     setIsEditComments(new_isEditComments);
     const new_comments = comments.slice(0, index).concat(comments.slice(index + 1));
@@ -139,6 +154,24 @@ function PostDetail() {
     let newLikes = [...likes, selfID];
     setLikes(newLikes);
     await updatePost(postID, "likes", newLikes);
+  }
+
+  const fetchMentionUsers = async (query, callBack) => {
+    try {
+      const allUsers = await getUsers();
+      const transformedAllUsers = allUsers.map(function (u) { return { id: u.id, display: u.username } });
+      if (!query) {
+        callBack(transformedAllUsers);
+      }
+      else {
+        const filteredUsers = transformedAllUsers.filter((user) => user.display.toLowerCase().includes(query.toLowerCase()));
+        callBack(filteredUsers);
+      }
+    }
+    catch (error) {
+      console.log(error);
+      return;
+    }
   }
 
   useEffect(() => {
@@ -172,10 +205,21 @@ function PostDetail() {
   }, [postID, userID])
   console.log("miao", isEditComments)
   console.log(comments)
+
+  function mapComment(i) {
+    console.log(i);
+    if (i.includes("^^^")) {
+      return <Link to={`/profile/${i.split("^^^")[0]}`}>@{i.split("^^^__")[1]}</Link>;
+    }
+    else {
+      return i;
+    }
+  }
+
   return (
     // <div className="post-background">
     //   <Cancel onClick={handleCancel} />
-    
+
     <Modal
       open={true}
       onClose={handleClose}
@@ -219,8 +263,24 @@ function PostDetail() {
                     <div className="comment">
                       {isEditComments[key] ? (
                         <div>
-                          {/* <div className="comment-text">{item.comment}</div> */}
-                          <input className="comment-text" defaultValue={item.comment} onChange={(e) => newComment.current = e.target.value}></input>
+                          <MentionsInput
+                            className="edit-comment-input"
+                            value={newCommentValue === "" ? item.comment : newCommentValue}
+                            forceSuggestionsAboveCursor={true}
+                            onChange={(e) => { setNewCommentValue(e.target.value); newComment.current = e.target.value }}
+
+                          >
+                            <Mention
+                              data={fetchMentionUsers}
+                              displayTransform={
+                                (id, display) => "@" + (display)
+                              }
+                              trigger="@"
+                              markup="@@@____id__^^^____display__@@@__"
+                              appendSpaceOnAdd={true}
+                              style={{ backgroundColor: "#cee4e5", fontWeight: "normal" }}
+                            />
+                          </MentionsInput>
                           {userID === item.ownerID ? (
                             <div className="comment-operators">
                               <div className="time">{item.createdTime}</div>
@@ -233,7 +293,14 @@ function PostDetail() {
                         </div>
                       ) : (
                         <div>
-                          <div className="comment-text">{item.comment}</div>
+                          <div className="comment-text" id="comment-text-nonInput">
+                            {
+                              item.comment.split("@@@__").map(
+                                (i) => (mapComment(i))
+                              )
+                            }
+                          </div>
+
                           {userID === item.ownerID ? (
                             <div className="comment-operators">
                               <div className="time">{item.createdTime}</div>
@@ -262,7 +329,28 @@ function PostDetail() {
                   <div className="time">{createdTime}</div>
                 </div>
                 <div className="post-comment">
-                  <input id="comment-input" data-testid="comment-input" className="comment-input" placeholder="Add a comment ..." onChange={handleComment}></input>
+
+                  <MentionsInput
+                    singleLine
+                    className="comment-input"
+                    value={commentValue}
+                    onChange={(e) => setCommentValue(e.target.value)}
+                    forceSuggestionsAboveCursor={true}
+                    placeholder="Mention people using @">
+                    <Mention
+                      data={fetchMentionUsers}
+                      displayTransform={
+                        (id, display) => "@" + (display)
+                      }
+                      trigger="@"
+                      markup="@@@____id__^^^____display__@@@__"
+                      appendSpaceOnAdd={true}
+                      style={{ backgroundColor: "#cee4e5", fontWeight: "normal" }}
+                    />
+                  </MentionsInput>
+
+                  //<input id="comment-input" data-testid="comment-input" className="comment-input" placeholder="Add a comment ..." onChange={handleComment}></input>
+
                   <Button onClick={handlePost}>Post</Button>
                 </div>
               </div>
@@ -272,8 +360,8 @@ function PostDetail() {
           <EditPost post={postToEdit} avatar={avatar} username={username} />
         )}
       </div>
-    </Modal>
-    
+    </Modal >
+
     // </div> 
   )
 }

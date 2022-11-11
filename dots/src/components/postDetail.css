@@ -91,7 +91,9 @@
 
 .middle-part {
   overflow-y: scroll;
-}::-webkit-scrollbar {
+}
+
+::-webkit-scrollbar {
   display: none;
 }
 
@@ -99,7 +101,7 @@
   padding: 14px 0 14px 14px;
   max-height: 120px;
   justify-self: start;
-  border-bottom:  #8F8F8F 1px solid;
+  border-bottom: #8F8F8F 1px solid;
   font-family: 'Inter';
   font-style: normal;
   font-weight: 400;
@@ -153,6 +155,7 @@
 
   color: #727272;
 }
+
 /* .comment-operators .MuiButtonBase-root {
   margin-bottom: 8px;
   margin-left: 8px;
@@ -224,15 +227,77 @@
   background: #F4F4F4;
 }
 
+
 .comment-input {
-  margin-left: 28px;
+  width: 250px;
+  margin-left: 15px;
   border: none;
   outline: none;
   background-color: inherit;
-  font-family: 'Inter';
-  font-style: normal;
-  font-weight: 600;
-  font-size: 16px;
-  line-height: 19px;
   color: #8F8F8F;
+}
+
+.comment-input--singleLine .comment-input__control {
+  font-family: 'Commissioner';
+  position: relative;
+}
+
+.comment-input--singleLine .comment-input__highlighter {
+  padding: 5px;
+}
+
+.comment-input--singleLine .comment-input__input {
+  padding: 5px;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+
+.edit-comment-input--multiLine .edit-comment-input__input {
+  padding: 9px;
+  max-width: 240px;
+
+}
+
+.edit-comment-input--multiLine .edit-comment-input__control {
+  padding: 9px;
+  max-width: 240px;
+
+}
+
+.edit-comment-input__suggestions__list {
+  background-color: white;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  font-size: 10pt;
+  max-width: 200px;
+  max-height: 100px;
+  overflow-y: scroll;
+}
+
+.edit-comment-input__suggestions__item {
+  margin-top: 0px !important;
+  padding: 5px 15px !important;
+  background-color: white !important;
+  height: 10px !important;
+
+  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+.edit-comment-input__suggestions__item--focused {
+  background-color: #cee4e5 !important;
+}
+
+.comment-input__suggestions__list {
+  background-color: white;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  font-size: 10pt;
+}
+
+.comment-input__suggestions__item {
+  padding: 5px 15px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+.comment-input__suggestions__item--focused {
+  background-color: #cee4e5;
 }
