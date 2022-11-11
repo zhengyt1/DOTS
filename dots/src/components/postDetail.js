@@ -11,44 +11,8 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams, } from 'react-router-dom';
 import { deletePost, getPostByID, getUser, updatePost, getUsers } from "../mockedAPI/mockedAPI";
 import { useSelector } from "react-redux";
-import { Fragment } from "react";
 import EditPost from "./EditPost";
 
-
-// function EditComment(props) {
-//   const [open, setOpen] = useState(false);
-//   const comment = useRef("");
-//   const handleOpen = () => {
-//     setOpen(true);
-//   };
-//   const handleCloseEdit = async(e) => {
-//     setOpen(false);
-
-//     if (e.target.textContent === "Save") {
-
-//     }
-//   };
-
-//   return (
-//     <Fragment>
-//       <Button onClick={handleOpen}>Edit</Button>
-//       <Modal
-//         hideBackdrop
-//         open={open}
-//         onClose={handleCloseEdit}
-//         aria-labelledby="child-modal-title"
-//         aria-describedby="child-modal-description"
-//       >
-//         <div className="commentEdit-container">
-//           <h2 id="child-modal-title">Edit your comment</h2>
-//           {/* <input id="comment-input" className="comment-input" placeholder="Add a comment ..." onChange={handleComment}></input> */}
-//           <Button onClick={handleCloseEdit}>Close</Button>
-//           <Button onClick={handleCloseEdit}>Save</Button>
-//         </div>
-//       </Modal>
-//     </Fragment>
-//   )
-// }
 function PostDetail() {
   const userID = useSelector(state => state.userID.value);
   const newComment = useRef("");
@@ -68,6 +32,7 @@ function PostDetail() {
   const [editingPost, setEditingPost] = useState(false);
   const [newCommentValue, setNewCommentValue] = useState("");
   let postID = useParams();
+  console.log(userID, owner)
 
   // console.log(postID);
   postID = postID.postId;
@@ -248,7 +213,7 @@ function PostDetail() {
         console.log(e);
       }
     }
-    getData();
+    getData()
 
   }, [postID, userID])
 
@@ -274,15 +239,17 @@ function PostDetail() {
     >
       <div className="detail-container">
         {!editingPost ? (
-          <><div className="left-part">
-            {video ? (
-              <video controls>
-                <source src={video} type="video/mp4"></source>
-              </video>
-            ) : (
-              <img src={pic} alt="user-post" />
-            )}
-          </div><div className="right-part">
+          <>
+            <div className="left-part">
+              {video ? (
+                <video controls>
+                  <source src={video} type="video/mp4"></source>
+                </video>
+              ) : (
+                <img src={pic} alt="user-post" />
+              )}
+            </div>
+            <div className="right-part">
               <div className="middle-part">
                 <div>
                   <div className="user-info">
@@ -375,6 +342,7 @@ function PostDetail() {
                 <div className="post-comment">
                   <MentionsInput
                     singleLine
+                    data-testid="comment-input"
                     className="comment-input"
                     value={commentValue}
                     onChange={(e) => setCommentValue(e.target.value)}
@@ -394,7 +362,8 @@ function PostDetail() {
                   <Button onClick={handlePost}>Post</Button>
                 </div>
               </div>
-            </div></>
+            </div>
+          </>
         ) : (
           <EditPost post={postToEdit} avatar={avatar} username={username} />
         )}
