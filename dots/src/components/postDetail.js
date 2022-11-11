@@ -32,7 +32,6 @@ function PostDetail() {
   const [editingPost, setEditingPost] = useState(false);
   const [newCommentValue, setNewCommentValue] = useState("");
   let postID = useParams();
-  console.log(userID, owner)
 
   // console.log(postID);
   postID = postID.postId;
@@ -295,7 +294,7 @@ function PostDetail() {
                           {userID === item.ownerID ? (
                             <div className="comment-operators">
                               <div className="time">{item.createdTime}</div>
-                              <div className="comment-edit" onClick={() => handleEditComment(key, 'confirm')}>Confirm</div>
+                              <div className="comment-edit" data-testid={`confirm-${key}`} onClick={() => handleEditComment(key, 'confirm')}>Confirm</div>
                               <div className="comment-edit" onClick={() => handleEditComment(key, 'cancel')}>Cancel</div>
                             </div>
                           ) : (
@@ -315,7 +314,7 @@ function PostDetail() {
                           {userID === item.ownerID ? (
                             <div className="comment-operators">
                               <div className="time">{item.createdTime}</div>
-                              <div className="comment-edit" onClick={() => handleEditComment(key, 'open')}>Edit</div>
+                              <div className="comment-edit" data-testid={`edit-${key}`} onClick={() => handleEditComment(key, 'open')}>Edit</div>
                               <div className="comment-edit" onClick={() => handleDeleteComment(key)}>Delete</div>
                             </div>
                           ) : (
