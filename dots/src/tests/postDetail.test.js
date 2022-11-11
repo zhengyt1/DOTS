@@ -95,6 +95,10 @@ describe('test postDetail page', () => {
 
     userEvent.click(screen.getByText('Cancel'));
     expect(await screen.findByTestId('edit-0')).toBeInTheDocument();
+
+    userEvent.click(await screen.findByTestId('edit-0'));
+    userEvent.click(screen.getByText('Confirm'));
+    expect(await screen.findByTestId('edit-0')).toBeInTheDocument();
   });
 
   it('tests post comment by clicking button with and without comment', async () => {

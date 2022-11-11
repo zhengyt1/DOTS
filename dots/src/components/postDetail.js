@@ -15,7 +15,6 @@ import EditPost from "./EditPost";
 
 function PostDetail() {
   const userID = useSelector(state => state.userID.value);
-  const comment = useRef("");
   const newComment = useRef("");
   const [commentValue, setCommentValue] = useState("");
   const [text, setText] = useState("");
@@ -33,7 +32,6 @@ function PostDetail() {
   const [editingPost, setEditingPost] = useState(false);
   const [newCommentValue, setNewCommentValue] = useState("");
   let postID = useParams();
-  console.log(userID, owner)
 
   // console.log(postID);
   postID = postID.postId;
@@ -47,7 +45,6 @@ function PostDetail() {
     let new_isEditComments;
     switch (status) {
       case "open":
-        console.log(isEditComments);
         let otherCommmentIsEditing = false;
         isEditComments.forEach(element => {
           otherCommmentIsEditing ||= element;
@@ -72,7 +69,6 @@ function PostDetail() {
           break;
         }
         new_isEditComments = isEditComments.slice(0, index).concat(false).concat(isEditComments.slice(index + 1));
-        console.log(new_isEditComments)
         setIsEditComments(new_isEditComments);
         const new_comment = {
           "ownerID": comments[index].ownerID,
@@ -84,7 +80,12 @@ function PostDetail() {
         setNewCommentValue("");
         const new_comments = comments.slice(0, index).concat(new_comment).concat(comments.slice(index + 1));
         setComments(new_comments);
-        await updatePost(postID, "comments", new_comments);
+        try {
+          await updatePost(postID, "comments", new_comments);
+        }
+        catch (e) {
+          console.log(e)
+        }
         break;
       default:
         alert('edit status error')
@@ -92,12 +93,16 @@ function PostDetail() {
   };
 
   const handleDelete = async () => {
-    await deletePost(postID);
+    try {
+      await deletePost(postID);
+    }
+    catch (e) {
+      console.log(e);
+    }
     navigate(-1);
   };
 
   const handlePost = async () => {
-    console.info('Post ...')
     if (commentValue === "") {
       alert('Please enter a comment.');
       return;
@@ -109,19 +114,16 @@ function PostDetail() {
       "comment": commentValue,
       "createdTime": new Date(Date.now()).toISOString(),
     }
-    console.log(newComment["createdTime"])
     setComments(comments =>
       [...comments, newComment]
     )
     setIsEditComments([...isEditComments, false])
-
     try {
       await updatePost(postID, "comments", [...comments, newComment])
     }
-    catch (error) {
-      console.log(error)
+    catch (e) {
+      console.log(e);
     }
-    comment.current = ""
     setCommentValue("");
     document.getElementById("comment-input").value = "" //TODO: no comment-input?
   }
@@ -131,7 +133,12 @@ function PostDetail() {
     setIsEditComments(new_isEditComments);
     const new_comments = comments.slice(0, index).concat(comments.slice(index + 1));
     setComments(new_comments);
-    await updatePost(postID, "comments", new_comments);
+    try {
+      await updatePost(postID, "comments", new_comments);
+    }
+    catch (e) {
+      console.log(e);
+    }
   }
 
   const handleClose = () => {
@@ -139,21 +146,27 @@ function PostDetail() {
     // navigate(`/${location.state.from}`)
   }
 
-  function handleComment(e) {
-    comment.current = (e.target.value);
-  }
-
   const handleLikeClick = async () => {
     // Cancel like.
     let newLikes = likes.filter((x) => x !== selfID);
     setLikes(newLikes);
-    await updatePost(postID, "likes", newLikes);
+    try {
+      await updatePost(postID, "likes", newLikes);
+    }
+    catch (e) {
+      console.log(e);
+    }
   }
 
   const handleUnlikeClick = async () => {
     let newLikes = [...likes, selfID];
     setLikes(newLikes);
-    await updatePost(postID, "likes", newLikes);
+    try {
+      await updatePost(postID, "likes", newLikes);
+    }
+    catch (e) {
+      console.log(e);
+    }
   }
 
   const fetchMentionUsers = async (query, callBack) => {
@@ -175,7 +188,7 @@ function PostDetail() {
   }
 
   useEffect(() => {
-    console.log('in useEffect')
+    // console.log('in useEffect')
     async function getData() {
       try {
         const post = await getPostByID(postID);
@@ -203,11 +216,9 @@ function PostDetail() {
     getData()
 
   }, [postID, userID])
-  console.log("miao", isEditComments)
-  console.log(comments)
 
   function mapComment(i) {
-    console.log(i);
+    // console.log(i);
     if (i.includes("^^^")) {
       return <Link to={`/profile/${i.split("^^^")[0]}`}>@{i.split("^^^__")[1]}</Link>;
     }
@@ -284,7 +295,7 @@ function PostDetail() {
                           {userID === item.ownerID ? (
                             <div className="comment-operators">
                               <div className="time">{item.createdTime}</div>
-                              <div className="comment-edit" onClick={() => handleEditComment(key, 'confirm')}>Confirm</div>
+                              <div className="comment-edit" data-testid={`confirm-${key}`} onClick={() => handleEditComment(key, 'confirm')}>Confirm</div>
                               <div className="comment-edit" onClick={() => handleEditComment(key, 'cancel')}>Cancel</div>
                             </div>
                           ) : (
@@ -296,7 +307,7 @@ function PostDetail() {
                           <div className="comment-text" id="comment-text-nonInput">
                             {
                               item.comment.split("@@@__").map(
-                                (i) => (mapComment(i))
+                                (i, k) => (<span key={k}>{mapComment(i)}</span>)
                               )
                             }
                           </div>
@@ -304,7 +315,7 @@ function PostDetail() {
                           {userID === item.ownerID ? (
                             <div className="comment-operators">
                               <div className="time">{item.createdTime}</div>
-                              <div className="comment-edit" onClick={() => handleEditComment(key, 'open')}>Edit</div>
+                              <div className="comment-edit" data-testid={`edit-${key}`} onClick={() => handleEditComment(key, 'open')}>Edit</div>
                               <div className="comment-edit" onClick={() => handleDeleteComment(key)}>Delete</div>
                             </div>
                           ) : (
@@ -329,9 +340,10 @@ function PostDetail() {
                   <div className="time">{createdTime}</div>
                 </div>
                 <div className="post-comment">
-
                   <MentionsInput
                     singleLine
+                    data-testid="comment-input"
+                    id="comment-input"
                     className="comment-input"
                     value={commentValue}
                     onChange={(e) => setCommentValue(e.target.value)}
@@ -348,9 +360,6 @@ function PostDetail() {
                       style={{ backgroundColor: "#cee4e5", fontWeight: "normal" }}
                     />
                   </MentionsInput>
-
-                  //<input id="comment-input" data-testid="comment-input" className="comment-input" placeholder="Add a comment ..." onChange={handleComment}></input>
-
                   <Button onClick={handlePost}>Post</Button>
                 </div>
               </div>
