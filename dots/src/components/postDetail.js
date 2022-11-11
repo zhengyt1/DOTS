@@ -125,6 +125,7 @@ function PostDetail() {
       console.log(e);
     }
     setCommentValue("");
+    document.getElementById("comment-input").value = "" //TODO: no comment-input?
   }
 
   const handleDeleteComment = async (index) => {
