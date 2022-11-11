@@ -12,6 +12,7 @@ import Home from "../pages/home"
 import Register from "../pages/register"
 import Profile from '../pages/profile';
 import PostDetail from '../components/postDetail';
+import App from '../App';
 
 const user = {
   "username": "Brook6",
@@ -87,6 +88,10 @@ describe('test login page', () => {
 })
 
 describe("My app", () => {
+  it('render App', () => {
+    render(<App />);
+    });
+
   it("renders correctly", () => {
     let component = renderer.create(
       <MemoryRouter initialEntries={["/"]}>

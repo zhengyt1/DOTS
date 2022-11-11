@@ -145,7 +145,7 @@ function Post(props) {
           )}
           <div className="icon-bar">
             {
-              isLike ? (<FavoriteIcon onClick={handleLikeClick} className={"favIcon"} />) : (<FavoriteBorderIcon onClick={handleUnlikeClick} className={"notFavIcon"} />)
+              isLike ? (<FavoriteIcon onClick={handleLikeClick} data-testid={`like-${id}`} className={"favIcon"} />) : (<FavoriteBorderIcon onClick={handleUnlikeClick} data-testid={`unlike-${id}`} className={"notFavIcon"} />)
             }
             <div className="like">{totalLikes.length}</div>
             <Link to={`/post/${id}`} key={`${id}`} >
@@ -154,6 +154,7 @@ function Post(props) {
             <MentionsInput
               singleLine
               className="mentions"
+              data-testid="comment-input"
               value={commentValue}
               onChange={(e) => setCommentValue(e.target.value)}
               placeholder="Mention people using @">

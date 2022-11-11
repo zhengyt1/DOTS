@@ -107,7 +107,7 @@ function ProfileOverview(props) {
                                 (
                                     isFollowing ?
                                         (<Button variant="outlined" size="small" onClick={handleUnfollowClick} sx={{ width: "100px" }}>Unfollow</Button>) :
-                                        (<Button variant="contained" size="small" onClick={handleFollowClick} sx={{ width: "100px" }} > Follow</Button>)
+                                        (<Button variant="contained" size="small" onClick={handleFollowClick} sx={{ width: "100px" }} >Follow</Button>)
                                 )
                                 : (<Button variant="outlined" size="small">Settings</Button>)}
                         < IconButton >
