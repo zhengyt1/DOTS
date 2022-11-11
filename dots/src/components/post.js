@@ -8,6 +8,7 @@ import { useState, useEffect, useRef } from "react";
 import { Link } from 'react-router-dom';
 import { getUser, getUsers, updatePost } from "../mockedAPI/mockedAPI";
 import { Mention, MentionsInput } from "react-mentions";
+import Button from '@mui/material/Button';
 
 function Post(props) {
   let {
@@ -16,7 +17,7 @@ function Post(props) {
     pic,
     video,
     owner,
-    // comments,
+    comments,
     likes,
     // createdTime,
   } = props.postInfo;
@@ -27,21 +28,27 @@ function Post(props) {
   const [userID, setUserID] = useState("");
   const [isLike, setIsLike] = useState(likes.includes(selfID));
   const [totalLikes, setTotalLikes] = useState(likes);
+  const [selfAvatar, setSelfAvatar] = useState("");
 
 
   const loadData = useRef(true);
   useEffect(() => {
     async function fetchData() {
-      const data = await getUser(owner);
-      if (data !== undefined) {
-        setUsername(data.username);
-        setAvatar(data.avatar);
-        setUserID(data.id)
+      try {
+        const data = await getUser(owner);
+        if (data !== undefined) {
+          setUsername(data.username);
+          setAvatar(data.avatar);
+          setUserID(data.id);
+        }
+        const self_data = await getUser(selfID);
+        if (self_data !== undefined) {
+          setSelfAvatar(self_data.avatar);
+        }
       }
-      // const allUsers = await getUsers();
-      // if (allUsers !== undefined) {
-      //   setUsers(allUsers.map(function (u) { return { id: u.id, display: u.username } }));
-      // }
+      catch (e) {
+        console.log(e);
+      }
     }
 
     // only load data on the first rendering 
@@ -73,16 +80,47 @@ function Post(props) {
     setIsLike(false);
     let newLikes = totalLikes.filter((x) => x !== selfID);
     setTotalLikes(newLikes);
-    await updatePost(id, "likes", newLikes);
+    try {
+      await updatePost(id, "likes", newLikes);
+    }
+    catch (e) {
+      console.log(e);
+    }
   }
 
   const handleUnlikeClick = async () => {
     setIsLike(true);
     let newLikes = [...totalLikes, selfID];
     setTotalLikes(newLikes);
-    await updatePost(id, "likes", newLikes);
+    try {
+      await updatePost(id, "likes", newLikes);
+    }
+    catch (e) {
+      console.log(e);
+    }
   }
 
+  const handlePost = async () => {
+    console.info('Post ...')
+    if (commentValue === "") {
+      alert('Please enter a comment.');
+      return;
+    }
+
+    const newComment = {
+      "ownerID": selfID,
+      "avatar": selfAvatar,
+      "comment": commentValue,
+      "createdTime": new Date(Date.now()).toISOString(),
+    }
+    try {
+      await updatePost(id, "comments", [...comments, newComment])
+    }
+    catch (e) {
+      console.log(e);
+    }
+    setCommentValue("");
+  }
   return (
     <div className="post-container">
       <div className="post" >
@@ -120,24 +158,16 @@ function Post(props) {
               onChange={(e) => setCommentValue(e.target.value)}
               placeholder="Mention people using @">
               <Mention data={fetchMentionUsers} trigger="@"
-
+                markup="@@@____id__^^^____display__@@@__"
                 appendSpaceOnAdd={true}
                 style={{ backgroundColor: "#cee4e5" }}
               />
             </MentionsInput>
             {/* <input className="write-comment" placeholder="write a comment"></input> */}
+            <Button onClick={handlePost}>Post</Button>
           </div>
         </div>
       </div>
-      {/* <ol className="comment-container">
-        {comments.map((item, key) => (
-          <li key={key}>
-            <Avatar />
-            <div className="username">{item.user}</div>
-            <div className="username">{item.comment}</div>
-          </li>
-        ))}
-      </ol> */}
     </div >
   )
 }

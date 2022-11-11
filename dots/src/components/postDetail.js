@@ -1,4 +1,4 @@
-import { Avatar, Popper } from "@mui/material";
+import { Avatar } from "@mui/material";
 import Button from '@mui/material/Button';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import Chip from '@mui/material/Chip';
@@ -51,7 +51,6 @@ import EditPost from "./EditPost";
 // }
 function PostDetail() {
   const userID = useSelector(state => state.userID.value);
-  const comment = useRef("");
   const newComment = useRef("");
   const [commentValue, setCommentValue] = useState("");
   const [text, setText] = useState("");
@@ -82,7 +81,6 @@ function PostDetail() {
     let new_isEditComments;
     switch (status) {
       case "open":
-        console.log(isEditComments);
         let otherCommmentIsEditing = false;
         isEditComments.forEach(element => {
           otherCommmentIsEditing ||= element;
@@ -107,7 +105,6 @@ function PostDetail() {
           break;
         }
         new_isEditComments = isEditComments.slice(0, index).concat(false).concat(isEditComments.slice(index + 1));
-        console.log(new_isEditComments)
         setIsEditComments(new_isEditComments);
         const new_comment = {
           "ownerID": comments[index].ownerID,
@@ -119,7 +116,12 @@ function PostDetail() {
         setNewCommentValue("");
         const new_comments = comments.slice(0, index).concat(new_comment).concat(comments.slice(index + 1));
         setComments(new_comments);
-        await updatePost(postID, "comments", new_comments);
+        try {
+          await updatePost(postID, "comments", new_comments);
+        }
+        catch (e) {
+          console.log(e)
+        }
         break;
       default:
         alert('edit status error')
@@ -127,12 +129,16 @@ function PostDetail() {
   };
 
   const handleDelete = async () => {
-    await deletePost(postID);
+    try {
+      await deletePost(postID);
+    }
+    catch (e) {
+      console.log(e);
+    }
     navigate(-1);
   };
 
   const handlePost = async () => {
-    console.info('Post ...')
     if (commentValue === "") {
       alert('Please enter a comment.');
       return;
@@ -144,13 +150,16 @@ function PostDetail() {
       "comment": commentValue,
       "createdTime": new Date(Date.now()).toISOString(),
     }
-    console.log(newComment["createdTime"])
     setComments(comments =>
       [...comments, newComment]
     )
     setIsEditComments([...isEditComments, false])
-    const data = await updatePost(postID, "comments", [...comments, newComment])
-    console.log([...comments, newComment], data)
+    try {
+      await updatePost(postID, "comments", [...comments, newComment])
+    }
+    catch (e) {
+      console.log(e);
+    }
     setCommentValue("");
   }
 
@@ -159,7 +168,12 @@ function PostDetail() {
     setIsEditComments(new_isEditComments);
     const new_comments = comments.slice(0, index).concat(comments.slice(index + 1));
     setComments(new_comments);
-    await updatePost(postID, "comments", new_comments);
+    try {
+      await updatePost(postID, "comments", new_comments);
+    }
+    catch (e) {
+      console.log(e);
+    }
   }
 
   const handleClose = () => {
@@ -167,21 +181,27 @@ function PostDetail() {
     // navigate(`/${location.state.from}`)
   }
 
-  function handleComment(e) {
-    comment.current = (e.target.value);
-  }
-
   const handleLikeClick = async () => {
     // Cancel like.
     let newLikes = likes.filter((x) => x !== selfID);
     setLikes(newLikes);
-    await updatePost(postID, "likes", newLikes);
+    try {
+      await updatePost(postID, "likes", newLikes);
+    }
+    catch (e) {
+      console.log(e);
+    }
   }
 
   const handleUnlikeClick = async () => {
     let newLikes = [...likes, selfID];
     setLikes(newLikes);
-    await updatePost(postID, "likes", newLikes);
+    try {
+      await updatePost(postID, "likes", newLikes);
+    }
+    catch (e) {
+      console.log(e);
+    }
   }
 
   const fetchMentionUsers = async (query, callBack) => {
@@ -203,7 +223,7 @@ function PostDetail() {
   }
 
   useEffect(() => {
-    console.log('in useEffect')
+    // console.log('in useEffect')
     async function getData() {
       try {
         const post = await getPostByID(postID);
@@ -231,11 +251,9 @@ function PostDetail() {
     getData();
 
   }, [postID, userID])
-  console.log("miao", isEditComments)
-  console.log(comments)
 
   function mapComment(i) {
-    console.log(i);
+    // console.log(i);
     if (i.includes("^^^")) {
       return <Link to={`/profile/${i.split("^^^")[0]}`}>@{i.split("^^^__")[1]}</Link>;
     }
@@ -322,7 +340,7 @@ function PostDetail() {
                           <div className="comment-text" id="comment-text-nonInput">
                             {
                               item.comment.split("@@@__").map(
-                                (i) => (mapComment(i))
+                                (i, k) => (<div key={k}>{mapComment(i)}</div>)
                               )
                             }
                           </div>
