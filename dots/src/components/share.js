@@ -28,10 +28,14 @@ function Share() {
     const loadData = useRef(true);
     useEffect(() => {
       async function fetchData() {
-        const data = await getUser(userID);
-        if (data !== undefined) {
-          setUsername(data.username);
-          setAvatar(data.avatar);
+        try {
+          const data = await getUser(userID);
+          if (data !== undefined) {
+            setUsername(data.username);
+            setAvatar(data.avatar);
+          }
+        } catch (e) {
+          console.log(e);
         }
       }
       // only load data on the first rendering 
@@ -52,7 +56,7 @@ function Share() {
           comments: [],
           likes: [],
           isPrivate: isPrivate,
-          createdTime: Date.now(),
+          createdTime: new Date(Date.now()).toISOString(),
           mentions: tagUsersRef.current !== undefined && tagUsersRef.current !== null 
                                             ? tagUsersRef.current.value.split(", ") : []
         };
