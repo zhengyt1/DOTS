@@ -57,6 +57,7 @@ function PostDetail() {
 
         new_isEditComments = isEditComments.slice(0, index).concat(true).concat(isEditComments.slice(index + 1));
         setIsEditComments(new_isEditComments);
+        setNewCommentValue(comments[index].comment);
         break;
       case "cancel":
         new_isEditComments = isEditComments.slice(0, index).concat(false).concat(isEditComments.slice(index + 1));
@@ -65,7 +66,7 @@ function PostDetail() {
         break;
       case "confirm":
         if (newComment.current === "") {
-          alert("comment cann't be empty");
+          alert("comment can't be empty");
           break;
         }
         new_isEditComments = isEditComments.slice(0, index).concat(false).concat(isEditComments.slice(index + 1));
@@ -125,7 +126,7 @@ function PostDetail() {
       console.log(e);
     }
     setCommentValue("");
-    document.getElementById("comment-input").value = "" //TODO: no comment-input?
+    // document.getElementById("comment-input").value = "" //TODO: no comment-input?
   }
 
   const handleDeleteComment = async (index) => {
@@ -274,7 +275,7 @@ function PostDetail() {
                         <div>
                           <MentionsInput
                             className="edit-comment-input"
-                            value={newCommentValue === "" ? item.comment : newCommentValue}
+                            value={newCommentValue}
                             forceSuggestionsAboveCursor={true}
                             onChange={(e) => { setNewCommentValue(e.target.value); newComment.current = e.target.value }}
 

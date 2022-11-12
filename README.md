@@ -23,3 +23,5 @@ Swaggerhub link: [swaggerhub](https://app.swaggerhub.com/apis/ZXY9815_1/Group21_
 - In the **post** component, you must update one picture or one video. For video, we only support mp4 file. If you don't see your new post, please wait some seconds, and re-enter the page. We store posted pictures/videos in firebase. While some pictures are generated randomly from image website by mockAPI. So it's normal that a user display different content in a post.
 
 - In the **gallery** component, if there is a post with no picture, we generate random picture as its thumbnail.
+
+- We use UTC / GMT time in our app
