@@ -201,9 +201,7 @@ function PostDetail() {
         setIsEditComments(Array.apply(null, Array(post.comments.length)).map(function (x, i) { return false; }))
         setLikes(post.likes);
         setCreatTime(post.createdTime);
-        // console.log(post);
         const userInfo = await getUser(post.owner);
-        // console.log(userInfo)
         setUsername(userInfo.username);
         setAvatar(userInfo.avatar);
 

@@ -25,7 +25,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --watchAll=false --coverage",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "lint": "eslint --ignore-pattern *.test.js --ignore-pattern *.test.jsx"
   },
   "eslintConfig": {
     "extends": [
@@ -50,5 +51,13 @@
     "jest-mock-axios": "^4.7.0-beta",
     "react-test-renderer": "^18.2.0",
     "redux-mock-store": "^1.5.4"
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx}",
+      "!src/index.js",
+      "!src/mockedAPI/mockedAPI.js",
+      "!src/store.js"
+    ]
   }
 }
