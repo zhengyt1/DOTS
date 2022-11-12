@@ -66,7 +66,7 @@ function PostDetail() {
         break;
       case "confirm":
         if (newComment.current === "") {
-          alert("comment cann't be empty");
+          alert("comment can't be empty");
           break;
         }
         new_isEditComments = isEditComments.slice(0, index).concat(false).concat(isEditComments.slice(index + 1));
