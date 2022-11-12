@@ -1,13 +1,14 @@
-import { render } from "@testing-library/react"
+import { render, screen } from "@testing-library/react"
+import userEvent from "@testing-library/user-event";
 import EditPost from "../components/EditPost"
 
 const mockUpdate = jest.fn();
 jest.mock('../mockedAPI/mockedAPI', () => ({
-  updatePost: () => mockUpdate,
+    updatePost: () => mockUpdate,
 }))
 
 describe('test editPost Component', () => {
-  
+
     it('renders the editPost Component', () => {
 
         const postInfo = {
@@ -17,17 +18,19 @@ describe('test editPost Component', () => {
             pic: "/asset/photo.jpg",
             video: "",
             owner: "1",
-            comments: [{user: "yuting", comment: "Love your Post!"},{user: "shuyue", comment: "hhhh"}],
+            comments: [{ user: "yuting", comment: "Love your Post!" }, { user: "shuyue", comment: "hhhh" }],
             likes: [],
             createdTime: "March 19",
         };
 
         const mockAvatar = "/asset/photo.jpg";
         const mockUsername = "joe";
-        
+
         render(
             <EditPost post={postInfo} avatar={mockAvatar} username={mockUsername} />
         );
+        const updateBtn = screen.getByText("Update Post");
+        userEvent.click(updateBtn);
     });
 
 })
