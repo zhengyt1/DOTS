@@ -101,7 +101,7 @@ function Post(props) {
   }
 
   const handlePost = async () => {
-    console.info('Post ...')
+    // console.info('Post ...')
     if (commentValue === "") {
       alert('Please enter a comment.');
       return;
