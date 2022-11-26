@@ -14,8 +14,8 @@ const connect = async () => {
     // always use try/catch to handle any exception
     try {
         MongoConnection = (await MongoClient.connect(
-        dbURL,
-        { useNewUrlParser: true, useUnifiedTopology: true },
+            dbURL,
+            { useNewUrlParser: true, useUnifiedTopology: true },
         )); // we return the entire connection, not just the DB
         // check that we are connected to the db
         console.log(`connected to db: ${MongoConnection.db().databaseName}`);
@@ -24,14 +24,14 @@ const connect = async () => {
         console.log(err.message);
     }
 };
- 
+
 const getDB = async () => {
     if (!MongoConnection) {
         await connect();
     }
     return MongoConnection.db();
 };
- 
+
 const closeMongoDBConnection = async () => {
     await MongoConnection.close();
 };
@@ -40,36 +40,227 @@ const closeMongoDBConnection = async () => {
 // await/async syntax
 const getAllUsers = async () => {
     try {
-        // get the db
         const db = await getDB();
         const result = await db.collection('user').find({}).toArray();
-        // print the results
-        console.log(`Students: ${JSON.stringify(result)}`);
-        return result;
-    } catch (err) {
-        console.log(`error: ${err.message}`);
-    }
-};
-  
-// READ a student given their ID
-const getUserByID = async (userID) => {
-    try {
-        // get the db
-        const db = await getDB();
-        const result = await db.collection('user').findOne({ _id: ObjectId(userID) });
-        // print the result
-        console.log(`User: ${JSON.stringify(result)}`);
         return result;
     } catch (err) {
         console.log(`error: ${err.message}`);
     }
 };
 
+const getUsersByIDs = async (userIDs) => {
+    try {
+        const db = await getDB();
+        const ObjUserIDs = userIDs.map(id => ObjectId(id));
+
+        const result = await db.collection('user').find(
+            {
+                _id:
+                    { $in: ObjUserIDs }
+            }).toArray();
+        // console.log(`${JSON.stringify(result)}`);
+        return result;
+    }
+    catch (err) {
+        console.error(err);
+    }
+}
+
+
+// READ a student given their ID
+const getUserByID = async (userID) => {
+    try {
+        // get the db
+        const db = await getDB();
+        const result = await db.collection('user').findOne({ _id: ObjectId(userID) });
+        return result;
+    } catch (err) {
+        console.log(`error: ${err.message}`);
+    }
+};
+
+// get user by email
+const getUserByEmail = async (email) => {
+    try {
+        const db = await getDB();
+        const result = await db.collection('user').findOne({ email: email });
+        return result;
+    }
+    catch (err) {
+        console.log(`error: ${err.message}`);
+    }
+}
+
+const updateUser = async (userID, field, value) => {
+    try {
+        const payload = {};
+        payload[field] = value;
+        const db = await getDB();
+        const result = await db.collection('user').updateOne(
+            { _id: ObjectId(userID) },
+            { $set: payload }
+        )
+        return result;
+    }
+    catch (err) {
+        console.log(`error: ${err.message}`);
+    }
+}
+
+const createUser = async (userObject) => {
+    try {
+        const db = await getDB();
+        const result = await db.collection('user').insertOne(
+            userObject
+        )
+        // result contains 
+        // - A boolean `acknowledged`
+        // - A field `insertedId` with the _id value
+        return result;
+    }
+    catch (err) {
+        console.log(`error: ${err.message}`);
+    }
+}
+
+
+const getFollowings = async (userID) => {
+    try {
+        const db = await getDB();
+        // Bug: I used the proction to select only `followings` field
+        // but it still returns all the fields.
+        const result = await db.collection('user').findOne(
+            { _id: ObjectId(userID) },
+            {
+                _id: 0,
+                followings: 1
+            });
+        return result.followings;
+    }
+    catch (err) {
+        console.log(`error: ${err.message}`);
+    }
+}
+
+const getFollowers = async (userID) => {
+    try {
+        const db = await getDB();
+        // Bug: I used the proction to select only `followers` field
+        // but it still returns all the fields.
+        const result = await db.collection('user').findOne(
+            { _id: ObjectId(userID) },
+            {
+                _id: 0,
+                followers: 1
+            });
+        return result.followers;
+    }
+    catch (err) {
+        console.error(err);
+    }
+}
+
+// TODO: getFeed
+// It should be implemented in `Router` or `dbFunctions?`
+
+const getPostByID = async (postID) => {
+    try {
+        const db = await getDB();
+        const result = await db.collection('post').findOne(
+            { _id: ObjectId(postID) }
+        );
+        return result;
+    }
+    catch (err) {
+        console.log(`error: ${err.message}`);
+    }
+}
+
+const getPostsByUserID = async (userID) => {
+    try {
+        const db = await getDB();
+        const result = await db.collection('post').find(
+            { owner: ObjectId(userID) }
+        ).toArray();
+        return result;
+    }
+    catch (err) {
+        console.log(`error: ${err.message}`);
+    }
+}
+
+const updatePost = async (postID, field, value) => {
+    try {
+        const payload = {};
+        payload[field] = value;
+        const db = await getDB();
+        const result = await db.collection('post').updateOne(
+            { _id: ObjectId(postID) },
+            { $set: payload }
+        )
+        return result;
+    }
+    catch (err) {
+        console.log(`error: ${err.message}`);
+    }
+}
+
+
+const createPost = async (postObject) => {
+    try {
+        const db = await getDB();
+        const result = await db.collection('post').insertOne(
+            postObject
+        )
+        // result contains 
+        // - A boolean `acknowledged`
+        // - A field `insertedId` with the _id value
+        return result;
+    }
+    catch (err) {
+        console.log(`error: ${err.message}`);
+    }
+}
+
+const deletePost = async (postID) => {
+    try {
+        const db = await getDB();
+        const result = db.collection('post').deleteOne({ _id: postID });
+        return result;
+    }
+    catch (err) {
+        console.log(`error: ${err.message}`);
+    }
+}
+
+
+// TODO: getSuggestedFollowings
+
+// For TEST:
+// getUsersByIDs(['6377e0b34661a1bbf54d80b1', '6377e1b64661a1bbf54d80b2']);
+// getUserByEmail("zhengyt1@gmail.com");
+// getFollowings('6377e0b34661a1bbf54d80b1');
+// getFollowers('6377e0b34661a1bbf54d80b1');
+// updateUser('6377e0b34661a1bbf54d80b1', 'password', '22');
+// const newUser = { "username": "gaga", "avatar": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/340.jpg", "password": "22", "email": "zhengyt1@gmail.com", "description": "description 2", "followers": [{ "$oid": "6377e1b64661a1bbf54d80b2" }], "followings": [{ "$oid": "6377e1b64661a1bbf54d80b2" }], "posts": [] };
+// createUser(newUser);
+
 // export the functions
 module.exports = {
     closeMongoDBConnection,
     getDB,
     connect,
-    getUserByID,
     getAllUsers,
+    getUserByID,
+    getUsersByIDs,
+    getUserByEmail,
+    updateUser,
+    createUser,
+    getFollowings,
+    getFollowers,
+    getPostByID,
+    getPostsByUserID,
+    updatePost,
+    createPost,
+    deletePost,
 };

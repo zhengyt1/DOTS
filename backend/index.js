@@ -1,4 +1,4 @@
-const webapp = require('./server/testRouter');
+const webapp = require('./server/server');
 
 // (5) define the port
 const port = 8080;
