@@ -50,9 +50,8 @@ const getAllUsers = async () => {
 
 const getUsersByIDs = async (userIDs) => {
     try {
-        const db = await getDB();
         const ObjUserIDs = userIDs.map(id => ObjectId(id));
-
+        const db = await getDB();
         const result = await db.collection('user').find(
             {
                 _id:
@@ -161,7 +160,7 @@ const getFollowers = async (userID) => {
 }
 
 // TODO: getFeed
-// It should be implemented in `Router` or `dbFunctions?`
+// It should be implemented in `server.js` or `dbFunctions.js`?
 
 const getPostByID = async (postID) => {
     try {
@@ -225,7 +224,7 @@ const createPost = async (postObject) => {
 const deletePost = async (postID) => {
     try {
         const db = await getDB();
-        const result = db.collection('post').deleteOne({ _id: postID });
+        const result = await db.collection('post').deleteOne({ _id: postID });
         return result;
     }
     catch (err) {
@@ -235,6 +234,7 @@ const deletePost = async (postID) => {
 
 
 // TODO: getSuggestedFollowings
+// It should be implemented in `server.js` or `dbFunctions.js`?
 
 // For TEST:
 // getUsersByIDs(['6377e0b34661a1bbf54d80b1', '6377e1b64661a1bbf54d80b2']);
