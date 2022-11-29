@@ -56,9 +56,9 @@ const Gallery = (props) => {
             }}>
                 <ImageList sx={{ width: 816 }} cols={3}>
                     {toShow.map((item) => (
-                        <Link to={`/post/${item.id}`} key={item.id}>
+                        <Link to={`/post/${item._id}`} key={item._id}>
 
-                            <div key={item.id}>
+                            <div key={item._id}>
                                 <div className="middle">
                                     <div className="postThumbNail-text">
                                         <FavoriteIcon /> {item.likes.length}

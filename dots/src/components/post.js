@@ -12,7 +12,7 @@ import Button from '@mui/material/Button';
 
 function Post(props) {
   let {
-    id,
+    _id,
     text,
     pic,
     video,
@@ -22,6 +22,7 @@ function Post(props) {
     // createdTime,
   } = props.postInfo;
   const selfID = useSelector(state => state.userID.value);
+
   const [commentValue, setCommentValue] = useState("");
   const [username, setUsername] = useState("");
   const [avatar, setAvatar] = useState("");
@@ -39,7 +40,7 @@ function Post(props) {
         if (data !== undefined) {
           setUsername(data.username);
           setAvatar(data.avatar);
-          setUserID(data.id);
+          setUserID(data._id);
         }
         const self_data = await getUser(selfID);
         if (self_data !== undefined) {
@@ -60,7 +61,7 @@ function Post(props) {
   const fetchMentionUsers = async (query, callBack) => {
     try {
       const allUsers = await getUsers();
-      const transformedAllUsers = allUsers.map(function (u) { return { id: u.id, display: u.username } });
+      const transformedAllUsers = allUsers.map(function (u) { return { _id: u._id, display: u.username } });
       if (!query) {
         callBack(transformedAllUsers);
       }
@@ -81,7 +82,7 @@ function Post(props) {
     let newLikes = totalLikes.filter((x) => x !== selfID);
     setTotalLikes(newLikes);
     try {
-      await updatePost(id, "likes", newLikes);
+      await updatePost(_id, "likes", newLikes);
     }
     catch (e) {
       console.log(e);
@@ -93,7 +94,7 @@ function Post(props) {
     let newLikes = [...totalLikes, selfID];
     setTotalLikes(newLikes);
     try {
-      await updatePost(id, "likes", newLikes);
+      await updatePost(_id, "likes", newLikes);
     }
     catch (e) {
       console.log(e);
@@ -114,7 +115,7 @@ function Post(props) {
       "createdTime": new Date(Date.now()).toISOString(),
     }
     try {
-      await updatePost(id, "comments", [...comments, newComment])
+      await updatePost(_id, "comments", [...comments, newComment])
     }
     catch (e) {
       console.log(e);
@@ -145,10 +146,10 @@ function Post(props) {
           )}
           <div className="icon-bar">
             {
-              isLike ? (<FavoriteIcon onClick={handleLikeClick} data-testid={`like-${id}`} className={"favIcon"} />) : (<FavoriteBorderIcon onClick={handleUnlikeClick} data-testid={`unlike-${id}`} className={"notFavIcon"} />)
+              isLike ? (<FavoriteIcon onClick={handleLikeClick} data-testid={`like-${_id}`} className={"favIcon"} />) : (<FavoriteBorderIcon onClick={handleUnlikeClick} data-testid={`unlike-${_id}`} className={"notFavIcon"} />)
             }
             <div className="like">{totalLikes.length}</div>
-            <Link to={`/post/${id}`} key={`${id}`} >
+            <Link to={`/post/${_id}`} key={`${_id}`} >
               <ChatBubbleOutlineIcon />
             </Link>
             <MentionsInput

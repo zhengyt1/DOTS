@@ -33,21 +33,29 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function Register() {
-	const navigate = useNavigate();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const handleSubmit = async(event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    const user = await createUser({
-      email: data.get('email'),
-      password: data.get('password'),
-    })
-    
-    if (user.id) {
-      dispatch(userLogin(user.id));
+    const password = data.get('password');
+    const email = data.get('email');
+    if (password.length < 3) {
+      alert('password must be at least 3 characters');
+      return;
+    }
+    if (/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(email) === false) {
+      alert('invalid email');
+      return;
+    }
+    const userId = await createUser({
+      email,
+      password,
+    });
+    if (userId) {
+      dispatch(userLogin(userId));
       navigate('/home');
     }
-
   };
 
   return (
@@ -127,8 +135,7 @@ export default function Register() {
           sx={{
             backgroundImage: 'url(https://source.unsplash.com/random)',
             backgroundRepeat: 'no-repeat',
-            backgroundColor: (t) =>
-              t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
+            backgroundColor: (t) => (t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900]),
             backgroundSize: 'cover',
             backgroundPosition: 'center',
           }}

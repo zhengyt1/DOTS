@@ -1,17 +1,19 @@
-import { Avatar } from "@mui/material";
+import { Mention, MentionsInput } from 'react-mentions';
+import React, { useEffect, useRef, useState } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { Avatar } from '@mui/material';
 import Button from '@mui/material/Button';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import Chip from '@mui/material/Chip';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import Modal from '@mui/material/Modal';
-import './postDetail.css'
-import { Mention, MentionsInput } from "react-mentions";
-import { useEffect, useRef, useState } from "react";
-import { Link, useNavigate, useParams, } from 'react-router-dom';
-import { deletePost, getPostByID, getUser, updatePost, getUsers } from "../mockedAPI/mockedAPI";
-import { useSelector } from "react-redux";
-import EditPost from "./EditPost";
+import './postDetail.css';
+import {
+  deletePost, getPostByID, getUser, updatePost, getUsers,
+} from '../mockedAPI/mockedAPI';
+import EditPost from './EditPost';
 
 function PostDetail() {
   const userID = useSelector(state => state.userID.value);
@@ -173,20 +175,19 @@ function PostDetail() {
   const fetchMentionUsers = async (query, callBack) => {
     try {
       const allUsers = await getUsers();
-      const transformedAllUsers = allUsers.map(function (u) { return { id: u.id, display: u.username } });
+      const transformedAllUsers = allUsers.map((u) => ({ id: u._id, display: u.username }));
       if (!query) {
         callBack(transformedAllUsers);
-      }
-      else {
-        const filteredUsers = transformedAllUsers.filter((user) => user.display.toLowerCase().includes(query.toLowerCase()));
+      } else {
+        const filteredUsers = transformedAllUsers.filter(
+          (user) => user.display.toLowerCase().includes(query.toLowerCase()),
+        );
         callBack(filteredUsers);
       }
-    }
-    catch (error) {
+    } catch (error) {
       console.log(error);
-      return;
     }
-  }
+  };
 
   useEffect(() => {
     // console.log('in useEffect')
@@ -276,9 +277,11 @@ function PostDetail() {
                           <MentionsInput
                             className="edit-comment-input"
                             value={newCommentValue}
-                            forceSuggestionsAboveCursor={true}
-                            onChange={(e) => { setNewCommentValue(e.target.value); newComment.current = e.target.value }}
-
+                            forceSuggestionsAboveCursor
+                            onChange={(e) => {
+                              setNewCommentValue(e.target.value);
+                              newComment.current = e.target.value;
+                            }}
                           >
                             <Mention
                               data={fetchMentionUsers}
