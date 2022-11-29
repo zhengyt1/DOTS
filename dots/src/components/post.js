@@ -61,7 +61,7 @@ function Post(props) {
   const fetchMentionUsers = async (query, callBack) => {
     try {
       const allUsers = await getUsers();
-      const transformedAllUsers = allUsers.map(function (u) { return { _id: u._id, display: u.username } });
+      const transformedAllUsers = allUsers.map(function (u) { return { id: u._id, display: u.username } });
       if (!query) {
         callBack(transformedAllUsers);
       }
