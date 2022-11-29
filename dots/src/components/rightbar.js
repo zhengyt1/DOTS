@@ -63,7 +63,7 @@ function Rightbar(props) {
                     return;
                 }
                 rows.push(
-                    <Link to={`/profile/${item.id}`} key={`/profile/${item.id}`}>
+                    <Link to={`/profile/${item._id}`} key={`/profile/${item._id}`}>
                         <ListItem key={key}>
                             <ListItemAvatar>
                                 <Avatar
@@ -123,7 +123,7 @@ function Rightbar(props) {
                 justifyContent="center">
                 <List className="suggestUsersList">
                     {suggestFollowings.map((item, key)=>(   
-                        <Link to={`/profile/${item.id}`} key={`/profile/${item.id}`}>
+                        <Link to={`/profile/${item._id}`} key={`/profile/${item._id}`}>
                             <ListItem key={key}>
                                 <ListItemAvatar>
                                     <Avatar

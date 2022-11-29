@@ -82,7 +82,7 @@ const getUserByID = async (userID) => {
 const getUserByEmail = async (email) => {
     try {
         const db = await getDB();
-        const result = await db.collection('user').findOne({ email: email });
+        const result = await db.collection('user').findOne({ email });
         return result;
     }
     catch (err) {
@@ -90,14 +90,13 @@ const getUserByEmail = async (email) => {
     }
 }
 
-const updateUser = async (userID, field, value) => {
+const updateUser = async (userID, payload) => {
     try {
-        const payload = {};
-        payload[field] = value;
         const db = await getDB();
         const result = await db.collection('user').updateOne(
             { _id: ObjectId(userID) },
-            { $set: payload }
+            { $set: payload },
+            
         )
         return result;
     }
@@ -178,8 +177,11 @@ const getPostByID = async (postID) => {
 const getPostsByUserID = async (userID) => {
     try {
         const db = await getDB();
+        console.log(userID)
+        // 63855756fc77e865b7477a8a
+        // 6377e0b34661a1bbf54d80b1
         const result = await db.collection('post').find(
-            { owner: ObjectId(userID) }
+            { owner: userID },
         ).toArray();
         return result;
     }
@@ -188,14 +190,14 @@ const getPostsByUserID = async (userID) => {
     }
 }
 
-const updatePost = async (postID, field, value) => {
+const updatePost = async (postID, payload) => {
     try {
-        const payload = {};
-        payload[field] = value;
+        // const payload = {};
+        // payload[field] = value;
         const db = await getDB();
         const result = await db.collection('post').updateOne(
             { _id: ObjectId(postID) },
-            { $set: payload }
+            { $set: payload },
         )
         return result;
     }

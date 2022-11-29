@@ -23,14 +23,14 @@ function EditPost(props) {
     const handlePost = async (e) => {
         e.preventDefault();
 
-        await updatePost(props.post.id, "text", text);
+        await updatePost(props.post._id, "text", text);
 
         if (picChanged && pic) {
             //setPicChanged(false);
             const imageRef = ref(firebaseStorage, `images/${pic.name + Date.now()}`);
             uploadBytes(imageRef, pic).then(async (snapshot) => {
                 getDownloadURL(snapshot.ref).then(async (url) => {
-                    await updatePost(props.post.id, "pic", url);
+                    await updatePost(props.post._id, "pic", url);
                 });
             });
         } else if (videoChanged && video) {
@@ -38,7 +38,7 @@ function EditPost(props) {
             const videoRef = ref(firebaseStorage, `videos/${video.name + Date.now()}`);
             uploadBytes(videoRef, video).then(async (snapshot) => {
                 getDownloadURL(snapshot.ref).then(async (url) => {
-                    await updatePost(props.post.id, "video", url);
+                    await updatePost(props.post._id, "video", url);
                 });
             });
         } 

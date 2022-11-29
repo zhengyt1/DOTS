@@ -49,14 +49,17 @@ export default function Login() {
     //   password: data.get('password'),
     //   isConnected: isConnected,
     // });
+    const email = data.get('email');
+    const password = data.get('password');
+    if (email === '') {
+      alert("can't be empty");
+      return;
+    }
     try {
-      const user = await getUserByEmail(data.get("email"));
-      // console.log("user: ", user);
-      if (user.length >= 1) {
-        dispatch(userLogin(user[0].id));
-        // console.log(userID);
-        navigate('/home');
-      }
+      const user = await getUserByEmail(email, password);
+      dispatch(userLogin(user._id));
+      // console.log(userID);
+      navigate('/home');
     } catch (e) {
       console.log(e);
     }
