@@ -226,7 +226,7 @@ const createPost = async (postObject) => {
 const deletePost = async (postID) => {
     try {
         const db = await getDB();
-        const result = await db.collection('post').deleteOne({ _id: postID });
+        const result = await db.collection('post').deleteOne({ _id: ObjectId(postID) });
         return result;
     }
     catch (err) {
