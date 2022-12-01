@@ -48,22 +48,22 @@ const getAllUsers = async () => {
     }
 };
 
-const getUsersByIDs = async (userIDs) => {
-    try {
-        const ObjUserIDs = userIDs.map(id => ObjectId(id));
-        const db = await getDB();
-        const result = await db.collection('user').find(
-            {
-                _id:
-                    { $in: ObjUserIDs }
-            }).toArray();
-        // console.log(`${JSON.stringify(result)}`);
-        return result;
-    }
-    catch (err) {
-        console.error(err);
-    }
-}
+// const getUsersByIDs = async (userIDs) => {
+//     try {
+//         const ObjUserIDs = userIDs.map(id => ObjectId(id));
+//         const db = await getDB();
+//         const result = await db.collection('user').find(
+//             {
+//                 _id:
+//                     { $in: ObjUserIDs }
+//             }).toArray();
+//         // console.log(`${JSON.stringify(result)}`);
+//         return result;
+//     }
+//     catch (err) {
+//         console.error(err);
+//     }
+// }
 
 
 // READ a student given their ID
@@ -133,6 +133,7 @@ const getFollowings = async (userID) => {
                 _id: 0,
                 followings: 1
             });
+        console.log(result);
         return result.followings;
     }
     catch (err) {
@@ -234,6 +235,15 @@ const deletePost = async (postID) => {
     }
 }
 
+const deleteTestUser = async () => {
+    try {
+        const db = await getDB();
+        const result = await db.collection('user').deleteOne({ email: 'testuser@example.com' });
+        return result;
+    } catch (err) {
+        console.log('error', err.message);
+    }
+  };
 
 // TODO: getSuggestedFollowings
 // It should be implemented in `server.js` or `dbFunctions.js`?
@@ -254,7 +264,7 @@ module.exports = {
     connect,
     getAllUsers,
     getUserByID,
-    getUsersByIDs,
+    // getUsersByIDs,
     getUserByEmail,
     updateUser,
     createUser,
@@ -265,4 +275,5 @@ module.exports = {
     updatePost,
     createPost,
     deletePost,
+    deleteTestUser,
 };

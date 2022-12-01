@@ -57,8 +57,6 @@ function Share() {
           likes: [],
           isPrivate: isPrivate,
           createdTime: new Date(Date.now()).toISOString(),
-          mentions: tagUsersRef.current !== undefined && tagUsersRef.current !== null 
-                                            ? tagUsersRef.current.value.split(", ") : []
         };
 
         if (shareImage) {
