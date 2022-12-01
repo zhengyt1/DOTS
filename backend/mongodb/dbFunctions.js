@@ -177,7 +177,7 @@ const getPostByID = async (postID) => {
 const getPostsByUserID = async (userID) => {
     try {
         const db = await getDB();
-        console.log(userID)
+        // console.log(userID)
         // 63855756fc77e865b7477a8a
         // 6377e0b34661a1bbf54d80b1
         const result = await db.collection('post').find(
@@ -226,7 +226,7 @@ const createPost = async (postObject) => {
 const deletePost = async (postID) => {
     try {
         const db = await getDB();
-        const result = await db.collection('post').deleteOne({ _id: postID });
+        const result = await db.collection('post').deleteOne({ _id: ObjectId(postID) });
         return result;
     }
     catch (err) {
