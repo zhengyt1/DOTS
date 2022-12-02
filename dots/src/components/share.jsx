@@ -1,5 +1,7 @@
 /* eslint-disable jsx-a11y/media-has-caption */
 import React, { useRef, useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { message } from 'antd';
 import './share.css';
 import { Cancel } from '@mui/icons-material';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
@@ -7,12 +9,12 @@ import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import MovieCreationIcon from '@mui/icons-material/MovieCreation';
 import { Switch } from '@mui/material';
 import TextField from '@mui/material/TextField';
-import { useSelector } from 'react-redux';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { createPost, getUser } from '../mockedAPI/mockedAPI';
 import firebaseStorage from '../firebase/firebase';
 
 function Share() {
+  const [messageApi, contextHolder] = message.useMessage();
   const shareTextRef = useRef();
   const tagUsersRef = useRef();
   const [shareImage, setImage] = useState(null);
@@ -76,7 +78,7 @@ function Share() {
         });
       });
     } else {
-      window.alert('Please share with an Image or Video');
+      messageApi.info('Please share with an Image or Video');
     }
     if (shareTextRef.current !== undefined && shareTextRef.current !== null) {
       shareTextRef.current.value = '';
@@ -104,6 +106,7 @@ function Share() {
 
   return (
     <div className="share">
+      {contextHolder}
       <div className="shareWrapper">
         <div className="shareTop">
           <img

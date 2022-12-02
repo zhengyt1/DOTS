@@ -30,17 +30,18 @@ const clearDatabase = async () => {
     await dbLib.deletePost(testPostID);
     const { deletedCount } = result;
     if (deletedCount === 1) {
-      console.log('info', 'Successfully deleted player');
+      throw new Error('info', 'Successfully deleted player');
     } else {
-      console.log('warning', 'player was not deleted');
+      throw new Error('warning', 'player was not deleted');
     }
   } catch (err) {
-    console.log('error', err.message);
+    throw new Error('error', err.message);
   }
 };
 
 afterAll(async () => {
   await clearDatabase();
+  dbLib.closeMongoDBConnection();
 });
 
 describe('Database operations tests', () => {

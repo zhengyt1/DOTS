@@ -5,5 +5,5 @@ const port = 8080;
 
 // start the server and connect to the DB
 webapp.listen(port, async () => {
-  console.log(`Server running on port: ${port}`);
+  console.log(`Server running on port: ${port}`); // eslint-disable-line no-console
 });

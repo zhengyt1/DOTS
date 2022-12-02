@@ -18,10 +18,10 @@ const connect = async () => {
       { useNewUrlParser: true, useUnifiedTopology: true },
     )); // we return the entire connection, not just the DB
     // check that we are connected to the db
-    console.log(`connected to db: ${MongoConnection.db().databaseName}`);
+    console.log(`connected to db: ${MongoConnection.db().databaseName}`); // eslint-disable-line no-console
     return MongoConnection;
   } catch (err) {
-    console.log(err.message);
+    throw new Error(err.message);
   }
 };
 
@@ -44,7 +44,7 @@ const getAllUsers = async () => {
     const result = await db.collection('user').find({}).toArray();
     return result;
   } catch (err) {
-    console.log(`error: ${err.message}`);
+    throw new Error(`error: ${err.message}`);
   }
 };
 
@@ -57,14 +57,13 @@ const getAllUsers = async () => {
 //                 _id:
 //                     { $in: ObjUserIDs }
 //             }).toArray();
-//         // console.log(`${JSON.stringify(result)}`);
+//         // throw new Error(`${JSON.stringify(result)}`);
 //         return result;
 //     }
 //     catch (err) {
 //         console.error(err);
 //     }
 // }
-
 
 // READ a student given their ID
 const getUserByID = async (userID) => {
@@ -74,7 +73,7 @@ const getUserByID = async (userID) => {
     const result = await db.collection('user').findOne({ _id: ObjectId(userID) });
     return result;
   } catch (err) {
-    console.log(`error: ${err.message}`);
+    throw new Error(`error: ${err.message}`);
   }
 };
 
@@ -84,11 +83,10 @@ const getUserByEmail = async (userEmail) => {
     const db = await getDB();
     const result = await db.collection('user').findOne({ email: userEmail });
     return result;
+  } catch (err) {
+    throw new Error(`error: ${err.message}`);
   }
-  catch (err) {
-    console.log(`error: ${err.message}`);
-  }
-}
+};
 
 const updateUser = async (userID, payload) => {
   try {
@@ -97,30 +95,27 @@ const updateUser = async (userID, payload) => {
       { _id: ObjectId(userID) },
       { $set: payload },
 
-    )
+    );
     return result;
+  } catch (err) {
+    throw new Error(`error: ${err.message}`);
   }
-  catch (err) {
-    console.log(`error: ${err.message}`);
-  }
-}
+};
 
 const createUser = async (userObject) => {
   try {
     const db = await getDB();
     const result = await db.collection('user').insertOne(
-      userObject
-    )
-    // result contains 
+      userObject,
+    );
+    // result contains
     // - A boolean `acknowledged`
     // - A field `insertedId` with the _id value
     return result;
+  } catch (err) {
+    throw new Error(`error: ${err.message}`);
   }
-  catch (err) {
-    console.log(`error: ${err.message}`);
-  }
-}
-
+};
 
 const getFollowings = async (userID) => {
   try {
@@ -131,15 +126,14 @@ const getFollowings = async (userID) => {
       { _id: ObjectId(userID) },
       {
         _id: 0,
-        followings: 1
-      });
-    console.log(result);
+        followings: 1,
+      },
+    );
     return result.followings;
+  } catch (err) {
+    throw new Error(`error: ${err.message}`);
   }
-  catch (err) {
-    console.log(`error: ${err.message}`);
-  }
-}
+};
 
 const getFollowers = async (userID) => {
   try {
@@ -150,14 +144,14 @@ const getFollowers = async (userID) => {
       { _id: ObjectId(userID) },
       {
         _id: 0,
-        followers: 1
-      });
+        followers: 1,
+      },
+    );
     return result.followers;
+  } catch (err) {
+    throw new Error(err);
   }
-  catch (err) {
-    console.error(err);
-  }
-}
+};
 
 // TODO: getFeed
 // It should be implemented in `server.js` or `dbFunctions.js`?
@@ -166,28 +160,26 @@ const getPostByID = async (postID) => {
   try {
     const db = await getDB();
     const result = await db.collection('post').findOne(
-      { _id: ObjectId(postID) }
+      { _id: ObjectId(postID) },
     );
     return result;
+  } catch (err) {
+    throw new Error(`error: ${err.message}`);
   }
-  catch (err) {
-    console.log(`error: ${err.message}`);
-  }
-}
+};
 
 const getPostsByUserID = async (userID) => {
-    try {
-        const db = await getDB();
+  try {
+    const db = await getDB();
 
-        const result = await db.collection('post').find(
-            { owner: userID },
-        ).toArray();
-        return result;
-    }
-    catch (err) {
-        console.log(`error: ${err.message}`);
-    }
-}
+    const result = await db.collection('post').find(
+      { owner: userID },
+    ).toArray();
+    return result;
+  } catch (err) {
+    throw new Error(`error: ${err.message}`);
+  }
+};
 
 const updatePost = async (postID, payload) => {
   try {
@@ -197,41 +189,37 @@ const updatePost = async (postID, payload) => {
     const result = await db.collection('post').updateOne(
       { _id: ObjectId(postID) },
       { $set: payload },
-    )
+    );
     return result;
+  } catch (err) {
+    throw new Error(`error: ${err.message}`);
   }
-  catch (err) {
-    console.log(`error: ${err.message}`);
-  }
-}
-
+};
 
 const createPost = async (postObject) => {
   try {
     const db = await getDB();
     const result = await db.collection('post').insertOne(
-      postObject
-    )
-    // result contains 
+      postObject,
+    );
+    // result contains
     // - A boolean `acknowledged`
     // - A field `insertedId` with the _id value
     return result;
+  } catch (err) {
+    throw new Error(`error: ${err.message}`);
   }
-  catch (err) {
-    console.log(`error: ${err.message}`);
-  }
-}
+};
 
 const deletePost = async (postID) => {
   try {
     const db = await getDB();
     const result = await db.collection('post').deleteOne({ _id: ObjectId(postID) });
     return result;
+  } catch (err) {
+    throw new Error(`error: ${err.message}`);
   }
-  catch (err) {
-    console.log(`error: ${err.message}`);
-  }
-}
+};
 
 const deleteTestUser = async () => {
   try {
@@ -239,7 +227,7 @@ const deleteTestUser = async () => {
     const result = await db.collection('user').deleteOne({ email: 'testuser@example.com' });
     return result;
   } catch (err) {
-    console.log('error', err.message);
+    throw new Error('error', err.message);
   }
 };
 

@@ -1,5 +1,6 @@
 /* eslint-disable jsx-a11y/media-has-caption */
 import { React, useState } from 'react';
+import { message } from 'antd';
 import {
   Alert,
   Avatar,
@@ -20,6 +21,7 @@ import firebaseStorage from '../firebase/firebase';
 import { updatePost } from '../mockedAPI/mockedAPI';
 
 function EditPost(props) {
+  const [messageApi, contextHolder] = message.useMessage();
   const { post, username, avatar } = props;
   const [text, setText] = useState(post.text);
   const [pic, setPic] = useState(post.pic);
@@ -49,7 +51,7 @@ function EditPost(props) {
       });
     }
     if (!pic && !video) {
-      window.alert('Please share with an Image or Video');
+      messageApi.info('Please share with an Image or Video');
     } else {
       setOpenAlert(true);
     }
@@ -72,6 +74,7 @@ function EditPost(props) {
   return (
     <>
       <div className="left-part">
+        {contextHolder}
         {video && (
         <div className="shareImgContainer">
           <video controls>

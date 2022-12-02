@@ -1,9 +1,9 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit';
 
 export const userIDReducer = createSlice({
   name: 'userID',
   initialState: {
-    value: ""
+    value: '',
   },
   reducers: {
     userLogin: (state, action) => {
@@ -11,15 +11,15 @@ export const userIDReducer = createSlice({
       // doesn't actually mutate the state because it uses the Immer library,
       // which detects changes to a "draft state" and produces a brand new
       // immutable state based off those changes
-      state.value = action.payload
+      state.value = action.payload;
     },
-    userLogout: (state, action) => {
-      state.value = ""
-    }
-  }
-})
+    userLogout: (state) => {
+      state.value = '';
+    },
+  },
+});
 
 // Action creators are generated for each case reducer function
-export const { userLogin, userLogout } = userIDReducer.actions
+export const { userLogin, userLogout } = userIDReducer.actions;
 
-export default userIDReducer.reducer
+export default userIDReducer.reducer;
