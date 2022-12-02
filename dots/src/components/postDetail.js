@@ -332,7 +332,7 @@ function PostDetail() {
                           <div className="comment-text" id="comment-text-nonInput">
                             {
                               item.comment.split('@@@__').map(
-                                (i, k) => (<span key={k}>{mapComment(i)}</span>),
+                                (i) => (<span key={i._id}>{mapComment(i)}</span>),
                               )
                             }
                           </div>

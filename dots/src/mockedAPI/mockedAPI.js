@@ -3,7 +3,7 @@ import { faker } from '@faker-js/faker';
 /*
 **** Example Usage
 async function fetchData() {
-    const roster = await getUsers(); 
+    const roster = await getUsers();
     const user = await getUsersByUsername("jjohn");
     const updatePostResponse = await updatePost("1", "text", "today is a good day!");
     const deleteUserResponse = await deleteUser("1");
@@ -27,24 +27,10 @@ export const getUsers = async () => {
     return response.data.data;
     // the data is stored in the mockData
     // field of the response
+  } catch (err) {
+    throw new Error(err);
   }
-  catch (err) {
-    console.error(err);
-  }
-}
-
-export const getUsersByIds = async (useIds) => {
-  try {
-    return Promise.all(
-      useIds.map(async id => {
-        return await getUser(id);
-      })
-    )
-  }
-  catch (err) {
-    console.error(err);
-  }
-}
+};
 
 // get user by id
 export const getUser = async (userID) => {
@@ -52,11 +38,20 @@ export const getUser = async (userID) => {
     const response = await axios.get(`${rootURL}/user/${userID}`);
     // console.log(userID, response);
     return response.data.data;
+  } catch (err) {
+    throw new Error(err);
   }
-  catch (err) {
-    console.error(err);
+};
+
+export const getUsersByIds = async (useIds) => {
+  try {
+    return Promise.all(
+      useIds.map(async (id) => getUser(id)),
+    );
+  } catch (err) {
+    throw new Error(err);
   }
-}
+};
 
 // get user by email
 export const getUserByEmail = async (email, password) => {
@@ -66,11 +61,10 @@ export const getUserByEmail = async (email, password) => {
       { email, password },
     );
     return response.data.data;
+  } catch (err) {
+    throw new Error(err);
   }
-  catch (err) {
-    console.error(err.response.data.message);
-  }
-}
+};
 
 // get user by username => return array of users
 // export const getUsersByUsername = async (username) => {
@@ -93,21 +87,14 @@ export const updateUser = async (userID, field, value) => {
       payload,
     );
     return response.data.data;
+  } catch (err) {
+    throw new Error(err);
   }
-  catch (err) {
-    console.error(err);
-  }
-}
+};
 
 // create user
 export const createUser = async (userObject) => {
   try {
-    // const response = await axios.post(
-    //     `${rootURL}/user`,
-    //     `username=${userObject.username}&password=${userObject.password}&
-    //     avatar=${userObject.avatar}&email=${userObject.email}&description=${userObject.description}&
-    //     followers=${userObject.followers}&followings=${userObject.followings}&posts=${userObject.posts}`
-    // );
     const user = {
       username: faker.internet.userName(),
       avatar: faker.image.avatar(),
@@ -116,17 +103,16 @@ export const createUser = async (userObject) => {
       description: '',
       followers: [],
       followings: [],
-    }
+    };
     const response = await axios.post(
       `${rootURL}/user`,
       user,
     );
     return response.data.data.insertedId;
+  } catch (err) {
+    throw new Error(err);
   }
-  catch (err) {
-    console.error(err.response.data.message);
-  }
-}
+};
 
 // delete user
 // export const deleteUser = async (userID) => {
@@ -146,12 +132,10 @@ export const getFollowings = async (userID) => {
     return response.data.data.followings;
     // the data is stored in the mockData
     // field of the response
+  } catch (err) {
+    throw new Error(err);
   }
-  catch (err) {
-    console.error(err);
-
-  }
-}
+};
 
 // get all posts in the DB
 // export const getPosts = async () => {
@@ -167,36 +151,15 @@ export const getFollowings = async (userID) => {
 //     }
 // }
 
-export const getFeed = async (userID) => {
-  try {
-    const followings = await getFollowings(userID);
-    const run = async () => {
-      return await Promise.all(
-        followings.map(async id => {
-          return await getPostsByUserID(id);
-        })
-      );
-    }
-    const posts = await run();
-
-    return posts.flat();
-  }
-  catch (err) {
-    console.error(err);
-  }
-}
-
-
 // get post by id
 export const getPostByID = async (postID) => {
   try {
     const response = await axios.get(`${rootURL}/post/${postID}`);
     return response.data.data;
+  } catch (err) {
+    throw new Error(err);
   }
-  catch (err) {
-    console.error(err);
-  }
-}
+};
 
 // get post by user ID => return array of posts
 
@@ -204,11 +167,24 @@ export const getPostsByUserID = async (userID) => {
   try {
     const response = await axios.get(`${rootURL}/post?owner=${userID}`);
     return response.data.data;
+  } catch (err) {
+    throw new Error(err);
   }
-  catch (err) {
-    console.error(err);
+};
+
+export const getFeed = async (userID) => {
+  try {
+    const followings = await getFollowings(userID);
+    const run = async () => Promise.all(
+      followings.map(async (id) => getPostsByUserID(id)),
+    );
+    const posts = await run();
+
+    return posts.flat();
+  } catch (err) {
+    throw new Error(err);
   }
-}
+};
 
 // update post field by value
 export const updatePost = async (postID, field, value) => {
@@ -220,11 +196,10 @@ export const updatePost = async (postID, field, value) => {
       payload,
     );
     return response.data.data;
+  } catch (err) {
+    throw new Error(err);
   }
-  catch (err) {
-    console.error(err);
-  }
-}
+};
 // {
 //     text: shareTextRef.current.value,
 //     pic: "",
@@ -234,32 +209,28 @@ export const updatePost = async (postID, field, value) => {
 //     likes: [],
 //     isPrivate: isPrivate,
 //     createdTime: new Date(Date.now()).toISOString(),
-//     mentions: tagUsersRef.current !== undefined && tagUsersRef.current !== null 
+//     mentions: tagUsersRef.current !== undefined && tagUsersRef.current !== null
 //                                       ? tagUsersRef.current.value.split(", ") : []
 //   };
 // create user
 export const createPost = async (postObject) => {
   try {
-    const response = await axios.post(
-      `${rootURL}/post`, postObject
-    );
+    const response = await axios.post(`${rootURL}/post`, postObject);
     return response.data.data;
+  } catch (err) {
+    throw new Error(err);
   }
-  catch (err) {
-    console.error(err);
-  }
-}
+};
 
 // delete post
 export const deletePost = async (postID) => {
   try {
     const response = await axios.delete(`${rootURL}/post/${postID}`);
     return response.data.data;
+  } catch (err) {
+    throw new Error(err);
   }
-  catch (err) {
-    console.error(err);
-  }
-}
+};
 
 // get comment by id
 // export const getCommentByID = async (commentID) => {
@@ -367,16 +338,14 @@ export const deletePost = async (postID) => {
 //     }
 // }
 
-
 export const getFollowers = async (userID) => {
   try {
     const response = await axios.get(`${rootURL}/user/${userID}`);
     return response.data.data.followers;
+  } catch (err) {
+    throw new Error(err);
   }
-  catch (err) {
-    console.error(err);
-  }
-}
+};
 
 export const getSuggestedFollowings = async (userID) => {
   try {
@@ -384,7 +353,7 @@ export const getSuggestedFollowings = async (userID) => {
     const myFollowings = await getFollowings(userID);
     const suggestedList = [];
 
-    for (let i = 0; i < users.length; i++) {
+    for (let i = 0; i < users.length; i += 1) {
       if (users[i].followings.length > 0 && users[i]._id !== userID) {
         const intersection = myFollowings.filter((x) => users[i].followings.includes(x));
         // include users with >=3 common followings, exclude already followed users
@@ -394,8 +363,7 @@ export const getSuggestedFollowings = async (userID) => {
       }
     }
     return suggestedList;
-  }
-  catch (err) {
-    console.error(err);
+  } catch (err) {
+    throw new Error(err);
   }
 };

@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { message } from 'antd';
 import { Stack } from '@mui/material';
+import { message } from 'antd';
 import Navbar from '../components/navbar';
 import Rightbar from '../components/rightbar';
 import Feed from '../components/feed';
@@ -12,6 +12,8 @@ import { getFeed } from '../mockedAPI/mockedAPI';
 
 function Home() {
   const userID = useSelector((state) => state.userID.value);
+  // console.log(userID);
+
   const [posts, setPosts] = useState([]);
   const loadFeed = useRef(false);
   const [messageApi, contextHolder] = message.useMessage();
@@ -25,7 +27,7 @@ function Home() {
       messageApi.info('userID is empty, need to loggin first. Go back to /.');
     }
     if (loadFeed.current === false && userID !== '') {
-      // console.log('loadFeed');
+      // console.log("loadFeed");
       fetchFeed();
       loadFeed.current = true;
     }
