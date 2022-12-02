@@ -16,7 +16,7 @@ import './EditPost.css';
 
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import PropTypes from 'prop-types';
-import { firebaseStorage } from '../firebase/firebase';
+import firebaseStorage from '../firebase/firebase';
 import { updatePost } from '../mockedAPI/mockedAPI';
 
 function EditPost(props) {

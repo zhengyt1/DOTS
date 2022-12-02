@@ -10,7 +10,7 @@ import TextField from '@mui/material/TextField';
 import { useSelector } from 'react-redux';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { createPost, getUser } from '../mockedAPI/mockedAPI';
-import { firebaseStorage } from '../firebase/firebase';
+import firebaseStorage from '../firebase/firebase';
 
 function Share() {
   const shareTextRef = useRef();
