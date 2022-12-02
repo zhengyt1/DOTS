@@ -11,41 +11,41 @@ const dbURL = 'mongodb+srv://dbUser:Group21_@team21.8nk7d4t.mongodb.net/DOTS?ret
 let MongoConnection;
 
 const connect = async () => {
-    // always use try/catch to handle any exception
-    try {
-        MongoConnection = (await MongoClient.connect(
-            dbURL,
-            { useNewUrlParser: true, useUnifiedTopology: true },
-        )); // we return the entire connection, not just the DB
-        // check that we are connected to the db
-        console.log(`connected to db: ${MongoConnection.db().databaseName}`);
-        return MongoConnection;
-    } catch (err) {
-        console.log(err.message);
-    }
+  // always use try/catch to handle any exception
+  try {
+    MongoConnection = (await MongoClient.connect(
+      dbURL,
+      { useNewUrlParser: true, useUnifiedTopology: true },
+    )); // we return the entire connection, not just the DB
+    // check that we are connected to the db
+    console.log(`connected to db: ${MongoConnection.db().databaseName}`);
+    return MongoConnection;
+  } catch (err) {
+    console.log(err.message);
+  }
 };
 
 const getDB = async () => {
-    if (!MongoConnection) {
-        await connect();
-    }
-    return MongoConnection.db();
+  if (!MongoConnection) {
+    await connect();
+  }
+  return MongoConnection.db();
 };
 
 const closeMongoDBConnection = async () => {
-    await MongoConnection.close();
+  await MongoConnection.close();
 };
 
 // READ all students
 // await/async syntax
 const getAllUsers = async () => {
-    try {
-        const db = await getDB();
-        const result = await db.collection('user').find({}).toArray();
-        return result;
-    } catch (err) {
-        console.log(`error: ${err.message}`);
-    }
+  try {
+    const db = await getDB();
+    const result = await db.collection('user').find({}).toArray();
+    return result;
+  } catch (err) {
+    console.log(`error: ${err.message}`);
+  }
 };
 
 // const getUsersByIDs = async (userIDs) => {
@@ -68,119 +68,117 @@ const getAllUsers = async () => {
 
 // READ a student given their ID
 const getUserByID = async (userID) => {
-    try {
-        // get the db
-        const db = await getDB();
-        const result = await db.collection('user').findOne({ _id: ObjectId(userID) });
-        return result;
-    } catch (err) {
-        console.log(`error: ${err.message}`);
-    }
+  try {
+    // get the db
+    const db = await getDB();
+    const result = await db.collection('user').findOne({ _id: ObjectId(userID) });
+    return result;
+  } catch (err) {
+    console.log(`error: ${err.message}`);
+  }
 };
 
 // get user by email
-const getUserByEmail = async (email) => {
-    try {
-        const db = await getDB();
-        const result = await db.collection('user').findOne({ email });
-        return result;
-    }
-    catch (err) {
-        console.log(`error: ${err.message}`);
-    }
+const getUserByEmail = async (userEmail) => {
+  try {
+    const db = await getDB();
+    const result = await db.collection('user').findOne({ email: userEmail });
+    return result;
+  }
+  catch (err) {
+    console.log(`error: ${err.message}`);
+  }
 }
 
 const updateUser = async (userID, payload) => {
-    try {
-        const db = await getDB();
-        const result = await db.collection('user').updateOne(
-            { _id: ObjectId(userID) },
-            { $set: payload },
-            
-        )
-        return result;
-    }
-    catch (err) {
-        console.log(`error: ${err.message}`);
-    }
+  try {
+    const db = await getDB();
+    const result = await db.collection('user').updateOne(
+      { _id: ObjectId(userID) },
+      { $set: payload },
+
+    )
+    return result;
+  }
+  catch (err) {
+    console.log(`error: ${err.message}`);
+  }
 }
 
 const createUser = async (userObject) => {
-    try {
-        const db = await getDB();
-        const result = await db.collection('user').insertOne(
-            userObject
-        )
-        // result contains 
-        // - A boolean `acknowledged`
-        // - A field `insertedId` with the _id value
-        return result;
-    }
-    catch (err) {
-        console.log(`error: ${err.message}`);
-    }
+  try {
+    const db = await getDB();
+    const result = await db.collection('user').insertOne(
+      userObject
+    )
+    // result contains 
+    // - A boolean `acknowledged`
+    // - A field `insertedId` with the _id value
+    return result;
+  }
+  catch (err) {
+    console.log(`error: ${err.message}`);
+  }
 }
 
 
 const getFollowings = async (userID) => {
-    try {
-        const db = await getDB();
-        // Bug: I used the proction to select only `followings` field
-        // but it still returns all the fields.
-        const result = await db.collection('user').findOne(
-            { _id: ObjectId(userID) },
-            {
-                _id: 0,
-                followings: 1
-            });
-        console.log(result);
-        return result.followings;
-    }
-    catch (err) {
-        console.log(`error: ${err.message}`);
-    }
+  try {
+    const db = await getDB();
+    // Bug: I used the proction to select only `followings` field
+    // but it still returns all the fields.
+    const result = await db.collection('user').findOne(
+      { _id: ObjectId(userID) },
+      {
+        _id: 0,
+        followings: 1
+      });
+    console.log(result);
+    return result.followings;
+  }
+  catch (err) {
+    console.log(`error: ${err.message}`);
+  }
 }
 
 const getFollowers = async (userID) => {
-    try {
-        const db = await getDB();
-        // Bug: I used the proction to select only `followers` field
-        // but it still returns all the fields.
-        const result = await db.collection('user').findOne(
-            { _id: ObjectId(userID) },
-            {
-                _id: 0,
-                followers: 1
-            });
-        return result.followers;
-    }
-    catch (err) {
-        console.error(err);
-    }
+  try {
+    const db = await getDB();
+    // Bug: I used the proction to select only `followers` field
+    // but it still returns all the fields.
+    const result = await db.collection('user').findOne(
+      { _id: ObjectId(userID) },
+      {
+        _id: 0,
+        followers: 1
+      });
+    return result.followers;
+  }
+  catch (err) {
+    console.error(err);
+  }
 }
 
 // TODO: getFeed
 // It should be implemented in `server.js` or `dbFunctions.js`?
 
 const getPostByID = async (postID) => {
-    try {
-        const db = await getDB();
-        const result = await db.collection('post').findOne(
-            { _id: ObjectId(postID) }
-        );
-        return result;
-    }
-    catch (err) {
-        console.log(`error: ${err.message}`);
-    }
+  try {
+    const db = await getDB();
+    const result = await db.collection('post').findOne(
+      { _id: ObjectId(postID) }
+    );
+    return result;
+  }
+  catch (err) {
+    console.log(`error: ${err.message}`);
+  }
 }
 
 const getPostsByUserID = async (userID) => {
     try {
         const db = await getDB();
-        // console.log(userID)
-        // 63855756fc77e865b7477a8a
-        // 6377e0b34661a1bbf54d80b1
+
         const result = await db.collection('post').find(
             { owner: userID },
         ).toArray();
@@ -192,58 +190,58 @@ const getPostsByUserID = async (userID) => {
 }
 
 const updatePost = async (postID, payload) => {
-    try {
-        // const payload = {};
-        // payload[field] = value;
-        const db = await getDB();
-        const result = await db.collection('post').updateOne(
-            { _id: ObjectId(postID) },
-            { $set: payload },
-        )
-        return result;
-    }
-    catch (err) {
-        console.log(`error: ${err.message}`);
-    }
+  try {
+    // const payload = {};
+    // payload[field] = value;
+    const db = await getDB();
+    const result = await db.collection('post').updateOne(
+      { _id: ObjectId(postID) },
+      { $set: payload },
+    )
+    return result;
+  }
+  catch (err) {
+    console.log(`error: ${err.message}`);
+  }
 }
 
 
 const createPost = async (postObject) => {
-    try {
-        const db = await getDB();
-        const result = await db.collection('post').insertOne(
-            postObject
-        )
-        // result contains 
-        // - A boolean `acknowledged`
-        // - A field `insertedId` with the _id value
-        return result;
-    }
-    catch (err) {
-        console.log(`error: ${err.message}`);
-    }
+  try {
+    const db = await getDB();
+    const result = await db.collection('post').insertOne(
+      postObject
+    )
+    // result contains 
+    // - A boolean `acknowledged`
+    // - A field `insertedId` with the _id value
+    return result;
+  }
+  catch (err) {
+    console.log(`error: ${err.message}`);
+  }
 }
 
 const deletePost = async (postID) => {
-    try {
-        const db = await getDB();
-        const result = await db.collection('post').deleteOne({ _id: ObjectId(postID) });
-        return result;
-    }
-    catch (err) {
-        console.log(`error: ${err.message}`);
-    }
+  try {
+    const db = await getDB();
+    const result = await db.collection('post').deleteOne({ _id: ObjectId(postID) });
+    return result;
+  }
+  catch (err) {
+    console.log(`error: ${err.message}`);
+  }
 }
 
 const deleteTestUser = async () => {
-    try {
-        const db = await getDB();
-        const result = await db.collection('user').deleteOne({ email: 'testuser@example.com' });
-        return result;
-    } catch (err) {
-        console.log('error', err.message);
-    }
-  };
+  try {
+    const db = await getDB();
+    const result = await db.collection('user').deleteOne({ email: 'testuser@example.com' });
+    return result;
+  } catch (err) {
+    console.log('error', err.message);
+  }
+};
 
 // TODO: getSuggestedFollowings
 // It should be implemented in `server.js` or `dbFunctions.js`?
@@ -259,21 +257,21 @@ const deleteTestUser = async () => {
 
 // export the functions
 module.exports = {
-    closeMongoDBConnection,
-    getDB,
-    connect,
-    getAllUsers,
-    getUserByID,
-    // getUsersByIDs,
-    getUserByEmail,
-    updateUser,
-    createUser,
-    getFollowings,
-    getFollowers,
-    getPostByID,
-    getPostsByUserID,
-    updatePost,
-    createPost,
-    deletePost,
-    deleteTestUser,
+  closeMongoDBConnection,
+  getDB,
+  connect,
+  getAllUsers,
+  getUserByID,
+  // getUsersByIDs,
+  getUserByEmail,
+  updateUser,
+  createUser,
+  getFollowings,
+  getFollowers,
+  getPostByID,
+  getPostsByUserID,
+  updatePost,
+  createPost,
+  deletePost,
+  deleteTestUser,
 };
