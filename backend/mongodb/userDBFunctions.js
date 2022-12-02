@@ -48,23 +48,6 @@ const getAllUsers = async () => {
   }
 };
 
-// const getUsersByIDs = async (userIDs) => {
-//     try {
-//         const ObjUserIDs = userIDs.map(id => ObjectId(id));
-//         const db = await getDB();
-//         const result = await db.collection('user').find(
-//             {
-//                 _id:
-//                     { $in: ObjUserIDs }
-//             }).toArray();
-//         // throw new Error(`${JSON.stringify(result)}`);
-//         return result;
-//     }
-//     catch (err) {
-//         console.error(err);
-//     }
-// }
-
 // READ a student given their ID
 const getUserByID = async (userID) => {
   try {
@@ -153,74 +136,6 @@ const getFollowers = async (userID) => {
   }
 };
 
-// TODO: getFeed
-// It should be implemented in `server.js` or `dbFunctions.js`?
-
-const getPostByID = async (postID) => {
-  try {
-    const db = await getDB();
-    const result = await db.collection('post').findOne(
-      { _id: ObjectId(postID) },
-    );
-    return result;
-  } catch (err) {
-    throw new Error(`error: ${err.message}`);
-  }
-};
-
-const getPostsByUserID = async (userID) => {
-  try {
-    const db = await getDB();
-
-    const result = await db.collection('post').find(
-      { owner: userID },
-    ).toArray();
-    return result;
-  } catch (err) {
-    throw new Error(`error: ${err.message}`);
-  }
-};
-
-const updatePost = async (postID, payload) => {
-  try {
-    // const payload = {};
-    // payload[field] = value;
-    const db = await getDB();
-    const result = await db.collection('post').updateOne(
-      { _id: ObjectId(postID) },
-      { $set: payload },
-    );
-    return result;
-  } catch (err) {
-    throw new Error(`error: ${err.message}`);
-  }
-};
-
-const createPost = async (postObject) => {
-  try {
-    const db = await getDB();
-    const result = await db.collection('post').insertOne(
-      postObject,
-    );
-    // result contains
-    // - A boolean `acknowledged`
-    // - A field `insertedId` with the _id value
-    return result;
-  } catch (err) {
-    throw new Error(`error: ${err.message}`);
-  }
-};
-
-const deletePost = async (postID) => {
-  try {
-    const db = await getDB();
-    const result = await db.collection('post').deleteOne({ _id: ObjectId(postID) });
-    return result;
-  } catch (err) {
-    throw new Error(`error: ${err.message}`);
-  }
-};
-
 const deleteTestUser = async () => {
   try {
     const db = await getDB();
@@ -230,9 +145,6 @@ const deleteTestUser = async () => {
     throw new Error('error', err.message);
   }
 };
-
-// TODO: getSuggestedFollowings
-// It should be implemented in `server.js` or `dbFunctions.js`?
 
 // For TEST:
 // getUsersByIDs(['6377e0b34661a1bbf54d80b1', '6377e1b64661a1bbf54d80b2']);
@@ -256,10 +168,5 @@ module.exports = {
   createUser,
   getFollowings,
   getFollowers,
-  getPostByID,
-  getPostsByUserID,
-  updatePost,
-  createPost,
-  deletePost,
   deleteTestUser,
 };
