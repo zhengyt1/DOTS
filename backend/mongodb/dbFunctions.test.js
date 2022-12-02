@@ -30,12 +30,12 @@ const clearDatabase = async () => {
     await dbLib.deletePost(testPostID);
     const { deletedCount } = result;
     if (deletedCount === 1) {
-      throw new Error('info', 'Successfully deleted player');
+      console.log('info', 'Successfully deleted player'); // eslint-disable-line no-console
     } else {
       throw new Error('warning', 'player was not deleted');
     }
   } catch (err) {
-    throw new Error('error', err.message);
+    throw new Error('error', err);
   }
 };
 
