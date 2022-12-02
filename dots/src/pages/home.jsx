@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Stack } from '@mui/material';
+import { message } from 'antd';
 import Navbar from '../components/navbar';
 import Rightbar from '../components/rightbar';
 import Feed from '../components/feed';
@@ -15,6 +16,7 @@ function Home() {
 
   const [posts, setPosts] = useState([]);
   const loadFeed = useRef(false);
+  const [messageApi, contextHolder] = message.useMessage();
 
   useEffect(() => {
     async function fetchFeed() {
@@ -22,7 +24,7 @@ function Home() {
       setPosts(data);
     }
     if (userID === '') {
-      window.alert('userID is empty, need to loggin first. Go back to /.');
+      messageApi.info('userID is empty, need to loggin first. Go back to /.');
     }
     if (loadFeed.current === false && userID !== '') {
       // console.log("loadFeed");
@@ -33,6 +35,7 @@ function Home() {
 
   return (
     <div>
+      {contextHolder}
       {userID === '' ? (
         <Link to="/">
           <div>Login error, click to login.</div>
