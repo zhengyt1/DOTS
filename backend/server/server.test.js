@@ -56,7 +56,7 @@ afterAll(async () => {
     await dbLib.deletePost(postID);
     await dbLib.closeMongoDBConnection(); // mongo client that started server.
   } catch (err) {
-    console.log(err);
+    throw new Error(err);
   }
 });
 
