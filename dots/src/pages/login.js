@@ -1,4 +1,8 @@
-import * as React from 'react';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import PropTypes from 'prop-types';
+import { message } from 'antd';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -12,61 +16,60 @@ import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { useNavigate } from 'react-router-dom';
 import { getUserByEmail } from '../mockedAPI/mockedAPI';
-import { useDispatch } from 'react-redux'
-import { userLogin,  } from '../reducers';
+import { userLogin } from '../reducers';
 
 function Copyright(props) {
+  const { sx } = props;
   return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
+    <Typography variant="body2" color="text.secondary" align="center" sx={sx}>
       {'Copyright © '}
       <Link color="inherit" href="https://mui.com/">
         Your Website
-      </Link>{' '}
+      </Link>
+      {' '}
       {new Date().getFullYear()}
-      {'.'}
+      .
     </Typography>
   );
 }
 
+Copyright.propTypes = {
+  sx: PropTypes.shape({ mt: PropTypes.number.isRequired }).isRequired,
+};
+
 const theme = createTheme();
 
 export default function Login() {
-  // const userID = useSelector(state => state.userID.value);
-  // console.log("userID: ", userID);
-  const dispatch = useDispatch()
+  const [messageApi, contextHolder] = message.useMessage();
+  const dispatch = useDispatch();
 
-  let navigate = useNavigate()
+  const navigate = useNavigate();
   // console.log("route: ", route)
-  
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     // setIsConnected(true);
     const data = new FormData(event.currentTarget);
-    // console.log({
-    //   email: data.get('email'),
-    //   password: data.get('password'),
-    //   isConnected: isConnected,
-    // });
+
     const email = data.get('email');
     const password = data.get('password');
     if (email === '') {
-      alert("can't be empty");
+      messageApi.info("Email can't be empty");
       return;
     }
     try {
       const user = await getUserByEmail(email, password);
       dispatch(userLogin(user._id));
-      // console.log(userID);
       navigate('/home');
     } catch (e) {
-      console.log(e);
+      throw new Error(e);
     }
   };
 
   return (
     <ThemeProvider theme={theme}>
+      {contextHolder}
       <Grid container component="main" sx={{ height: '100vh' }}>
         <CssBaseline />
         <Grid
@@ -77,8 +80,7 @@ export default function Login() {
           sx={{
             backgroundImage: 'url(https://source.unsplash.com/random)',
             backgroundRepeat: 'no-repeat',
-            backgroundColor: (t) =>
-              t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
+            backgroundColor: (t) => (t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900]),
             backgroundSize: 'cover',
             backgroundPosition: 'center',
           }}
@@ -140,7 +142,7 @@ export default function Login() {
                 </Grid> */}
                 <Grid item>
                   <Link href="/register" variant="body2">
-                    {"Don't have an account? Sign Up"}
+                    Don&apos;t have an account? Sign Up
                   </Link>
                 </Grid>
               </Grid>

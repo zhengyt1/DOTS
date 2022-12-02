@@ -176,16 +176,17 @@ const getPostByID = async (postID) => {
 }
 
 const getPostsByUserID = async (userID) => {
-  try {
-    const db = await getDB();
-    const result = await db.collection('post').find(
-      { owner: userID },
-    ).toArray();
-    return result;
-  }
-  catch (err) {
-    console.log(`error: ${err.message}`);
-  }
+    try {
+        const db = await getDB();
+
+        const result = await db.collection('post').find(
+            { owner: userID },
+        ).toArray();
+        return result;
+    }
+    catch (err) {
+        console.log(`error: ${err.message}`);
+    }
 }
 
 const updatePost = async (postID, payload) => {

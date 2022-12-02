@@ -1,4 +1,8 @@
 import * as React from 'react';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { message } from 'antd';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -12,40 +16,46 @@ import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { useNavigate } from 'react-router-dom';
 import { createUser } from '../mockedAPI/mockedAPI';
 import { userLogin } from '../reducers';
-import { useDispatch } from 'react-redux';
 
 function Copyright(props) {
+  const { sx } = props;
   return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
+    <Typography variant="body2" color="text.secondary" align="center" sx={sx}>
       {'Copyright © '}
       <Link color="inherit" href="https://mui.com/">
         Your Website
-      </Link>{' '}
+      </Link>
+      {' '}
       {new Date().getFullYear()}
-      {'.'}
+      .
     </Typography>
   );
 }
 
+Copyright.propTypes = {
+  sx: PropTypes.shape({ mt: PropTypes.number.isRequired }).isRequired,
+};
+
 const theme = createTheme();
 
 export default function Register() {
+  const [messageApi, contextHolder] = message.useMessage();
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const handleSubmit = async(event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const password = data.get('password');
     const email = data.get('email');
-    if (password.length < 3) {
-      alert('password must be at least 3 characters');
+    if (/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(email) === false) {
+      messageApi.info('invalid email');
       return;
     }
-    if (/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(email) === false) {
-      alert('invalid email');
+    if (password.length < 3) {
+      messageApi.info('password must be at least 3 characters');
       return;
     }
     const userId = await createUser({
@@ -60,6 +70,7 @@ export default function Register() {
 
   return (
     <ThemeProvider theme={theme}>
+      {contextHolder}
       <Grid container component="main" sx={{ height: '100vh' }}>
         <CssBaseline />
         <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
@@ -119,7 +130,7 @@ export default function Register() {
                 </Grid> */}
                 <Grid item>
                   <Link href="/" variant="body2">
-                    {"Already have an account? Sign In"}
+                    Already have an account? Sign In
                   </Link>
                 </Grid>
               </Grid>
