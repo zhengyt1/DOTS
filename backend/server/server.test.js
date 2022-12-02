@@ -1,7 +1,8 @@
 const request = require('supertest');
 
 // Import database operations
-const dbLib = require('../mongodb/dbFunctions');
+const userDBLib = require('../mongodb/userDBFunctions');
+const postDBLib = require('../mongodb/postDBFunctions');
 
 const webapp = require('./server');
 
@@ -52,9 +53,10 @@ beforeAll(async () => {
 
 afterAll(async () => {
   try {
-    await dbLib.deleteTestUser();
-    await dbLib.deletePost(postID);
-    await dbLib.closeMongoDBConnection(); // mongo client that started server.
+    await userDBLib.deleteTestUser();
+    await postDBLib.deletePost(postID);
+    await postDBLib.closeMongoDBConnection();
+    await userDBLib.closeMongoDBConnection(); // mongo client that started server.
   } catch (err) {
     throw new Error(err);
   }
