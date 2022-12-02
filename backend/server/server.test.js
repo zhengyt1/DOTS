@@ -40,9 +40,8 @@ beforeAll(async () => {
     // get the id of the test student
     testStudentID = JSON.parse(res.text).data.insertedId;
     postID = JSON.parse(postRes.text).data.insertedId;
-    console.log(testStudentID, postID);
   } catch (err) {
-    console.log(err);
+    throw new Error(err);
   }
 });
 

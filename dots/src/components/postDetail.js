@@ -2,6 +2,7 @@ import { Mention, MentionsInput } from 'react-mentions';
 import React, { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { message } from 'antd';
 import { Avatar } from '@mui/material';
 import Button from '@mui/material/Button';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
@@ -16,161 +17,162 @@ import {
 import EditPost from './EditPost';
 
 function PostDetail() {
-  const userID = useSelector(state => state.userID.value);
-  const newComment = useRef("");
-  const [commentValue, setCommentValue] = useState("");
-  const [text, setText] = useState("");
-  const [pic, setPic] = useState("");
-  const [video, setVideo] = useState("");
-  const [owner, setOwner] = useState("");
+  const [messageApi, contextHolder] = message.useMessage();
+
+  const userID = useSelector((state) => state.userID.value);
+  const newComment = useRef('');
+  const [commentValue, setCommentValue] = useState('');
+  const [text, setText] = useState('');
+  const [pic, setPic] = useState('');
+  const [video, setVideo] = useState('');
+  const [owner, setOwner] = useState('');
   const [comments, setComments] = useState([]);
   const [likes, setLikes] = useState([]);
-  const [createdTime, setCreatTime] = useState("");
-  const [username, setUsername] = useState("");
-  const [avatar, setAvatar] = useState("");
-  const [loggedInUserAvatar, setLoggedInUserAvatar] = useState("");
+  const [createdTime, setCreatTime] = useState('');
+  const [username, setUsername] = useState('');
+  const [avatar, setAvatar] = useState('');
+  const [loggedInUserAvatar, setLoggedInUserAvatar] = useState('');
   const [isEditComments, setIsEditComments] = useState([]);
   const [postToEdit, setPostToEdit] = useState(null);
   const [editingPost, setEditingPost] = useState(false);
-  const [newCommentValue, setNewCommentValue] = useState("");
+  const [newCommentValue, setNewCommentValue] = useState('');
   let postID = useParams();
 
   // console.log(postID);
   postID = postID.postId;
-  const selfID = useSelector(state => state.userID.value);
-  const navigate = useNavigate()
+  const selfID = useSelector((state) => state.userID.value);
+  const navigate = useNavigate();
 
   const handleEdit = () => {
     setEditingPost(true);
   };
   const handleEditComment = async (index, status) => {
-    let new_isEditComments;
+    let newIsEditComments;
     switch (status) {
-      case "open":
+      case 'open': {
         let otherCommmentIsEditing = false;
-        isEditComments.forEach(element => {
+        isEditComments.forEach((element) => {
           otherCommmentIsEditing ||= element;
         });
         if (otherCommmentIsEditing) {
-          alert("You are editing other comment.");
+          messageApi.info('You are editing other comment.');
           break;
         }
         newComment.current = comments[index].comment;
 
-        new_isEditComments = isEditComments.slice(0, index).concat(true).concat(isEditComments.slice(index + 1));
-        setIsEditComments(new_isEditComments);
+        newIsEditComments = isEditComments.slice(0, index).concat(true)
+          .concat(isEditComments.slice(index + 1));
+        setIsEditComments(newIsEditComments);
         setNewCommentValue(comments[index].comment);
         break;
-      case "cancel":
-        new_isEditComments = isEditComments.slice(0, index).concat(false).concat(isEditComments.slice(index + 1));
-        setIsEditComments(new_isEditComments);
-        setNewCommentValue("");
+      }
+      case 'cancel':
+        newIsEditComments = isEditComments.slice(0, index).concat(false)
+          .concat(isEditComments.slice(index + 1));
+        setIsEditComments(newIsEditComments);
+        setNewCommentValue('');
         break;
-      case "confirm":
-        if (newComment.current === "") {
-          alert("comment can't be empty");
+      case 'confirm': {
+        if (newComment.current === '') {
+          messageApi.info("comment can't be empty");
           break;
         }
-        new_isEditComments = isEditComments.slice(0, index).concat(false).concat(isEditComments.slice(index + 1));
-        setIsEditComments(new_isEditComments);
-        const new_comment = {
-          "ownerID": comments[index].ownerID,
-          "avatar": comments[index].avatar,
-          "comment": newComment.current,
-          "createdTime": comments[index].createdTime
+        newIsEditComments = isEditComments.slice(0, index)
+          .concat(false).concat(isEditComments.slice(index + 1));
+        setIsEditComments(newIsEditComments);
+        const tempNewComment = {
+          ownerID: comments[index].ownerID,
+          avatar: comments[index].avatar,
+          comment: newComment.current,
+          createdTime: comments[index].createdTime,
         };
-        newComment.current = "";
-        setNewCommentValue("");
-        const new_comments = comments.slice(0, index).concat(new_comment).concat(comments.slice(index + 1));
-        setComments(new_comments);
+        newComment.current = '';
+        setNewCommentValue('');
+        const newComments = comments.slice(0, index).concat(tempNewComment)
+          .concat(comments.slice(index + 1));
+        setComments(newComments);
         try {
-          await updatePost(postID, "comments", new_comments);
-        }
-        catch (e) {
-          console.log(e)
+          await updatePost(postID, 'comments', newComments);
+        } catch (e) {
+          throw new Error(e);
         }
         break;
+      }
       default:
-        alert('edit status error')
+        messageApi.info('edit status error');
     }
   };
 
   const handleDelete = async () => {
     try {
       await deletePost(postID);
-    }
-    catch (e) {
-      console.log(e);
+    } catch (e) {
+      throw new Error(e);
     }
     navigate(-1);
   };
 
   const handlePost = async () => {
-    if (commentValue === "") {
-      alert('Please enter a comment.');
+    if (commentValue === '') {
+      messageApi.info('Please enter a comment.');
       return;
     }
 
-    const newComment = {
-      "ownerID": userID,
-      "avatar": loggedInUserAvatar,
-      "comment": commentValue,
-      "createdTime": new Date(Date.now()).toISOString(),
-    }
-    setComments(comments =>
-      [...comments, newComment]
-    )
-    setIsEditComments([...isEditComments, false])
+    const tempNewComment = {
+      ownerID: userID,
+      avatar: loggedInUserAvatar,
+      comment: commentValue,
+      createdTime: new Date(Date.now()).toISOString(),
+    };
+    setComments([...comments, tempNewComment]);
+    setIsEditComments([...isEditComments, false]);
     try {
-      await updatePost(postID, "comments", [...comments, newComment])
+      await updatePost(postID, 'comments', [...comments, tempNewComment]);
+    } catch (e) {
+      throw new Error(e);
     }
-    catch (e) {
-      console.log(e);
-    }
-    setCommentValue("");
+    setCommentValue('');
     // document.getElementById("comment-input").value = "" //TODO: no comment-input?
-  }
+  };
 
   const handleDeleteComment = async (index) => {
-    const new_isEditComments = isEditComments.slice(0, index).concat(isEditComments.slice(index + 1));
-    setIsEditComments(new_isEditComments);
-    const new_comments = comments.slice(0, index).concat(comments.slice(index + 1));
-    setComments(new_comments);
+    const newIsEditComments = isEditComments.slice(0, index)
+      .concat(isEditComments.slice(index + 1));
+    setIsEditComments(newIsEditComments);
+    const newComments = comments.slice(0, index).concat(comments.slice(index + 1));
+    setComments(newComments);
     try {
-      await updatePost(postID, "comments", new_comments);
+      await updatePost(postID, 'comments', newComments);
+    } catch (e) {
+      throw new Error(e);
     }
-    catch (e) {
-      console.log(e);
-    }
-  }
+  };
 
   const handleClose = () => {
     navigate(-1);
     // navigate(`/${location.state.from}`)
-  }
+  };
 
   const handleLikeClick = async () => {
     // Cancel like.
-    let newLikes = likes.filter((x) => x !== selfID);
+    const newLikes = likes.filter((x) => x !== selfID);
     setLikes(newLikes);
     try {
-      await updatePost(postID, "likes", newLikes);
+      await updatePost(postID, 'likes', newLikes);
+    } catch (e) {
+      throw new Error(e);
     }
-    catch (e) {
-      console.log(e);
-    }
-  }
+  };
 
   const handleUnlikeClick = async () => {
-    let newLikes = [...likes, selfID];
+    const newLikes = [...likes, selfID];
     setLikes(newLikes);
     try {
-      await updatePost(postID, "likes", newLikes);
+      await updatePost(postID, 'likes', newLikes);
+    } catch (e) {
+      throw new Error(e);
     }
-    catch (e) {
-      console.log(e);
-    }
-  }
+  };
 
   const fetchMentionUsers = async (query, callBack) => {
     try {
@@ -185,7 +187,7 @@ function PostDetail() {
         callBack(filteredUsers);
       }
     } catch (error) {
-      console.log(error);
+      throw new Error(error);
     }
   };
 
@@ -200,7 +202,7 @@ function PostDetail() {
         setOwner(post.owner);
         setVideo(post.video);
         setComments(post.comments);
-        setIsEditComments(Array.apply(null, Array(post.comments.length)).map(function (x, i) { return false; }))
+        setIsEditComments(Array(post.comments.length).fill(false));
         setLikes(post.likes);
         setCreatTime(post.createdTime);
         const userInfo = await getUser(post.owner);
@@ -210,40 +212,44 @@ function PostDetail() {
         const loggedInUser = await getUser(userID);
         setLoggedInUserAvatar(loggedInUser.avatar);
       } catch (e) {
-        console.log(e);
+        throw new Error(e);
       }
     }
-    getData()
-
-  }, [postID, userID])
+    getData();
+  }, [postID, userID]);
 
   function mapComment(i) {
     // console.log(i);
-    if (i.includes("^^^")) {
-      return <Link to={`/profile/${i.split("^^^")[0]}`}>@{i.split("^^^__")[1]}</Link>;
+    if (i.includes('^^^')) {
+      return (
+        <Link to={`/profile/${i.split('^^^')[0]}`}>
+          @
+          {i.split('^^^__')[1]}
+        </Link>
+      );
     }
-    else {
-      return i;
-    }
+
+    return i;
   }
 
   return (
-    // <div className="post-background">
-    //   <Cancel onClick={handleCancel} />
+  // <div className="post-background">
+  //   <Cancel onClick={handleCancel} />
 
     <Modal
-      open={true}
+      open
       onClose={handleClose}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
       <div className="detail-container">
+        {contextHolder}
         {!editingPost ? (
           <>
             <div className="left-part">
               {video ? (
                 <video controls>
-                  <source src={video} type="video/mp4"></source>
+                  <source src={video} type="video/mp4" />
                 </video>
               ) : (
                 <img src={pic} alt="user-post" />
@@ -255,13 +261,13 @@ function PostDetail() {
                   <div className="user-info">
                     <Avatar src={avatar} />
                     <div className="username">{username}</div>
-                    <span></span>
+                    <span />
                     {owner === userID && (
                       <div>
                         <Chip label="Edit" variant="outlined" onClick={handleEdit} />
-                        <span></span>
+                        <span />
                         <Chip label="Delete" variant="outlined" onClick={handleDelete} />
-                        <span></span>
+                        <span />
                       </div>
                     )}
                   </div>
@@ -269,7 +275,7 @@ function PostDetail() {
                 </div>
                 {/* <hr /> */}
                 {comments.map((item, key) => (
-                  <div key={key} className="comment-container">
+                  <div key={item.createdTime} className="comment-container">
                     <Avatar src={item.avatar} />
                     <div className="comment">
                       {isEditComments[key] ? (
@@ -286,19 +292,36 @@ function PostDetail() {
                             <Mention
                               data={fetchMentionUsers}
                               displayTransform={
-                                (id, display) => "@" + (display)
+                                (id, display) => `@${display}`
                               }
                               trigger="@"
                               markup="@@@____id__^^^____display__@@@__"
-                              appendSpaceOnAdd={true}
-                              style={{ backgroundColor: "#cee4e5", fontWeight: "normal" }}
+                              appendSpaceOnAdd
+                              style={{ backgroundColor: '#cee4e5', fontWeight: 'normal' }}
                             />
                           </MentionsInput>
                           {userID === item.ownerID ? (
                             <div className="comment-operators">
                               <div className="time">{item.createdTime}</div>
-                              <div className="comment-edit" data-testid={`confirm-${key}`} onClick={() => handleEditComment(key, 'confirm')}>Confirm</div>
-                              <div className="comment-edit" onClick={() => handleEditComment(key, 'cancel')}>Cancel</div>
+                              <div
+                                className="comment-edit"
+                                data-testid={`confirm-${key}`}
+                                role="button"
+                                tabIndex="0"
+                                onKeyDown={() => {}}
+                                onClick={() => handleEditComment(key, 'confirm')}
+                              >
+                                Confirm
+                              </div>
+                              <div
+                                className="comment-edit"
+                                role="button"
+                                tabIndex="0"
+                                onKeyDown={() => {}}
+                                onClick={() => handleEditComment(key, 'cancel')}
+                              >
+                                Cancel
+                              </div>
                             </div>
                           ) : (
                             <div className="time">{item.createdTime}</div>
@@ -308,8 +331,8 @@ function PostDetail() {
                         <div>
                           <div className="comment-text" id="comment-text-nonInput">
                             {
-                              item.comment.split("@@@__").map(
-                                (i, k) => (<span key={k}>{mapComment(i)}</span>)
+                              item.comment.split('@@@__').map(
+                                (i, k) => (<span key={k}>{mapComment(i)}</span>),
                               )
                             }
                           </div>
@@ -317,8 +340,25 @@ function PostDetail() {
                           {userID === item.ownerID ? (
                             <div className="comment-operators">
                               <div className="time">{item.createdTime}</div>
-                              <div className="comment-edit" data-testid={`edit-${key}`} onClick={() => handleEditComment(key, 'open')}>Edit</div>
-                              <div className="comment-edit" onClick={() => handleDeleteComment(key)}>Delete</div>
+                              <div
+                                className="comment-edit"
+                                data-testid={`edit-${key}`}
+                                role="button"
+                                tabIndex="0"
+                                onKeyDown={() => {}}
+                                onClick={() => handleEditComment(key, 'open')}
+                              >
+                                Edit
+                              </div>
+                              <div
+                                className="comment-edit"
+                                role="button"
+                                tabIndex="0"
+                                onKeyDown={() => {}}
+                                onClick={() => handleDeleteComment(key)}
+                              >
+                                Delete
+                              </div>
                             </div>
                           ) : (
                             <div className="time">{item.createdTime}</div>
@@ -327,18 +367,21 @@ function PostDetail() {
                       )}
                     </div>
                   </div>
-                )
-                )}
+                ))}
               </div>
               <div className="bottom">
                 <hr />
                 <div className="statistic">
                   <div className="icons">
-                    {likes.includes(selfID) ? (<FavoriteIcon onClick={handleLikeClick} className={"favIcon"} />) : (<FavoriteBorderIcon onClick={handleUnlikeClick} className={"notFavIcon"} />)}
-                    <span></span>
+                    {likes.includes(selfID) ? (<FavoriteIcon onClick={handleLikeClick} className="favIcon" />) : (<FavoriteBorderIcon onClick={handleUnlikeClick} className="notFavIcon" />)}
+                    <span />
                     <ChatBubbleOutlineIcon />
                   </div>
-                  <div className="like">{likes.length} likes</div>
+                  <div className="like">
+                    {likes.length}
+                    {' '}
+                    likes
+                  </div>
                   <div className="time">{createdTime}</div>
                 </div>
                 <div className="post-comment">
@@ -349,17 +392,18 @@ function PostDetail() {
                     className="comment-input"
                     value={commentValue}
                     onChange={(e) => setCommentValue(e.target.value)}
-                    forceSuggestionsAboveCursor={true}
-                    placeholder="Mention people using @">
+                    forceSuggestionsAboveCursor
+                    placeholder="Mention people using @"
+                  >
                     <Mention
                       data={fetchMentionUsers}
                       displayTransform={
-                        (id, display) => "@" + (display)
+                        (id, display) => `@${display}`
                       }
                       trigger="@"
                       markup="@@@____id__^^^____display__@@@__"
-                      appendSpaceOnAdd={true}
-                      style={{ backgroundColor: "#cee4e5", fontWeight: "normal" }}
+                      appendSpaceOnAdd
+                      style={{ backgroundColor: '#cee4e5', fontWeight: 'normal' }}
                     />
                   </MentionsInput>
                   <Button onClick={handlePost}>Post</Button>
@@ -371,11 +415,8 @@ function PostDetail() {
           <EditPost post={postToEdit} avatar={avatar} username={username} />
         )}
       </div>
-    </Modal >
-
-    // </div> 
-  )
+    </Modal>
+  );
 }
 
-
-export default PostDetail
+export default PostDetail;
