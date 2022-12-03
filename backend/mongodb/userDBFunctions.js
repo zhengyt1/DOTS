@@ -5,7 +5,9 @@ const { MongoClient } = require('mongodb');
 const { ObjectId } = require('mongodb');
 
 // mongodb server URL
-const dbURL = 'mongodb+srv://dbUser:Group21_@team21.8nk7d4t.mongodb.net/DOTS?retryWrites=true&w=majority';
+require('dotenv').config();
+
+const dbURL = process.env.DBURL;
 
 // Connection
 let MongoConnection;

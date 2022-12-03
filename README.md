@@ -1,3 +1,9 @@
+# MongoDB Credentials
+To access MongoDB, create a `.env` file inside `backend/` and add `DBURL = "url we sent in the credentials form"`. 
+Then you are able to run our app by:
+- `cd backend/ && npm start` to start the express server
+- `cd dots/ && npm start` to start react app
+
 # project_design
 Photo&amp;Video-sharing Social Network APP -  UI &amp; Architecture Design (HW1)
 
