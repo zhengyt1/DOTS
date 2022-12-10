@@ -163,10 +163,20 @@ export const getPostByID = async (postID) => {
 
 // get post by user ID => return array of posts
 
-export const getPostsByUserID = async (userID) => {
+export const getPostsByUserID = async (ownerID, viewerID) => {
   try {
-    const response = await axios.get(`${rootURL}/post?owner=${userID}`);
-    return response.data.data;
+    const response = await axios.get(`${rootURL}/post?owner=${ownerID}`);
+    const postList = response.data.data;
+    if (ownerID === viewerID) {
+      return response.data.data;
+    }
+    const filteredList = [];
+    for (let i = 0; i < postList.length; i += 1) {
+      if (!postList[i].isPrivate) {
+        filteredList.push(postList[i]);
+      }
+    }
+    return filteredList;
   } catch (err) {
     throw new Error(err);
   }
@@ -176,7 +186,7 @@ export const getFeed = async (userID) => {
   try {
     const followings = await getFollowings(userID);
     const run = async () => Promise.all(
-      followings.map(async (id) => getPostsByUserID(id)),
+      followings.map(async (id) => getPostsByUserID(id, userID)),
     );
     const posts = await run();
 
