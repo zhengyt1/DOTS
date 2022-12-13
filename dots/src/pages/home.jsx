@@ -46,6 +46,10 @@ function Home() {
     setPage(page + 1);
   };
 
+  const fetchNextDelayed = async () => {
+    setTimeout(fetchNext, 1000);
+  };
+
   return (
     <div>
       {contextHolder}
@@ -61,7 +65,7 @@ function Home() {
               <Share />
               <InfiniteScroll
                 dataLength={posts.length}
-                next={fetchNext}
+                next={fetchNextDelayed}
                 hasMore={hasMoreData}
                 loader={(
                   <p style={{ textAlign: 'center' }}>
