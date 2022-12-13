@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useDispatch } from 'react-redux';
+// import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { message } from 'antd';
@@ -17,7 +17,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { createUser } from '../mockedAPI/mockedAPI';
-import { userLogin } from '../reducers';
+// import { userLogin } from '../reducers';
 
 function Copyright(props) {
   const { sx } = props;
@@ -44,7 +44,7 @@ export default function Register() {
   const [messageApi, contextHolder] = message.useMessage();
 
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -58,19 +58,23 @@ export default function Register() {
       messageApi.info('password must be at least 3 characters');
       return;
     }
-    const userId = await createUser({
-      email,
-      password,
-    });
-    if (userId) {
-      dispatch(userLogin(userId));
-      navigate('/home');
+    try {
+      const token = await createUser({
+        email,
+        password,
+      });
+      if (token) {
+        // dispatch(userLogin(userId));
+        navigate('/home');
+      }
+    } catch (e) {
+      messageApi.error(e.message);
     }
   };
 
   return (
     <ThemeProvider theme={theme}>
-      {contextHolder}
+      <div>{contextHolder}</div>
       <Grid container component="main" sx={{ height: '100vh' }}>
         <CssBaseline />
         <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>

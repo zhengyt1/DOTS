@@ -1,5 +1,6 @@
 /* eslint-disable jsx-a11y/media-has-caption */
 import { React, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { message } from 'antd';
 import {
   Alert,
@@ -21,6 +22,8 @@ import firebaseStorage from '../firebase/firebase';
 import { updatePost } from '../mockedAPI/mockedAPI';
 
 function EditPost(props) {
+  const navigate = useNavigate();
+
   const [messageApi, contextHolder] = message.useMessage();
   const { post, username, avatar } = props;
   const [text, setText] = useState(post.text);
@@ -32,28 +35,32 @@ function EditPost(props) {
 
   const handlePost = async (e) => {
     e.preventDefault();
+    try {
+      await updatePost(post._id, 'text', text);
 
-    await updatePost(post._id, 'text', text);
-
-    if (picChanged && pic) {
-      const imageRef = ref(firebaseStorage, `images/${pic.name + Date.now()}`);
-      uploadBytes(imageRef, pic).then(async (snapshot) => {
-        getDownloadURL(snapshot.ref).then(async (url) => {
-          await updatePost(post._id, 'pic', url);
+      if (picChanged && pic) {
+        const imageRef = ref(firebaseStorage, `images/${pic.name + Date.now()}`);
+        uploadBytes(imageRef, pic).then(async (snapshot) => {
+          getDownloadURL(snapshot.ref).then(async (url) => {
+            await updatePost(post._id, 'pic', url);
+          });
         });
-      });
-    } else if (videoChanged && video) {
-      const videoRef = ref(firebaseStorage, `videos/${video.name + Date.now()}`);
-      uploadBytes(videoRef, video).then(async (snapshot) => {
-        getDownloadURL(snapshot.ref).then(async (url) => {
-          await updatePost(post._id, 'video', url);
+      } else if (videoChanged && video) {
+        const videoRef = ref(firebaseStorage, `videos/${video.name + Date.now()}`);
+        uploadBytes(videoRef, video).then(async (snapshot) => {
+          getDownloadURL(snapshot.ref).then(async (url) => {
+            await updatePost(post._id, 'video', url);
+          });
         });
-      });
-    }
-    if (!pic && !video) {
-      messageApi.info('Please share with an Image or Video');
-    } else {
-      setOpenAlert(true);
+      }
+      if (!pic && !video) {
+        messageApi.info('Please share with an Image or Video');
+      } else {
+        setOpenAlert(true);
+      }
+    } catch (err) {
+      messageApi.error(e.message);
+      setTimeout(() => { navigate('/'); }, 1000);
     }
   };
 
@@ -161,8 +168,18 @@ function EditPost(props) {
   );
 }
 
+const postShape = {
+  _id: PropTypes.string.isRequired,
+  text: PropTypes.string.isRequired,
+  pic: PropTypes.string.isRequired,
+  video: PropTypes.string.isRequired,
+  owner: PropTypes.string.isRequired,
+  comments: PropTypes.array.isRequired,
+  likes: PropTypes.array.isRequired,
+};
+
 EditPost.propTypes = {
-  post: PropTypes.func.isRequired,
+  post: PropTypes.shape(postShape).isRequired,
   username: PropTypes.string.isRequired,
   avatar: PropTypes.string.isRequired,
 };

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+// import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import { message } from 'antd';
 import Avatar from '@mui/material/Avatar';
@@ -17,7 +17,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { getUserByEmail } from '../mockedAPI/mockedAPI';
-import { userLogin } from '../reducers';
+// import { userLogin } from '../reducers';
 
 function Copyright(props) {
   const { sx } = props;
@@ -42,10 +42,9 @@ const theme = createTheme();
 
 export default function Login() {
   const [messageApi, contextHolder] = message.useMessage();
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
   const navigate = useNavigate();
-  // console.log("route: ", route)
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -59,18 +58,20 @@ export default function Login() {
       return;
     }
     try {
-      const user = await getUserByEmail(email, password);
-      dispatch(userLogin(user._id));
-      navigate('/home');
+      const token = await getUserByEmail(email, password);
+      if (token) {
+        // dispatch(userLogin(user.token));
+        navigate('/home');
+      }
     } catch (e) {
-      throw new Error(e);
+      messageApi.error(e.message);
     }
   };
 
   return (
     <ThemeProvider theme={theme}>
-      {contextHolder}
       <Grid container component="main" sx={{ height: '100vh' }}>
+        {contextHolder}
         <CssBaseline />
         <Grid
           item

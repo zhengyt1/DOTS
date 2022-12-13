@@ -1,6 +1,6 @@
-import { useSelector } from 'react-redux';
+// import { useSelector } from 'react-redux';
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Mention, MentionsInput } from 'react-mentions';
 import PropTypes from 'prop-types';
 import { message } from 'antd';
@@ -13,6 +13,7 @@ import './post.css';
 import { getUser, getUsers, updatePost } from '../mockedAPI/mockedAPI';
 
 function Post(props) {
+  const navigate = useNavigate();
   const [messageApi, contextHolder] = message.useMessage();
 
   const { postInfo } = props;
@@ -26,13 +27,13 @@ function Post(props) {
     likes,
     // createdTime,
   } = postInfo;
-  const selfID = useSelector((state) => state.userID.value);
-
+  // const selfID = useSelector((state) => state.userID.value);
+  const [selfID, setSelfID] = useState('selfId');
   const [commentValue, setCommentValue] = useState('');
   const [username, setUsername] = useState('');
   const [avatar, setAvatar] = useState('');
   const [userID, setUserID] = useState('');
-  const [isLike, setIsLike] = useState(likes.includes(selfID));
+  const [isLike, setIsLike] = useState(false);
   const [totalLikes, setTotalLikes] = useState(likes);
   const [selfAvatar, setSelfAvatar] = useState('');
 
@@ -46,12 +47,15 @@ function Post(props) {
           setAvatar(data.avatar);
           setUserID(data._id);
         }
-        const selfData = await getUser(selfID);
+        const selfData = await getUser('selfId');
         if (selfData !== undefined) {
           setSelfAvatar(selfData.avatar);
+          setSelfID(selfData._id);
+          setIsLike(likes.includes(selfData._id));
         }
       } catch (e) {
-        throw new Error(e);
+        messageApi.error(e.message);
+        setTimeout(() => { navigate('/'); }, 1000);
       }
     }
 
@@ -73,8 +77,9 @@ function Post(props) {
         );
         callBack(filteredUsers);
       }
-    } catch (error) {
-      throw new Error(error);
+    } catch (e) {
+      messageApi.error(e.message);
+      setTimeout(() => { navigate('/'); }, 1000);
     }
   };
 
@@ -86,7 +91,8 @@ function Post(props) {
     try {
       await updatePost(_id, 'likes', newLikes);
     } catch (e) {
-      throw new Error(e);
+      messageApi.error(e.message);
+      setTimeout(() => { navigate('/'); }, 1000);
     }
   };
 
@@ -97,7 +103,8 @@ function Post(props) {
     try {
       await updatePost(_id, 'likes', newLikes);
     } catch (e) {
-      throw new Error(e);
+      messageApi.error(e.message);
+      setTimeout(() => { navigate('/'); }, 1000);
     }
   };
 
@@ -117,7 +124,8 @@ function Post(props) {
     try {
       await updatePost(_id, 'comments', [...comments, newComment]);
     } catch (e) {
-      throw new Error(e);
+      messageApi.error(e.message);
+      setTimeout(() => { navigate('/'); }, 1000);
     }
     setCommentValue('');
   };
