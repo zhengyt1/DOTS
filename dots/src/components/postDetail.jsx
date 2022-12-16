@@ -226,6 +226,10 @@ function PostDetail() {
       }
     }
     getData();
+    const interval = setInterval(() => {
+      getData();
+    }, 5000);
+    return () => clearInterval(interval);
   }, [postID]);
 
   function mapComment(i) {

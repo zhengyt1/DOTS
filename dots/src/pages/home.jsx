@@ -39,8 +39,11 @@ function Home() {
       fetchFeed();
       loadFeed.current = true;
     }
-  }, [navigate]);
-
+    const interval = setInterval(() => {
+      fetchFeed();
+    }, 5000);
+    return () => clearInterval(interval);
+  });
   return (
     <div>
       {contextHolder}

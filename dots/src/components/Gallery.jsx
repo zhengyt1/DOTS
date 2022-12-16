@@ -93,7 +93,6 @@ function Gallery(props) {
             </Link>
           ))}
         </ImageList>
-
       </div>
     </div>
 

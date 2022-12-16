@@ -10,7 +10,12 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import Button from '@mui/material/Button';
 import './post.css';
-import { getUser, getUsers, updatePost } from '../mockedAPI/mockedAPI';
+import {
+  getPostByID,
+  getUser,
+  getUsers,
+  updatePost,
+} from '../mockedAPI/mockedAPI';
 
 function Post(props) {
   const navigate = useNavigate();
@@ -24,7 +29,7 @@ function Post(props) {
     video,
     owner,
     comments,
-    likes,
+    // likes,
     // createdTime,
   } = postInfo;
   // const selfID = useSelector((state) => state.userID.value);
@@ -34,7 +39,7 @@ function Post(props) {
   const [avatar, setAvatar] = useState('');
   const [userID, setUserID] = useState('');
   const [isLike, setIsLike] = useState(false);
-  const [totalLikes, setTotalLikes] = useState(likes);
+  const [totalLikes, setTotalLikes] = useState([]);
   const [selfAvatar, setSelfAvatar] = useState('');
 
   const loadData = useRef(true);
@@ -42,17 +47,19 @@ function Post(props) {
     async function fetchData() {
       try {
         const data = await getUser(owner);
-        if (data !== undefined) {
+        const post = await getPostByID(_id);
+        const selfData = await getUser('selfId');
+        if (data && post && selfData) {
           setUsername(data.username);
           setAvatar(data.avatar);
           setUserID(data._id);
-        }
-        const selfData = await getUser('selfId');
-        if (selfData !== undefined) {
+          setTotalLikes(post.likes);
           setSelfAvatar(selfData.avatar);
           setSelfID(selfData._id);
-          setIsLike(likes.includes(selfData._id));
+          setIsLike(post.likes.includes(selfData._id));
         }
+        // console.log(post);
+        // console.log(post.likes, post.likes.includes(selfData._id));
       } catch (e) {
         messageApi.error(e.message);
         setTimeout(() => { navigate('/'); }, 1000);
@@ -64,6 +71,10 @@ function Post(props) {
       loadData.current = false;
       fetchData();
     }
+    const interval = setInterval(() => {
+      fetchData();
+    }, 5000);
+    return () => clearInterval(interval);
   });
   const fetchMentionUsers = async (query, callBack) => {
     try {
