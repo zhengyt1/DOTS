@@ -1,6 +1,6 @@
-import { useSelector } from 'react-redux';
+// import { useSelector } from 'react-redux';
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Mention, MentionsInput } from 'react-mentions';
 import PropTypes from 'prop-types';
 import { message } from 'antd';
@@ -10,9 +10,15 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import Button from '@mui/material/Button';
 import './post.css';
-import { getUser, getUsers, updatePost } from '../mockedAPI/mockedAPI';
+import {
+  getPostByID,
+  getUser,
+  getUsers,
+  updatePost,
+} from '../mockedAPI/mockedAPI';
 
 function Post(props) {
+  const navigate = useNavigate();
   const [messageApi, contextHolder] = message.useMessage();
 
   const { postInfo } = props;
@@ -23,17 +29,17 @@ function Post(props) {
     video,
     owner,
     comments,
-    likes,
+    // likes,
     // createdTime,
   } = postInfo;
-  const selfID = useSelector((state) => state.userID.value);
-
+  // const selfID = useSelector((state) => state.userID.value);
+  const [selfID, setSelfID] = useState('selfId');
   const [commentValue, setCommentValue] = useState('');
   const [username, setUsername] = useState('');
   const [avatar, setAvatar] = useState('');
   const [userID, setUserID] = useState('');
-  const [isLike, setIsLike] = useState(likes.includes(selfID));
-  const [totalLikes, setTotalLikes] = useState(likes);
+  const [isLike, setIsLike] = useState(false);
+  const [totalLikes, setTotalLikes] = useState([]);
   const [selfAvatar, setSelfAvatar] = useState('');
 
   const loadData = useRef(true);
@@ -41,17 +47,22 @@ function Post(props) {
     async function fetchData() {
       try {
         const data = await getUser(owner);
-        if (data !== undefined) {
+        const post = await getPostByID(_id);
+        const selfData = await getUser('selfId');
+        if (data && post && selfData) {
           setUsername(data.username);
           setAvatar(data.avatar);
           setUserID(data._id);
-        }
-        const selfData = await getUser(selfID);
-        if (selfData !== undefined) {
+          setTotalLikes(post.likes);
           setSelfAvatar(selfData.avatar);
+          setSelfID(selfData._id);
+          setIsLike(post.likes.includes(selfData._id));
         }
+        // console.log(post);
+        // console.log(post.likes, post.likes.includes(selfData._id));
       } catch (e) {
-        throw new Error(e);
+        messageApi.error(e.message);
+        setTimeout(() => { navigate('/'); }, 1000);
       }
     }
 
@@ -60,6 +71,10 @@ function Post(props) {
       loadData.current = false;
       fetchData();
     }
+    const interval = setInterval(() => {
+      fetchData();
+    }, 5000);
+    return () => clearInterval(interval);
   });
   const fetchMentionUsers = async (query, callBack) => {
     try {
@@ -73,8 +88,9 @@ function Post(props) {
         );
         callBack(filteredUsers);
       }
-    } catch (error) {
-      throw new Error(error);
+    } catch (e) {
+      messageApi.error(e.message);
+      setTimeout(() => { navigate('/'); }, 1000);
     }
   };
 
@@ -86,7 +102,8 @@ function Post(props) {
     try {
       await updatePost(_id, 'likes', newLikes);
     } catch (e) {
-      throw new Error(e);
+      messageApi.error(e.message);
+      setTimeout(() => { navigate('/'); }, 1000);
     }
   };
 
@@ -97,7 +114,8 @@ function Post(props) {
     try {
       await updatePost(_id, 'likes', newLikes);
     } catch (e) {
-      throw new Error(e);
+      messageApi.error(e.message);
+      setTimeout(() => { navigate('/'); }, 1000);
     }
   };
 
@@ -117,7 +135,8 @@ function Post(props) {
     try {
       await updatePost(_id, 'comments', [...comments, newComment]);
     } catch (e) {
-      throw new Error(e);
+      messageApi.error(e.message);
+      setTimeout(() => { navigate('/'); }, 1000);
     }
     setCommentValue('');
   };

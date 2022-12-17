@@ -1,5 +1,8 @@
 import axios from 'axios';
 import { faker } from '@faker-js/faker';
+// import { useHistory } from 'react-router-dom';
+// import { Redirect } from 'react-router-dom';
+// import React from 'react';
 /*
 **** Example Usage
 async function fetchData() {
@@ -19,27 +22,45 @@ useEffect(() => {
 // mockAPI URL
 // const rootURL = 'https://63446bd6dcae733e8fdeff41.mockapi.io/api';
 const rootURL = 'http://localhost:8080';
+const selfId = 'selfId';
 
-// get all users in the DB
+// Add the token to all HTTP request
+const setHeaders = () => {
+  axios.defaults.headers.common.Authorization = (sessionStorage.getItem('app-token') !== null) ? sessionStorage.getItem('app-token') : null;
+};
+
+export const reAuthenticate = async (status) => {
+  if (status === 401) {
+    // console.log('in reAuthenticate');
+    // delete the token
+    sessionStorage.removeItem('app-token');
+  }
+};
+
 export const getUsers = async () => {
   try {
+    setHeaders();
     const response = await axios.get(`${rootURL}/users`);
     return response.data.data;
     // the data is stored in the mockData
     // field of the response
   } catch (err) {
-    throw new Error(err);
+    reAuthenticate(401);
+    throw new Error(err.response.data.message);
   }
 };
 
-// get user by id
+// get user by id, pass in 'selfId' if the user is the logged in user
 export const getUser = async (userID) => {
   try {
+    setHeaders();
     const response = await axios.get(`${rootURL}/user/${userID}`);
     // console.log(userID, response);
+    reAuthenticate(response.status);
     return response.data.data;
   } catch (err) {
-    throw new Error(err);
+    reAuthenticate(401);
+    throw new Error(err.response.data.message);
   }
 };
 
@@ -49,7 +70,8 @@ export const getUsersByIds = async (useIds) => {
       useIds.map(async (id) => getUser(id)),
     );
   } catch (err) {
-    throw new Error(err);
+    reAuthenticate(401);
+    throw new Error(err.response.data.message);
   }
 };
 
@@ -60,35 +82,29 @@ export const getUserByEmail = async (email, password) => {
       `${rootURL}/login`,
       { email, password },
     );
-    return response.data.data;
+    sessionStorage.setItem('app-token', response.data.token);
+    return response.data.token;
   } catch (err) {
-    throw new Error(err);
+    // reAuthenticate(401);
+    throw new Error(err.response.data.message);
   }
 };
-
-// get user by username => return array of users
-// export const getUsersByUsername = async (username) => {
-//     try {
-//         const response = await axios.get(`${rootURL}/user?username=${username}`);
-//         return response.data.data;
-//     }
-//     catch (err) {
-//         console.error(err);
-//     }
-// }
 
 // update user field by value
 export const updateUser = async (userID, field, value) => {
   const payload = {};
   payload[field] = value;
   try {
+    setHeaders();
     const response = await axios.put(
       `${rootURL}/user/${userID}`,
       payload,
     );
+    reAuthenticate(response.status);
     return response.data.data;
   } catch (err) {
-    throw new Error(err);
+    reAuthenticate(401);
+    throw new Error(err.response.data.message);
   }
 };
 
@@ -108,9 +124,11 @@ export const createUser = async (userObject) => {
       `${rootURL}/user`,
       user,
     );
-    return response.data.data.insertedId;
+    sessionStorage.setItem('app-token', response.data.token);
+    return response.data.token;
   } catch (err) {
-    throw new Error(err);
+    // reAuthenticate(401);
+    throw new Error(err.response.data.message);
   }
 };
 
@@ -128,12 +146,16 @@ export const createUser = async (userObject) => {
 // get user's followings by userID
 export const getFollowings = async (userID) => {
   try {
+    setHeaders();
+    // console.log(`getFollowings, ${rootURL}/user/${userID}`);
     const response = await axios.get(`${rootURL}/user/${userID}`);
+    reAuthenticate(response.status);
     return response.data.data.followings;
     // the data is stored in the mockData
     // field of the response
   } catch (err) {
-    throw new Error(err);
+    reAuthenticate(401);
+    throw new Error(err.response.data.message);
   }
 };
 
@@ -154,10 +176,13 @@ export const getFollowings = async (userID) => {
 // get post by id
 export const getPostByID = async (postID) => {
   try {
+    setHeaders();
     const response = await axios.get(`${rootURL}/post/${postID}`);
+    reAuthenticate(response.status);
     return response.data.data;
   } catch (err) {
-    throw new Error(err);
+    reAuthenticate(401);
+    throw new Error(err.response.data.message);
   }
 };
 
@@ -165,8 +190,10 @@ export const getPostByID = async (postID) => {
 
 export const getPostsByUserID = async (ownerID, viewerID) => {
   try {
+    setHeaders();
     const response = await axios.get(`${rootURL}/post?owner=${ownerID}`);
     const postList = response.data.data;
+    reAuthenticate(response.status);
     if (ownerID === viewerID) {
       return response.data.data;
     }
@@ -178,13 +205,15 @@ export const getPostsByUserID = async (ownerID, viewerID) => {
     }
     return filteredList;
   } catch (err) {
-    throw new Error(err);
+    reAuthenticate(401);
+    throw new Error(err.response.data.message);
   }
 };
 
 export const getFeed = async (userID, page, limit) => {
   try {
-    const followings = await getFollowings(userID);
+    setHeaders();
+    const followings = await getFollowings(selfId);
     const run = async () => Promise.all(
       followings.map(async (id) => getPostsByUserID(id, userID)),
     );
@@ -195,6 +224,7 @@ export const getFeed = async (userID, page, limit) => {
 
     return currentPage;
   } catch (err) {
+    reAuthenticate(401);
     throw new Error(err);
   }
 };
@@ -204,13 +234,16 @@ export const updatePost = async (postID, field, value) => {
   const payload = {};
   payload[field] = value;
   try {
+    setHeaders();
     const response = await axios.put(
       `${rootURL}/post/${postID}`,
       payload,
     );
+    reAuthenticate(response.status);
     return response.data.data;
   } catch (err) {
-    throw new Error(err);
+    reAuthenticate(401);
+    throw new Error(err.response.data.message);
   }
 };
 // {
@@ -228,20 +261,26 @@ export const updatePost = async (postID, field, value) => {
 // create user
 export const createPost = async (postObject) => {
   try {
+    setHeaders();
     const response = await axios.post(`${rootURL}/post`, postObject);
+    reAuthenticate(response.status);
     return response.data.data;
   } catch (err) {
-    throw new Error(err);
+    reAuthenticate(401);
+    throw new Error(err.response.data.message);
   }
 };
 
 // delete post
 export const deletePost = async (postID) => {
   try {
+    setHeaders();
     const response = await axios.delete(`${rootURL}/post/${postID}`);
+    reAuthenticate(response.status);
     return response.data.data;
   } catch (err) {
-    throw new Error(err);
+    reAuthenticate(401);
+    throw new Error(err.response.data.message);
   }
 };
 
@@ -353,15 +392,19 @@ export const deletePost = async (postID) => {
 
 export const getFollowers = async (userID) => {
   try {
+    setHeaders();
     const response = await axios.get(`${rootURL}/user/${userID}`);
+    reAuthenticate(response.status);
     return response.data.data.followers;
   } catch (err) {
-    throw new Error(err);
+    reAuthenticate(401);
+    throw new Error(err.response.data.message);
   }
 };
 
 export const getSuggestedFollowings = async (userID) => {
   try {
+    setHeaders();
     const users = await getUsers();
     const myFollowings = await getFollowings(userID);
     const suggestedList = [];
@@ -377,6 +420,7 @@ export const getSuggestedFollowings = async (userID) => {
     }
     return suggestedList;
   } catch (err) {
+    reAuthenticate(401);
     throw new Error(err);
   }
 };

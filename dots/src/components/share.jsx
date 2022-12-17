@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/media-has-caption */
 import React, { useRef, useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+// import { useSelector } from 'react-redux';
 import { message } from 'antd';
 import './share.css';
 import { Cancel } from '@mui/icons-material';
@@ -15,15 +16,17 @@ import { createPost, getUser } from '../mockedAPI/mockedAPI';
 import firebaseStorage from '../firebase/firebase';
 
 function Share() {
+  const navigate = useNavigate();
   const [messageApi, contextHolder] = message.useMessage();
   const shareTextRef = useRef();
   const tagUsersRef = useRef();
   // const [mentionValue, setMentionValue] = useState('');
   const [shareImage, setImage] = useState(null);
   const [shareVideo, setVideo] = useState(null);
-  const [showTagArea, setShowTagArea] = React.useState(false);
-  const [isPrivate, setPrivate] = React.useState(false);
-  const userID = useSelector((state) => state.userID.value);
+  const [showTagArea, setShowTagArea] = useState(false);
+  const [isPrivate, setPrivate] = useState(false);
+  // const userID = useSelector((state) => state.userID.value);
+  const [userID, setUserID] = useState('selfId');
 
   const [username, setUsername] = useState('');
   const [avatar, setAvatar] = useState('');
@@ -31,13 +34,15 @@ function Share() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const data = await getUser(userID);
+        const data = await getUser('selfId');
         if (data !== undefined) {
           setUsername(data.username);
           setAvatar(data.avatar);
+          setUserID(data._id);
         }
       } catch (e) {
-        throw new Error(e);
+        messageApi.error(e.message);
+        setTimeout(() => { navigate('/'); }, 1000);
       }
     }
     // only load data on the first rendering
@@ -49,49 +54,54 @@ function Share() {
 
   const submitHandler = async (e) => {
     e.preventDefault();
-
-    const newPost = {
-      text: shareTextRef.current.value,
-      pic: '',
-      video: '',
-      owner: userID,
-      comments: [],
-      likes: [],
-      isPrivate,
-      createdTime: new Date(Date.now()).toISOString(),
-    };
-
-    if (shareImage) {
-      const imageRef = ref(firebaseStorage, `images/${shareImage.name + Date.now()}`);
-      uploadBytes(imageRef, shareImage).then(async (snapshot) => {
-        getDownloadURL(snapshot.ref).then(async (url) => {
-          // add url to newPost
-          newPost.pic = url;
-          await createPost(newPost);
+    console.log('');
+    try {
+      const newPost = {
+        text: shareTextRef.current.value,
+        pic: '',
+        video: '',
+        owner: userID,
+        comments: [],
+        likes: [],
+        isPrivate,
+        createdTime: new Date(Date.now()).toISOString(),
+      };
+      if (shareImage) {
+        console.log('');
+        const imageRef = ref(firebaseStorage, `images/${shareImage.name + Date.now()}`);
+        uploadBytes(imageRef, shareImage).then(async (snapshot) => {
+          getDownloadURL(snapshot.ref).then(async (url) => {
+            // add url to newPost
+            newPost.pic = url;
+            await createPost(newPost);
+          });
         });
-      });
-    } else if (shareVideo) {
-      const videoRef = ref(firebaseStorage, `videos/${shareVideo.name + Date.now()}`);
-      uploadBytes(videoRef, shareVideo).then(async (snapshot) => {
-        getDownloadURL(snapshot.ref).then(async (url) => {
-          // add url to newPost
-          newPost.video = url;
-          await createPost(newPost);
+      } else if (shareVideo) {
+        const videoRef = ref(firebaseStorage, `videos/${shareVideo.name + Date.now()}`);
+        uploadBytes(videoRef, shareVideo).then(async (snapshot) => {
+          getDownloadURL(snapshot.ref).then(async (url) => {
+            // add url to newPost
+            newPost.video = url;
+            await createPost(newPost);
+          });
         });
-      });
-    } else {
-      messageApi.info('Please share with an Image or Video');
+      } else {
+        messageApi.info('Please share with an Image or Video');
+      }
+      if (shareTextRef.current !== undefined && shareTextRef.current !== null) {
+        shareTextRef.current.value = '';
+      }
+      if (tagUsersRef.current !== undefined && tagUsersRef.current !== null) {
+        tagUsersRef.current.value = '';
+      }
+      setImage(null);
+      setVideo(null);
+      setPrivate(false);
+      setShowTagArea(false);
+    } catch (err) {
+      messageApi.error(e.message);
+      setTimeout(() => { navigate('/'); }, 1000);
     }
-    if (shareTextRef.current !== undefined && shareTextRef.current !== null) {
-      shareTextRef.current.value = '';
-    }
-    if (tagUsersRef.current !== undefined && tagUsersRef.current !== null) {
-      tagUsersRef.current.value = '';
-    }
-    setImage(null);
-    setVideo(null);
-    setPrivate(false);
-    setShowTagArea(false);
   };
 
   // const TagInputAreaHandler = () => {

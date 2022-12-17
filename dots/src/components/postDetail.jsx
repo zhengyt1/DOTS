@@ -1,7 +1,7 @@
 import { Mention, MentionsInput } from 'react-mentions';
 import React, { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+// import { useSelector } from 'react-redux';
 import { message } from 'antd';
 import { Avatar } from '@mui/material';
 import Button from '@mui/material/Button';
@@ -19,7 +19,7 @@ import EditPost from './EditPost';
 function PostDetail() {
   const [messageApi, contextHolder] = message.useMessage();
 
-  const userID = useSelector((state) => state.userID.value);
+  // const userID = useSelector((state) => state.userID.value);
   const newComment = useRef('');
   const [commentValue, setCommentValue] = useState('');
   const [text, setText] = useState('');
@@ -36,11 +36,12 @@ function PostDetail() {
   const [postToEdit, setPostToEdit] = useState(null);
   const [editingPost, setEditingPost] = useState(false);
   const [newCommentValue, setNewCommentValue] = useState('');
+  const [selfID, setSelfID] = useState('selfId');
   let postID = useParams();
 
   // console.log(postID);
   postID = postID.postId;
-  const selfID = useSelector((state) => state.userID.value);
+  // const selfID = useSelector((state) => state.userID.value);
   const navigate = useNavigate();
 
   const handleEdit = () => {
@@ -94,7 +95,8 @@ function PostDetail() {
         try {
           await updatePost(postID, 'comments', newComments);
         } catch (e) {
-          throw new Error(e);
+          messageApi.error(e.message);
+          setTimeout(() => { navigate('/'); }, 1000);
         }
         break;
       }
@@ -107,7 +109,8 @@ function PostDetail() {
     try {
       await deletePost(postID);
     } catch (e) {
-      throw new Error(e);
+      messageApi.error(e.message);
+      setTimeout(() => { navigate('/'); }, 1000);
     }
     navigate(-1);
   };
@@ -119,7 +122,7 @@ function PostDetail() {
     }
 
     const tempNewComment = {
-      ownerID: userID,
+      ownerID: selfID,
       avatar: loggedInUserAvatar,
       comment: commentValue,
       createdTime: new Date(Date.now()).toISOString(),
@@ -129,7 +132,8 @@ function PostDetail() {
     try {
       await updatePost(postID, 'comments', [...comments, tempNewComment]);
     } catch (e) {
-      throw new Error(e);
+      messageApi.error(e.message);
+      setTimeout(() => { navigate('/'); }, 1000);
     }
     setCommentValue('');
     // document.getElementById("comment-input").value = "" //TODO: no comment-input?
@@ -144,7 +148,8 @@ function PostDetail() {
     try {
       await updatePost(postID, 'comments', newComments);
     } catch (e) {
-      throw new Error(e);
+      messageApi.error(e.message);
+      setTimeout(() => { navigate('/'); }, 1000);
     }
   };
 
@@ -160,7 +165,8 @@ function PostDetail() {
     try {
       await updatePost(postID, 'likes', newLikes);
     } catch (e) {
-      throw new Error(e);
+      messageApi.error(e.message);
+      setTimeout(() => { navigate('/'); }, 1000);
     }
   };
 
@@ -170,7 +176,8 @@ function PostDetail() {
     try {
       await updatePost(postID, 'likes', newLikes);
     } catch (e) {
-      throw new Error(e);
+      messageApi.error(e.message);
+      setTimeout(() => { navigate('/'); }, 1000);
     }
   };
 
@@ -186,8 +193,9 @@ function PostDetail() {
         );
         callBack(filteredUsers);
       }
-    } catch (error) {
-      throw new Error(error);
+    } catch (e) {
+      messageApi.error(e.message);
+      setTimeout(() => { navigate('/'); }, 1000);
     }
   };
 
@@ -209,14 +217,20 @@ function PostDetail() {
         setUsername(userInfo.username);
         setAvatar(userInfo.avatar);
 
-        const loggedInUser = await getUser(userID);
+        const loggedInUser = await getUser('selfId');
         setLoggedInUserAvatar(loggedInUser.avatar);
+        setSelfID(loggedInUser._id);
       } catch (e) {
-        throw new Error(e);
+        messageApi.error(e.message);
+        setTimeout(() => { navigate('/'); }, 1000);
       }
     }
     getData();
-  }, [postID, userID]);
+    const interval = setInterval(() => {
+      getData();
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [postID]);
 
   function mapComment(i) {
     // console.log(i);
@@ -262,7 +276,7 @@ function PostDetail() {
                     <Avatar src={avatar} />
                     <div className="username">{username}</div>
                     <span />
-                    {owner === userID && (
+                    {owner === selfID && (
                       <div>
                         <Chip label="Edit" variant="outlined" onClick={handleEdit} />
                         <span />
@@ -300,7 +314,7 @@ function PostDetail() {
                               style={{ backgroundColor: '#cee4e5', fontWeight: 'normal' }}
                             />
                           </MentionsInput>
-                          {userID === item.ownerID ? (
+                          {selfID === item.ownerID ? (
                             <div className="comment-operators">
                               <div className="time">{item.createdTime}</div>
                               <div
@@ -332,12 +346,13 @@ function PostDetail() {
                           <div className="comment-text" id="comment-text-nonInput">
                             {
                               item.comment.split('@@@__').map(
-                                (i) => (<span key={i._id}>{mapComment(i)}</span>),
+                                // eslint-disable-next-line react/no-array-index-key
+                                (i, k) => (<span key={k}>{mapComment(i)}</span>),
                               )
                             }
                           </div>
 
-                          {userID === item.ownerID ? (
+                          {selfID === item.ownerID ? (
                             <div className="comment-operators">
                               <div className="time">{item.createdTime}</div>
                               <div
