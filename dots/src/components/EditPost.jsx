@@ -46,6 +46,7 @@ function EditPost(props) {
         uploadBytes(imageRef, pic).then(async (snapshot) => {
           getDownloadURL(snapshot.ref).then(async (url) => {
             await updatePost(post._id, 'pic', url);
+          });
         });
       } else if (videoChanged && video) {
         const videoRef = ref(firebaseStorage, `videos/${video.name + Date.now()}`);
