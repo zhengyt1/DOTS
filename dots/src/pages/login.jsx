@@ -63,6 +63,7 @@ export default function Login() {
       dispatch(userLogin(user._id));
       navigate('/home');
     } catch (e) {
+      messageApi.info(e.message);
       throw new Error(e);
     }
   };

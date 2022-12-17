@@ -36,7 +36,6 @@ export const getUsers = async () => {
 export const getUser = async (userID) => {
   try {
     const response = await axios.get(`${rootURL}/user/${userID}`);
-    // console.log(userID, response);
     return response.data.data;
   } catch (err) {
     throw new Error(err);
@@ -62,7 +61,8 @@ export const getUserByEmail = async (email, password) => {
     );
     return response.data.data;
   } catch (err) {
-    throw new Error(err);
+    // by this way, we can deliver our error message to frontend.
+    throw new Error(`${err.response.data.message}`);
   }
 };
 
