@@ -182,15 +182,18 @@ export const getPostsByUserID = async (ownerID, viewerID) => {
   }
 };
 
-export const getFeed = async (userID) => {
+export const getFeed = async (userID, page, limit) => {
   try {
     const followings = await getFollowings(userID);
     const run = async () => Promise.all(
       followings.map(async (id) => getPostsByUserID(id, userID)),
     );
     const posts = await run();
+    const flatArr = posts.flat();
 
-    return posts.flat();
+    const currentPage = flatArr.slice(limit * page, limit * page + limit);
+
+    return currentPage;
   } catch (err) {
     throw new Error(err);
   }
