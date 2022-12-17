@@ -11,6 +11,7 @@ import MovieCreationIcon from '@mui/icons-material/MovieCreation';
 import { Switch } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+// import { Mention, MentionsInput } from 'react-mentions';
 import { createPost, getUser } from '../mockedAPI/mockedAPI';
 import firebaseStorage from '../firebase/firebase';
 
@@ -19,6 +20,7 @@ function Share() {
   const [messageApi, contextHolder] = message.useMessage();
   const shareTextRef = useRef();
   const tagUsersRef = useRef();
+  // const [mentionValue, setMentionValue] = useState('');
   const [shareImage, setImage] = useState(null);
   const [shareVideo, setVideo] = useState(null);
   const [showTagArea, setShowTagArea] = useState(false);
@@ -112,7 +114,36 @@ function Share() {
 
   const privacyHandler = (event) => {
     setPrivate(event.target.checked);
+    // if (showTagArea === true) {
+    //   setShowTagArea(false);
+    // } else {
+    //   setShowTagArea(true);
+    // }
   };
+
+  // const handleMentionsChange = (event) => {
+  //   setMentionValue(event.target.value);
+  //   tagUsersRef.current = event.target.value;
+  //   console.log(mentionValue);
+  //   console.log(tagUsersRef);
+  // };
+
+  // const fetchMentionUsers = async (query, callBack) => {
+  //   try {
+  //     const allUsers = await getUsers();
+  //     const transformedAllUsers = allUsers.map((u) => ({ id: u._id, display: u.username }));
+  //     if (!query) {
+  //       callBack(transformedAllUsers);
+  //     } else {
+  //       const filteredUsers = transformedAllUsers.filter(
+  //         (user) => user.display.toLowerCase().includes(query.toLowerCase()),
+  //       );
+  //       callBack(filteredUsers);
+  //     }
+  //   } catch (error) {
+  //     throw new Error(error);
+  //   }
+  // };
 
   return (
     <div className="share">
@@ -140,11 +171,27 @@ function Share() {
         {showTagArea && (
         <div className="shareTags">
           <hr className="shareHr" />
-          <input
-            placeholder="Tag other users, input usernames separated by comma: "
+          {/* <input
+            placeholder="Select who can view this post by mentioning users using @."
             className="shareInput"
             ref={tagUsersRef}
-          />
+          /> */}
+          {/* <MentionsInput
+            className="view-restriction-input"
+            placeholder="Select who can view this post. e.g. @user1, @user2"
+            value={mentionValue}
+            forceSuggestionsAboveCursor
+            onChange={(e) => handleMentionsChange(e)}
+          >
+            <Mention
+              data={fetchMentionUsers}
+              displayTransform={(id, display) => `@${display}`}
+              trigger="@"
+              markup="@@@____id__^^^____display__@@@__"
+              appendSpaceOnAdd
+              style={{ backgroundColor: '#cee4e5', fontWeight: 'normal' }}
+            />
+          </MentionsInput> */}
         </div>
         )}
 

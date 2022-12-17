@@ -188,28 +188,41 @@ export const getPostByID = async (postID) => {
 
 // get post by user ID => return array of posts
 
-export const getPostsByUserID = async (userID) => {
+export const getPostsByUserID = async (ownerID, viewerID) => {
   try {
     setHeaders();
-    const response = await axios.get(`${rootURL}/post?owner=${userID}`);
+    const response = await axios.get(`${rootURL}/post?owner=${ownerID}`);
+    const postList = response.data.data;
     reAuthenticate(response.status);
-    return response.data.data;
+    if (ownerID === viewerID) {
+      return response.data.data;
+    }
+    const filteredList = [];
+    for (let i = 0; i < postList.length; i += 1) {
+      if (!postList[i].isPrivate) {
+        filteredList.push(postList[i]);
+      }
+    }
+    return filteredList;
   } catch (err) {
     reAuthenticate(401);
     throw new Error(err.response.data.message);
   }
 };
 
-export const getFeed = async () => {
+export const getFeed = async (userID, page, limit) => {
   try {
     setHeaders();
     const followings = await getFollowings(selfId);
     const run = async () => Promise.all(
-      followings.map(async (id) => getPostsByUserID(id)),
+      followings.map(async (id) => getPostsByUserID(id, userID)),
     );
     const posts = await run();
+    const flatArr = posts.flat();
 
-    return posts.flat();
+    const currentPage = flatArr.slice(limit * page, limit * page + limit);
+
+    return currentPage;
   } catch (err) {
     reAuthenticate(401);
     throw new Error(err);

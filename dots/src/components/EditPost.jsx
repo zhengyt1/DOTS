@@ -7,6 +7,7 @@ import {
   Avatar,
   Collapse,
   IconButton,
+  Switch,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import Button from '@mui/material/Button';
@@ -29,6 +30,7 @@ function EditPost(props) {
   const [text, setText] = useState(post.text);
   const [pic, setPic] = useState(post.pic);
   const [video, setVideo] = useState(post.video);
+  const [isPrivate, setPrivate] = useState(post.isPrivate);
   const [picChanged, setPicChanged] = useState(false);
   const [videoChanged, setVideoChanged] = useState(false);
   const [openAlert, setOpenAlert] = useState(false);
@@ -37,13 +39,13 @@ function EditPost(props) {
     e.preventDefault();
     try {
       await updatePost(post._id, 'text', text);
+      await updatePost(post._id, 'isPrivate', isPrivate);
 
       if (picChanged && pic) {
         const imageRef = ref(firebaseStorage, `images/${pic.name + Date.now()}`);
         uploadBytes(imageRef, pic).then(async (snapshot) => {
           getDownloadURL(snapshot.ref).then(async (url) => {
             await updatePost(post._id, 'pic', url);
-          });
         });
       } else if (videoChanged && video) {
         const videoRef = ref(firebaseStorage, `videos/${video.name + Date.now()}`);
@@ -76,6 +78,10 @@ function EditPost(props) {
     if (e.target.files.length) {
       setVideo(e.target.files[0]);
     }
+  };
+
+  const privacyHandler = (event) => {
+    setPrivate(event.target.checked);
   };
 
   return (
@@ -160,7 +166,11 @@ function EditPost(props) {
                 onChange={(e) => handleVideoChange(e)}
               />
             </label>
-            <Button onClick={handlePost}>Update Post</Button>
+            <div className="shareOption">
+              <Switch className="shareIcon" checked={isPrivate} onChange={privacyHandler} />
+              <span className="shareOptionText">Private Post</span>
+            </div>
+            <Button onClick={handlePost}>Post</Button>
           </div>
         </div>
       </div>

@@ -36,7 +36,7 @@ function Profile() {
           SetFollowers(userData.followers);
           SetFollowings(userData.followings);
         }
-        const postsData = await getPostsByUserID(profileID);
+        const postsData = await getPostsByUserID(profileID, selfID);
         if (postsData !== undefined) {
           SetPosts(postsData);
         }
