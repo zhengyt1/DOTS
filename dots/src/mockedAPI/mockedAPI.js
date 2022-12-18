@@ -177,7 +177,7 @@ export const getFollowings = async (userID) => {
 export const getPostByID = async (postID) => {
   try {
     setHeaders();
-    const response = await axios.get(`${rootURL}/post/${postID}`);
+    const response = await axios.get(`${rootURL}/api/post/${postID}`);
     reAuthenticate(response.status);
     return response.data.data;
   } catch (err) {
@@ -236,7 +236,7 @@ export const updatePost = async (postID, field, value) => {
   try {
     setHeaders();
     const response = await axios.put(
-      `${rootURL}/post/${postID}`,
+      `${rootURL}/api/post/${postID}`,
       payload,
     );
     reAuthenticate(response.status);
@@ -275,7 +275,7 @@ export const createPost = async (postObject) => {
 export const deletePost = async (postID) => {
   try {
     setHeaders();
-    const response = await axios.delete(`${rootURL}/post/${postID}`);
+    const response = await axios.delete(`${rootURL}/api/post/${postID}`);
     reAuthenticate(response.status);
     return response.data.data;
   } catch (err) {

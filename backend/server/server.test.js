@@ -81,9 +81,9 @@ describe('Create player endpoint API & integration tests', () => {
   });
 
   test('test post related function', async () => {
-    const res = await request(webapp).put(`/post/${postID}`).send('text=miaomiaomiao');
+    const res = await request(webapp).put(`/api/post/${postID}`).send('text=miaomiaomiao');
     expect(res.statusCode).toBe(200);
-    const post = await request(webapp).get(`/post/${postID}`);
+    const post = await request(webapp).get(`/api/post/${postID}`);
     expect(JSON.parse(post.text).data.text).toBe('miaomiaomiao');
   });
 });

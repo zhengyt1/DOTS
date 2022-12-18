@@ -160,7 +160,7 @@ webapp.post('/user', async (req, res) => {
 //   }
 // });
 
-webapp.get('/post/:id', async (req, res) => {
+webapp.get('/api/post/:id', async (req, res) => {
   if (await authenticateUser(req.headers.authorization, secret)) {
     try {
       const results = await postDBLib.getPostByID(req.params.id);
@@ -173,7 +173,7 @@ webapp.get('/post/:id', async (req, res) => {
   }
 });
 
-webapp.get('/post', async (req, res) => {
+webapp.get('/api/post', async (req, res) => {
   if (await authenticateUser(req.headers.authorization, secret)) {
     if (!req.query) {
       res.status(404).json({ message: 'get post without queryByText}' });
@@ -190,7 +190,7 @@ webapp.get('/post', async (req, res) => {
   }
 });
 
-webapp.put('/post/:id', async (req, res) => {
+webapp.put('/api/post/:id', async (req, res) => {
   if (await authenticateUser(req.headers.authorization, secret)) {
     try {
       const results = await postDBLib.updatePost(req.params.id, req.body);
@@ -203,7 +203,7 @@ webapp.put('/post/:id', async (req, res) => {
   }
 });
 
-webapp.post('/post', async (req, res) => {
+webapp.post('/api/post', async (req, res) => {
   if (await authenticateUser(req.headers.authorization, secret)) {
     if (!req.body) {
       res.status(404).json({ message: 'missing post body' });
@@ -220,7 +220,7 @@ webapp.post('/post', async (req, res) => {
   }
 });
 
-webapp.delete('/post/:id', async (req, res) => {
+webapp.delete('/api/post/:id', async (req, res) => {
   if (await authenticateUser(req.headers.authorization, secret)) {
     try {
       const results = await postDBLib.deletePost(req.params.id);
