@@ -107,8 +107,8 @@ webapp.post('/login', async (req, res) => {
           return;
         }
         await userDBLib.updateUser(results._id, payload);
+        res.status(401).json({ message: 'email and password do not match' });
       }
-      res.status(401).json({ message: 'email and password do not match' });
     }
   } catch (err) {
     res.status(404).json({ message: 'there is an error' });
