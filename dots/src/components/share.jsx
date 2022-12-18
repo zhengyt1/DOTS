@@ -54,7 +54,6 @@ function Share() {
 
   const submitHandler = async (e) => {
     e.preventDefault();
-    console.log('');
     try {
       const newPost = {
         text: shareTextRef.current.value,
@@ -67,7 +66,6 @@ function Share() {
         createdTime: new Date(Date.now()).toISOString(),
       };
       if (shareImage) {
-        console.log('');
         const imageRef = ref(firebaseStorage, `images/${shareImage.name + Date.now()}`);
         uploadBytes(imageRef, shareImage).then(async (snapshot) => {
           getDownloadURL(snapshot.ref).then(async (url) => {
