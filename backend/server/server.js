@@ -63,13 +63,52 @@ webapp.get('/users', async (req, res) => {
 });
 
 webapp.post('/login', async (req, res) => {
+  const payload = {};
+  const frozenMinutes = 1;
   try {
     const results = await userDBLib.getUserByEmail(req.body.email);
-    if (results.password === req.body.password) {
-      const jwtoken = jwt.sign({ _id: results._id }, secret, { expiresIn: '120s' });
-      res.status(201).json({ token: jwtoken });
-    } else {
-      res.status(401).json({ message: 'email and password do not match' });
+    if (results._id) {
+      if ('limitLoginTime' in results) { // If we record, then first check it
+        if (results.limitLoginTime >= Date.now()) {
+          const remainTime = parseInt((results.limitLoginTime - Date.now()) / (365 * 24 * 60), 10);
+          if (remainTime <= 0) {
+            res.status(404).json({ message: 'You are limited to login, please wait less than one minute to try agian' });
+          } else {
+            res.status(404).json({ message: `You are limited to login, please wait ${remainTime.toString()} minutes to try agian` });
+          }
+          return;
+        }
+        // limit login time should be cleared
+        if (results.failedTimes >= 3) {
+          payload.failedTimes = 0;
+          results.failedTimes = 0;
+          await userDBLib.updateUser(results._id, payload);
+        }
+      }
+      if (results.password === req.body.password) {
+        // Clear all failure times if this login succeed
+        payload.failedTimes = 0;
+        payload.limitLoginTime = Date.now();
+        await userDBLib.updateUser(results._id, payload);
+        const jwtoken = jwt.sign({ _id: results._id }, secret, { expiresIn: '120s' });
+        res.status(201).json({ token: jwtoken });
+      } else { // email and password do not match
+        if (!('limitLoginTime' in results)) { // If we have no record before
+          payload.failedTimes = 1;
+          payload.limitLoginTime = Date.now();
+        } else { // If we have record, add the record by one
+          payload.failedTimes = results.failedTimes + 1;
+          payload.limitLoginTime = Date.now();
+        }
+        if (payload.failedTimes >= 3) { // failure times have accumulated to 3
+          payload.limitLoginTime = new Date(Date.now() + 60000 * frozenMinutes);
+          await userDBLib.updateUser(results._id, payload);
+          res.status(401).json({ message: `You are limited to login, please wait ${frozenMinutes} minute to try agian` });
+          return;
+        }
+        await userDBLib.updateUser(results._id, payload);
+        res.status(401).json({ message: 'email and password do not match' });
+      }
     }
   } catch (err) {
     res.status(404).json({ message: 'there is an error' });
