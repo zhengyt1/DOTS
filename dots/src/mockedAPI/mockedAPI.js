@@ -404,6 +404,9 @@ export const getFollowers = async (userID) => {
 
 export const getSuggestedFollowings = async (userID) => {
   try {
+    if (userID === selfId) {
+      return [];
+    }
     setHeaders();
     const users = await getUsers();
     const myFollowings = await getFollowings(userID);

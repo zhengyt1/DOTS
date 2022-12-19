@@ -22,7 +22,6 @@ function Home() {
   const DATALEN = 2;
 
   useEffect(() => {
-    setUserID(sessionStorage.getItem('app-token'));
     async function fetchFeed() {
       try {
         const user = await getUser('selfId');
