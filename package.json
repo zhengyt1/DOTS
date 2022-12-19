@@ -1,0 +1,8 @@
+{
+  "scripts": {
+    "build": "cd backend && npm install && cd ../dots && npm install && npm run build"
+  },
+  "engines": {
+    "node": "16.x"
+  }
+}
