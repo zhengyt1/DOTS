@@ -7,6 +7,7 @@ const jwt = require('jsonwebtoken');
 
 const dotenv = require('dotenv');
 
+const path = require('path');
 // get config vars
 dotenv.config();
 
@@ -21,6 +22,7 @@ const webapp = express();
 webapp.use(cors());
 webapp.use(express.urlencoded({ extended: true }));
 webapp.use(express.json());
+webapp.use(express.static(path.join(__dirname, '../../dots/build')));
 const userDBLib = require('../mongodb/userDBFunctions');
 const postDBLib = require('../mongodb/postDBFunctions');
 
@@ -43,7 +45,8 @@ const authenticateUser = async (token, key) => {
 
 // root endpoint / route
 webapp.get('/', (req, resp) => {
-  resp.json({ message: 'welcome to our backend!!!' });
+  // resp.json({ message: 'welcome to our backend!!!' });
+  resp.sendFile(path.join(__dirname, '../../dots/build/index.html'));
 });
 
 // implement the GET /students endpoint
@@ -160,7 +163,7 @@ webapp.post('/user', async (req, res) => {
 //   }
 // });
 
-webapp.get('/post/:id', async (req, res) => {
+webapp.get('/api/post/:id', async (req, res) => {
   if (await authenticateUser(req.headers.authorization, secret)) {
     try {
       const results = await postDBLib.getPostByID(req.params.id);
@@ -173,7 +176,7 @@ webapp.get('/post/:id', async (req, res) => {
   }
 });
 
-webapp.get('/post', async (req, res) => {
+webapp.get('/api/post', async (req, res) => {
   if (await authenticateUser(req.headers.authorization, secret)) {
     if (!req.query) {
       res.status(404).json({ message: 'get post without queryByText}' });
@@ -190,7 +193,7 @@ webapp.get('/post', async (req, res) => {
   }
 });
 
-webapp.put('/post/:id', async (req, res) => {
+webapp.put('/api/post/:id', async (req, res) => {
   if (await authenticateUser(req.headers.authorization, secret)) {
     try {
       const results = await postDBLib.updatePost(req.params.id, req.body);
@@ -203,7 +206,7 @@ webapp.put('/post/:id', async (req, res) => {
   }
 });
 
-webapp.post('/post', async (req, res) => {
+webapp.post('/api/post', async (req, res) => {
   if (await authenticateUser(req.headers.authorization, secret)) {
     if (!req.body) {
       res.status(404).json({ message: 'missing post body' });
@@ -220,7 +223,7 @@ webapp.post('/post', async (req, res) => {
   }
 });
 
-webapp.delete('/post/:id', async (req, res) => {
+webapp.delete('/api/post/:id', async (req, res) => {
   if (await authenticateUser(req.headers.authorization, secret)) {
     try {
       const results = await postDBLib.deletePost(req.params.id);
