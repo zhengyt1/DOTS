@@ -408,12 +408,11 @@ export const getSuggestedFollowings = async (userID) => {
     const users = await getUsers();
     const myFollowings = await getFollowings(userID);
     const suggestedList = [];
-
     for (let i = 0; i < users.length; i += 1) {
       if (users[i].followings.length > 0 && users[i]._id !== userID) {
         const intersection = myFollowings.filter((x) => users[i].followings.includes(x));
-        // include users with >=3 common followings, exclude already followed users
-        if (intersection.length >= 3 && !myFollowings.includes(users[i]._id)) {
+        // include users with >=2 common followings, exclude already followed users
+        if (intersection.length >= 2 && !myFollowings.includes(users[i]._id)) {
           suggestedList.push(users[i]);
         }
       }
@@ -421,6 +420,6 @@ export const getSuggestedFollowings = async (userID) => {
     return suggestedList;
   } catch (err) {
     reAuthenticate(401);
-    throw new Error(err);
+    throw new Error(err.response.data.message);
   }
 };

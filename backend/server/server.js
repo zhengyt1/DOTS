@@ -8,6 +8,7 @@ const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 
 const path = require('path');
+const favicon = require('serve-favicon');
 // get config vars
 dotenv.config();
 
@@ -23,6 +24,7 @@ webapp.use(cors());
 webapp.use(express.urlencoded({ extended: true }));
 webapp.use(express.json());
 webapp.use(express.static(path.join(__dirname, '../../dots/build')));
+webapp.use(favicon(path.join(__dirname, '../../dots/build', 'favicon.ico')));
 const userDBLib = require('../mongodb/userDBFunctions');
 const postDBLib = require('../mongodb/postDBFunctions');
 
@@ -68,6 +70,10 @@ webapp.get('/users', async (req, res) => {
 webapp.post('/login', async (req, res) => {
   try {
     const results = await userDBLib.getUserByEmail(req.body.email);
+    if (!results) {
+      res.status(401).json({ message: 'the user is not in the database' });
+      return;
+    }
     if (results.password === req.body.password) {
       const jwtoken = jwt.sign({ _id: results._id }, secret, { expiresIn: '120s' });
       res.status(201).json({ token: jwtoken });
