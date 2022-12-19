@@ -45,12 +45,6 @@ const authenticateUser = async (token, key) => {
   }
 };
 
-// root endpoint / route
-webapp.get('/', (req, resp) => {
-  // resp.json({ message: 'welcome to our backend!!!' });
-  resp.sendFile(path.join(__dirname, '../../dots/build/index.html'));
-});
-
 // implement the GET /students endpoint
 webapp.get('/users', async (req, res) => {
   if (await authenticateUser(req.headers.authorization, secret)) {
@@ -240,6 +234,12 @@ webapp.delete('/api/post/:id', async (req, res) => {
   } else {
     res.status(401).json({ message: 'failed authentication' });
   }
+});
+
+// root endpoint / route
+webapp.get('*', (req, resp) => {
+  // resp.json({ message: 'welcome to our backend!!!' });
+  resp.sendFile(path.join(__dirname, '../../dots/build/index.html'));
 });
 
 module.exports = webapp;
