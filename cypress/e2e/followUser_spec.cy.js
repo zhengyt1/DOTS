@@ -14,5 +14,7 @@ describe('test user login and follow an user', () => {
     cy.get('button').contains('Follow').click()
     // make sure the button becomes Unfollow
     cy.get('button').contains('Unfollow')
+    // unfollow the user
+    cy.get('button').contains('Unfollow').click()
   })
 })

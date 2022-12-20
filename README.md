@@ -14,6 +14,9 @@ Swaggerhub link: [swaggerhub](https://app.swaggerhub.com/apis/ZXY9815_1/Group21_
 ## Deployment
 visit **https://deployment-dots.herokuapp.com/** for our deployment app.
 
+## End to End Tests
+run `npx cypress open` to open the test page. Click on E2E Testing and run the 2 Specs we have configured. Note that the registration test can only be run once as we check for unique email address when registering.
+
 ## Tips: 
 - cd our file dots/ and run `npm start` to start
 
