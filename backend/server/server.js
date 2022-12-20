@@ -16,7 +16,7 @@ dotenv.config();
 // eslint-disable-next-line max-len
 // 0e1b98cd289418f10cd78a55c5b9192f0b17d4b71c094a6443018c70d95432e9ec2534d290606e374a92d609a4491005c571b42673b0c7b12e1fec243c5fb265
 const secret = process.env.TOKEN_SECRET;
-
+const EXPIRE_TIME = '120s';
 const webapp = express();
 webapp.use(cors());
 webapp.use(express.urlencoded({ extended: true }));
@@ -90,7 +90,7 @@ webapp.post('/login', async (req, res) => {
         payload.failedTimes = 0;
         payload.limitLoginTime = Date.now();
         await userDBLib.updateUser(results._id, payload);
-        const jwtoken = jwt.sign({ _id: results._id }, secret, { expiresIn: '120s' });
+        const jwtoken = jwt.sign({ _id: results._id }, secret, { expiresIn: EXPIRE_TIME });
         res.status(201).json({ token: jwtoken });
       } else { // email and password do not match
         if (!('limitLoginTime' in results)) { // If we have no record before
@@ -165,7 +165,7 @@ webapp.post('/user', async (req, res) => {
       return;
     }
     const results = await userDBLib.createUser(req.body);
-    const jwtoken = jwt.sign({ _id: results.insertedId }, secret, { expiresIn: '120s' });
+    const jwtoken = jwt.sign({ _id: results.insertedId }, secret, { expiresIn: EXPIRE_TIME });
     res.status(201).json({ token: jwtoken });
   } catch (err) {
     res.status(404).json({ message: 'there is an error' });

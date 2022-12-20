@@ -52,18 +52,22 @@ function Home() {
         window.scrollTo(0, sessionStorage.getItem('scrollPosition'));
       }, 2);
 
+      // Not a good idea, but can work
       setTimeout(() => {
         setTimeout(sessionStorage.setItem('scrollPosition', null));
-      }, 1500);
+      }, 2000);
     }
 
     const interval = setInterval(async () => {
       const newFeedLen = await checkFeedLen(userID);
-      if (newFeedLen !== feedLen.current) {
+      if (newFeedLen > feedLen.current) {
         feedLen.current = newFeedLen;
         fetchFeed();
         setHasMoreData(true);
         setPage(1);
+        message.info('New posts in your feed');
+      } else {
+        feedLen.current = newFeedLen;
       }
     }, 5000);
     return () => clearInterval(interval);

@@ -210,6 +210,7 @@ export const getPostsByUserID = async (ownerID, viewerID) => {
   }
 };
 
+// live update only when the feed length changed
 export const checkFeedLen = async (userID) => {
   try {
     setHeaders();
