@@ -11,7 +11,8 @@ Figma link: [Figma](https://www.figma.com/file/2zKBicT9YGqXbUttyQ4yne/Group21-Pr
 
 Swaggerhub link: [swaggerhub](https://app.swaggerhub.com/apis/ZXY9815_1/Group21_openapi2/1.0.0)
 
-
+## Deployment
+visit **https://deployment-dots.herokuapp.com/** for our deployment app.
 
 ## Tips: 
 - cd our file dots/ and run `npm start` to start
