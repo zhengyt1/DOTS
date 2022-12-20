@@ -1,0 +1,13 @@
+{
+  "scripts": {
+    "start": "cd backend && npm start",
+    "build": "cd backend && npm install && cd ../dots && npm install && npm run build",
+    "heroku-postbuild": "npm run build"
+  },
+  "engines": {
+    "node": "16.x"
+  },
+  "dependencies": {
+    "serve": "^14.1.2"
+  }
+}
