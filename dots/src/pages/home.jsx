@@ -9,13 +9,13 @@ import Rightbar from '../components/rightbar';
 import Feed from '../components/feed';
 import './home.css';
 import Share from '../components/share';
-import { checkFeedLen, getFeed, getUser } from '../mockedAPI/mockedAPI';
+import { checkNewFeed, getFeed, getUser } from '../mockedAPI/mockedAPI';
 
 function Home() {
   const [posts, setPosts] = useState([]);
   const [userID, setUserID] = useState('selfId');
   const loadFeed = useRef(false);
-  const feedLen = useRef(0);
+  const latestFeed = useRef(null);
   const [messageApi, contextHolder] = message.useMessage();
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
@@ -34,8 +34,7 @@ function Home() {
         }
         setUserID(user._id);
         const data = await getFeed(user._id, 0, DATALEN);
-        const newFeedLen = await checkFeedLen(userID);
-        feedLen.current = newFeedLen;
+        latestFeed.current = await checkNewFeed(userID); // update latest feed
         setPosts(data);
       } catch (e) {
         messageApi.error(e.message);
@@ -59,15 +58,15 @@ function Home() {
     }
 
     const interval = setInterval(async () => {
-      const newFeedLen = await checkFeedLen(userID);
-      if (newFeedLen > feedLen.current) {
-        feedLen.current = newFeedLen;
+      const latestPost = await checkNewFeed(userID);
+      if (latestPost.createdTime > latestFeed.current.createdTime) {
+        latestFeed.current = latestPost;
         fetchFeed();
         setHasMoreData(true);
         setPage(1);
         message.info('New posts in your feed');
       } else {
-        feedLen.current = newFeedLen;
+        latestFeed.current = latestPost;
       }
     }, 5000);
     return () => clearInterval(interval);
