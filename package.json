@@ -9,5 +9,8 @@
   },
   "dependencies": {
     "serve": "^14.1.2"
+  },
+  "devDependencies": {
+    "cypress": "^12.1.0"
   }
 }

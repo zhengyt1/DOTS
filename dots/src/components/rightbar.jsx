@@ -114,6 +114,7 @@ function Rightbar(props) {
           <SearchIcon />
         </SearchIconWrapper>
         <StyledInputBase
+          id="searchBox"
           placeholder="Search…"
           inputProps={{ 'aria-label': 'search' }}
           onChange={handleFilterTextChange}
