@@ -247,9 +247,6 @@ function PostDetail() {
   }
 
   return (
-  // <div className="post-background">
-  //   <Cancel onClick={handleCancel} />
-
     <Modal
       open
       onClose={handleClose}
@@ -322,7 +319,7 @@ function PostDetail() {
                                 data-testid={`confirm-${key}`}
                                 role="button"
                                 tabIndex="0"
-                                onKeyDown={() => {}}
+                                onKeyDown={() => { }}
                                 onClick={() => handleEditComment(key, 'confirm')}
                               >
                                 Confirm
@@ -331,7 +328,7 @@ function PostDetail() {
                                 className="comment-edit"
                                 role="button"
                                 tabIndex="0"
-                                onKeyDown={() => {}}
+                                onKeyDown={() => { }}
                                 onClick={() => handleEditComment(key, 'cancel')}
                               >
                                 Cancel
@@ -360,7 +357,7 @@ function PostDetail() {
                                 data-testid={`edit-${key}`}
                                 role="button"
                                 tabIndex="0"
-                                onKeyDown={() => {}}
+                                onKeyDown={() => { }}
                                 onClick={() => handleEditComment(key, 'open')}
                               >
                                 Edit
@@ -369,7 +366,7 @@ function PostDetail() {
                                 className="comment-edit"
                                 role="button"
                                 tabIndex="0"
-                                onKeyDown={() => {}}
+                                onKeyDown={() => { }}
                                 onClick={() => handleDeleteComment(key)}
                               >
                                 Delete

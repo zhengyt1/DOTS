@@ -47,9 +47,18 @@ function Home() {
       fetchFeed();
       loadFeed.current = true;
     }
+    if (sessionStorage.getItem('scrollPosition') !== 'null') {
+      setTimeout(() => {
+        window.scrollTo(0, sessionStorage.getItem('scrollPosition'));
+      }, 2);
+
+      setTimeout(() => {
+        setTimeout(sessionStorage.setItem('scrollPosition', null));
+      }, 1500);
+    }
+
     const interval = setInterval(async () => {
       const newFeedLen = await checkFeedLen(userID);
-      console.log(newFeedLen, feedLen.current);
       if (newFeedLen !== feedLen.current) {
         feedLen.current = newFeedLen;
         fetchFeed();

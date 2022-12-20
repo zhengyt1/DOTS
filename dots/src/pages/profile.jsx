@@ -36,7 +36,10 @@ function Profile() {
           SetFollowers(userData.followers);
           SetFollowings(userData.followings);
         }
-        const postsData = await getPostsByUserID(profileID, selfID);
+        let postsData = await getPostsByUserID(profileID, selfID);
+        postsData = postsData.sort(
+          (a, b) => (a.createdTime > b.createdTime ? -1 : 1),
+        );
         if (postsData !== undefined) {
           SetPosts(postsData);
         }
