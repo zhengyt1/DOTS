@@ -1,6 +1,6 @@
 describe('test user login and follow an user', () => {
   it('passes', () => {
-    cy.visit('http://localhost:3000/')
+    cy.visit('https://deployment-dots.herokuapp.com/')
     // type in username and password
     cy.get('#email').type('2@2.com').should('have.value', '2@2.com')
     cy.get('#password').type('222').should('have.value', '222')

@@ -433,8 +433,8 @@ export const getSuggestedFollowings = async (userID) => {
     for (let i = 0; i < users.length; i += 1) {
       if (users[i].followings.length > 0 && users[i]._id !== userID) {
         const intersection = myFollowings.filter((x) => users[i].followings.includes(x));
-        // include users with >=2 common followings, exclude already followed users
-        if (intersection.length >= 2 && !myFollowings.includes(users[i]._id)) {
+        // include users with >=3 common followings, exclude already followed users
+        if (intersection.length >= 3 && !myFollowings.includes(users[i]._id)) {
           suggestedList.push(users[i]);
         }
       }
