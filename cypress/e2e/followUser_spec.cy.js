@@ -2,8 +2,8 @@ describe('test user login and follow an user', () => {
   it('passes', () => {
     cy.visit('http://localhost:3000/')
     // type in username and password
-    cy.get('#email').type('Francis2@gmail.com').should('have.value', 'Francis2@gmail.com')
-    cy.get('#password').type('111').should('have.value', '111')
+    cy.get('#email').type('2@2.com').should('have.value', '2@2.com')
+    cy.get('#password').type('222').should('have.value', '222')
     // click login button
     cy.get('button').contains('Login').click()
     cy.url().should('include', '/home')
