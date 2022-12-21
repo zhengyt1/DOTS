@@ -1,6 +1,6 @@
 describe('test registration of a user', () => {
   it('passes', () => {
-    cy.visit('http://localhost:3000/register')
+    cy.visit('https://deployment-dots.herokuapp.com/register')
     // type in username and password
     cy.get('#email').type('testuser@example.com').should('have.value', 'testuser@example.com')
     cy.get('#password').type('111').should('have.value', '111')
@@ -11,6 +11,6 @@ describe('test registration of a user', () => {
     // logout
     cy.get('a[href="/"]').click()
     // delete user
-    cy.request('DELETE', 'http://localhost:8080/test/user')
+    cy.request('DELETE', 'https://deployment-dots.herokuapp.com/test/user')
   })
 })
