@@ -9,17 +9,18 @@ import Rightbar from '../components/rightbar';
 import Feed from '../components/feed';
 import './home.css';
 import Share from '../components/share';
-import { getFeed, getUser } from '../mockedAPI/mockedAPI';
+import { checkNewFeed, getFeed, getUser } from '../mockedAPI/mockedAPI';
 
 function Home() {
   const [posts, setPosts] = useState([]);
   const [userID, setUserID] = useState('selfId');
   const loadFeed = useRef(false);
+  const latestFeed = useRef(null);
   const [messageApi, contextHolder] = message.useMessage();
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const [hasMoreData, setHasMoreData] = useState(true);
-  const DATALEN = 2;
+  const DATALEN = 10;
 
   useEffect(() => {
     async function fetchFeed() {
@@ -32,6 +33,7 @@ function Home() {
         }
         setUserID(user._id);
         const data = await getFeed(user._id, 0, DATALEN);
+        latestFeed.current = await checkNewFeed(userID); // update latest feed
         setPosts(data);
       } catch (e) {
         messageApi.error(e.message);
@@ -43,8 +45,30 @@ function Home() {
       fetchFeed();
       loadFeed.current = true;
     }
-    const interval = setInterval(() => {
+
+    if (sessionStorage.getItem('scrollPosition') !== 'null') {
+      setTimeout(() => {
+        window.scrollTo(0, sessionStorage.getItem('scrollPosition'));
+      }, 1);
+
+      // Not a good idea, but can work
+      setTimeout(() => {
+        setTimeout(sessionStorage.setItem('scrollPosition', null));
+      }, 1000);
+    }
+
+    const interval = setInterval(async () => {
+      const latestPost = await checkNewFeed(userID);
+      if (window.pageYOffset > 100) {
+        sessionStorage.setItem('scrollPosition', window.pageYOffset);
+      }
+      if (latestPost.createdTime > latestFeed.current.createdTime) {
+        message.info('New posts in your feed');
+      }
+      latestFeed.current = latestPost;
       fetchFeed();
+      setHasMoreData(true);
+      setPage(1);
     }, 5000);
     return () => clearInterval(interval);
   });
@@ -59,7 +83,7 @@ function Home() {
   };
 
   const fetchNextDelayed = async () => {
-    setTimeout(fetchNext, 1000);
+    setTimeout(fetchNext, 10);
   };
 
   return (

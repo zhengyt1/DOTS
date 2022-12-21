@@ -41,7 +41,6 @@ function Post(props) {
   const [isLike, setIsLike] = useState(false);
   const [totalLikes, setTotalLikes] = useState([]);
   const [selfAvatar, setSelfAvatar] = useState('');
-
   const loadData = useRef(true);
   useEffect(() => {
     async function fetchData() {
@@ -58,8 +57,6 @@ function Post(props) {
           setSelfID(selfData._id);
           setIsLike(post.likes.includes(selfData._id));
         }
-        // console.log(post);
-        // console.log(post.likes, post.likes.includes(selfData._id));
       } catch (e) {
         messageApi.error(e.message);
         setTimeout(() => { navigate('/'); }, 1000);
@@ -92,6 +89,10 @@ function Post(props) {
       messageApi.error(e.message);
       setTimeout(() => { navigate('/'); }, 1000);
     }
+  };
+  const handleCommentClick = () => {
+    // Remember the y position on click
+    sessionStorage.setItem('scrollPosition', window.pageYOffset);
   };
 
   const handleLikeClick = async () => {
@@ -169,7 +170,7 @@ function Post(props) {
             }
             <div className="like">{totalLikes.length}</div>
             <Link to={`/post/${_id}`} key={`${_id}`}>
-              <ChatBubbleOutlineIcon />
+              <ChatBubbleOutlineIcon onClick={handleCommentClick} />
             </Link>
             <MentionsInput
               singleLine

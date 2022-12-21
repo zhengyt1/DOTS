@@ -210,6 +210,23 @@ export const getPostsByUserID = async (ownerID, viewerID) => {
   }
 };
 
+// live update only when the feed length changed
+export const checkNewFeed = async (userID) => {
+  try {
+    setHeaders();
+    const followings = await getFollowings(selfId);
+    const run = async () => Promise.all(
+      followings.map(async (id) => getPostsByUserID(id, userID)),
+    );
+    const posts = await run();
+    const flatArr = posts.flat().sort((a, b) => (a.createdTime > b.createdTime ? -1 : 1));
+    return flatArr[0];
+  } catch (err) {
+    reAuthenticate(401);
+    throw new Error(err);
+  }
+};
+
 export const getFeed = async (userID, page, limit) => {
   try {
     setHeaders();
@@ -218,7 +235,7 @@ export const getFeed = async (userID, page, limit) => {
       followings.map(async (id) => getPostsByUserID(id, userID)),
     );
     const posts = await run();
-    const flatArr = posts.flat();
+    const flatArr = posts.flat().sort((a, b) => (a.createdTime > b.createdTime ? -1 : 1));
 
     const currentPage = flatArr.slice(limit * page, limit * page + limit);
 

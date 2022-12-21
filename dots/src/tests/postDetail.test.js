@@ -1,10 +1,11 @@
-import { 
+import {
   BrowserRouter as Router,
- } from 'react-router-dom';
+} from 'react-router-dom';
 import { render, screen, waitFor } from "@testing-library/react"
 import PostDetail from "../components/postDetail"
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom'
+import { act } from 'react-dom/test-utils';
 
 const mockedNavigate = jest.fn();
 const mockedParam = jest.fn();
@@ -16,8 +17,8 @@ jest.mock('react-router-dom', () => ({
 
 const mockDispatch = jest.fn();
 jest.mock('react-redux', () => ({
-    useSelector: () => "2",
-    useDispatch: () => mockDispatch
+  useSelector: () => "2",
+  useDispatch: () => mockDispatch
 }));
 
 const mockPost = jest.fn();
@@ -29,18 +30,18 @@ const user = {
   "email": "zhengyt1@gmail.com",
   "description": "description 2",
   "followers": [
-   "4",
-   "3"
+    "4",
+    "3"
   ],
   "followings": [
-   "5",
-   "6",
-   "7",
-   "4"
+    "5",
+    "6",
+    "7",
+    "4"
   ],
   "posts": [],
-  "id": "2"
- };
+  "_id": "2"
+};
 const post = {
   "createdTime": "2022-10-13T15:40:12.039Z",
   "text": "Cumque eos quia dicta non velit repellendus maxime quaerat. Magnam pariatur illum esse. Aut et sed beatae molestiae et repellendus dolore rem hic.",
@@ -58,7 +59,7 @@ const post = {
   "likes": [],
   "isPrivate": true,
   "mentions": [],
-  "id": "1"
+  "_id": "1"
 };
 jest.mock('../mockedAPI/mockedAPI', () => ({
   getPostByID: () => post,
@@ -67,8 +68,8 @@ jest.mock('../mockedAPI/mockedAPI', () => ({
 }))
 
 describe('test postDetail page', () => {
-  
-  it('renders postDetail by checking existence of post text', () => {
+
+  it('renders postDetail by checking existence of post text', async () => {
     // const mock = new MockAdapter(axios);
 
     // This sets the mock adapter on the default instance
@@ -76,20 +77,21 @@ describe('test postDetail page', () => {
     // mock.onGet('https://63446bd6dcae733e8fdeff41.mockapi.io/api/user/2').reply(200, user);
     // mock.onGet('https://63446bd6dcae733e8fdeff41.mockapi.io/api/post/2').reply(200, post);
 
-    render(
+    await act(async () => render(
       <Router>
         <PostDetail />
       </Router>
-    )
+    ));
     expect(screen.getByText('Post').textContent).toBe('Post');
   });
 
   it('tests edit comment by clicking edit', async () => {
-    render(
+    await act(async () => render(
       <Router>
         <PostDetail />
       </Router>
-    )
+    ));
+
     userEvent.click(await screen.findByTestId('edit-0'));
     expect(await screen.findByTestId('confirm-0')).toBeInTheDocument();
 
@@ -102,11 +104,11 @@ describe('test postDetail page', () => {
   });
 
   it('tests post comment by clicking button with and without comment', async () => {
-    render(
+    await act(async () => render(
       <Router>
         <PostDetail />
       </Router>
-    )
+    ));
     const button = screen.getByText("Post");
     userEvent.click(button);
     await waitFor(async () => {

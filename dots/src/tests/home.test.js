@@ -8,6 +8,7 @@ import Home from '../pages/home';
 import Share from '../components/share';
 import Rightbar from '../components/rightbar';
 import Post from '../components/post';
+import { act } from 'react-dom/test-utils';
 
 const user = {
   username: 'Brook6',
@@ -59,13 +60,15 @@ jest.mock('react-redux', () => ({
   useDispatch: () => mockDispatch,
 }));
 
+window.scrollTo = jest.fn();
+
 describe('Testing Home Page Components Rendering', () => {
-  it('Shows Home page', () => {
-    render(
+  it('Shows Home page', async () => {
+    await act(async () => render(
       <Router>
         <Home />
       </Router>,
-    );
+    ));
   });
   // it('Shows feed', async () => {
   //   const posts = [post];
