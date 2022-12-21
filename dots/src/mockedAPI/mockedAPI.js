@@ -112,7 +112,7 @@ export const updateUser = async (userID, field, value) => {
 export const createUser = async (userObject) => {
   try {
     const user = {
-      username: faker.internet.userName(),
+      username: userObject.email.split('@')[0],
       avatar: faker.image.avatar(),
       password: userObject.password,
       email: userObject.email,
