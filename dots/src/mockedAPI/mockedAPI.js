@@ -214,7 +214,8 @@ export const getPostsByUserID = async (ownerID, viewerID) => {
 export const checkNewFeed = async (userID) => {
   try {
     setHeaders();
-    const followings = await getFollowings(selfId);
+    let followings = await getFollowings(selfId);
+    followings = [userID, ...followings];
     const run = async () => Promise.all(
       followings.map(async (id) => getPostsByUserID(id, userID)),
     );
@@ -230,7 +231,8 @@ export const checkNewFeed = async (userID) => {
 export const getFeed = async (userID, page, limit) => {
   try {
     setHeaders();
-    const followings = await getFollowings(selfId);
+    let followings = await getFollowings(selfId);
+    followings = [userID, ...followings];
     const run = async () => Promise.all(
       followings.map(async (id) => getPostsByUserID(id, userID)),
     );
