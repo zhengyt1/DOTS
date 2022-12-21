@@ -36,7 +36,7 @@ function Profile() {
           SetFollowers(userData.followers);
           SetFollowings(userData.followings);
         }
-        let postsData = await getPostsByUserID(profileID, selfID);
+        let postsData = await getPostsByUserID(profileID, data._id);
         postsData = postsData.sort(
           (a, b) => (a.createdTime > b.createdTime ? -1 : 1),
         );
