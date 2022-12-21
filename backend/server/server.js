@@ -175,6 +175,19 @@ webapp.post('/user', async (req, res) => {
   }
 });
 
+webapp.delete('/test/user', async (req, res) => {
+  try {
+    const results = await userDBLib.deleteTestUser();
+    if (!results) {
+      res.status(404).json({ message: 'no such user' });
+      return;
+    }
+    res.status(200).json({ data: results });
+  } catch (err) {
+    res.status(404).json({ message: 'there is an error' });
+  }
+});
+
 // webapp.get('/followings/:id', async (req, res) => {
 //   const userId = await authenticateUser(req.headers.authorization, secret);
 //   if (userId) {
