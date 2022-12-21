@@ -20,7 +20,7 @@ function Home() {
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const [hasMoreData, setHasMoreData] = useState(true);
-  const DATALEN = 10;
+  const DATALEN = 5;
 
   useEffect(() => {
     async function fetchFeed() {
@@ -83,7 +83,7 @@ function Home() {
   };
 
   const fetchNextDelayed = async () => {
-    setTimeout(fetchNext, 10);
+    setTimeout(fetchNext, 500);
   };
 
   return (
@@ -97,16 +97,16 @@ function Home() {
             dataLength={posts.length}
             next={fetchNextDelayed}
             hasMore={hasMoreData}
-            loader={(
-              <p style={{ textAlign: 'center' }}>
-                <b>Loading...</b>
-              </p>
-            )}
-            endMessage={(
-              <p style={{ textAlign: 'center' }}>
-                <b>Yay! You have seen it all</b>
-              </p>
-            )}
+            // loader={(
+            //   <p style={{ textAlign: 'center' }}>
+            //     <b>Loading...</b>
+            //   </p>
+            // )}
+            // endMessage={(
+            //   <p style={{ textAlign: 'center' }}>
+            //     <b>Yay! You have seen it all</b>
+            //   </p>
+            // )}
           >
             <Feed posts={posts} />
           </InfiniteScroll>
