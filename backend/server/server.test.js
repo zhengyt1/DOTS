@@ -99,20 +99,20 @@ describe('Create player endpoint API & integration tests', () => {
   });
 
   test('test post related function', async () => {
-    res = await request(webapp).post('/post').send(post);
-    res = await request(webapp).post('/post').send(post).set('Authorization', token);
+    res = await request(webapp).post('/api/post').send(post);
+    res = await request(webapp).post('/api/post').send(post).set('Authorization', token);
     postID = res._body.data.insertedId;
-    res = await request(webapp).get(`/post/${postID}`).set('Authorization', token);
+    res = await request(webapp).get(`/api/post/${postID}`).set('Authorization', token);
     expect(res.statusCode).toBe(200);
-    res = await request(webapp).get(`/post/${postID}`);
+    res = await request(webapp).get(`/api/post/${postID}`);
     expect(res.statusCode).toBe(401);
-    res = await request(webapp).put(`/post/${postID}`).send('text=miaomiaomiao').set('Authorization', token);
+    res = await request(webapp).put(`/api/post/${postID}`).send('text=miaomiaomiao').set('Authorization', token);
     expect(res.statusCode).toBe(200);
-    res = await request(webapp).put(`/post/${postID}`).send('text=miaomiaomiao');
+    res = await request(webapp).put(`/api/post/${postID}`).send('text=miaomiaomiao');
     expect(res.statusCode).toBe(401);
-    res = await request(webapp).delete(`/post/${postID}`).set('Authorization', token);
+    res = await request(webapp).delete(`/api/post/${postID}`).set('Authorization', token);
     expect(res.statusCode).toBe(200);
-    res = await request(webapp).delete(`/post/${postID}`);
+    res = await request(webapp).delete(`/api/post/${postID}`);
     expect(res.statusCode).toBe(401);
   });
 });

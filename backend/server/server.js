@@ -175,7 +175,6 @@ webapp.post('/user', async (req, res) => {
   }
 });
 
-
 webapp.get('/followings/:id', async (req, res) => {
   const userId = await authenticateUser(req.headers.authorization, secret);
   if (userId) {
