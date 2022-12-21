@@ -166,38 +166,39 @@ webapp.post('/user', async (req, res) => {
     }
     const results = await userDBLib.createUser(req.body);
     const jwtoken = jwt.sign({ _id: results.insertedId }, secret, { expiresIn: EXPIRE_TIME });
-    res.status(201).json({ token: jwtoken });
+    res.status(201).json({ token: jwtoken, data: results });
   } catch (err) {
     res.status(404).json({ message: 'there is an error' });
   }
 });
 
-// webapp.get('/followings/:id', async (req, res) => {
-//   const userId = await authenticateUser(req.headers.authorization, secret);
-//   if (userId) {
-//     try {
-//       const results = await userDBLib.getFollowings(userId);
-//       res.status(200).json({ data: results });
-//     } catch (err) {
-//       res.status(404).json({ message: 'there is an error' });
-//     }
-//   } else {
-//     res.status(401).json({ message: 'failed authentication' });
-//   }
-// });
+webapp.get('/followings/:id', async (req, res) => {
+  const userId = await authenticateUser(req.headers.authorization, secret);
+  if (userId) {
+    try {
+      const results = await userDBLib.getFollowings(userId);
+      res.status(200).json({ data: results });
+    } catch (err) {
+      res.status(404).json({ message: 'there is an error' });
+    }
+  } else {
+    res.status(401).json({ message: 'failed authentication' });
+  }
+});
 
-// webapp.get('/followers/:id', async (req, res) => {
-//   if (await authenticateUser(req.headers.authorization, secret)) {
-//     try {
-//       const results = await userDBLib.getFollowers(req.params.id);
-//       res.status(200).json({ data: results });
-//     } catch (err) {
-//       res.status(404).json({ message: 'there is an error' });
-//     }
-//   } else {
-//     res.status(401).json({ message: 'failed authentication' });
-//   }
-// });
+webapp.get('/followers/:id', async (req, res) => {
+  const userId = await authenticateUser(req.headers.authorization, secret);
+  if (userId) {
+    try {
+      const results = await userDBLib.getFollowers(userId);
+      res.status(200).json({ data: results });
+    } catch (err) {
+      res.status(404).json({ message: 'there is an error' });
+    }
+  } else {
+    res.status(401).json({ message: 'failed authentication' });
+  }
+});
 
 webapp.get('/post/:id', async (req, res) => {
   if (await authenticateUser(req.headers.authorization, secret)) {

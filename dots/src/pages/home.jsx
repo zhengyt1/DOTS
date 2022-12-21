@@ -20,7 +20,7 @@ function Home() {
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const [hasMoreData, setHasMoreData] = useState(true);
-  const DATALEN = 2;
+  const DATALEN = 10;
 
   useEffect(() => {
     setUserID(sessionStorage.getItem('app-token'));
@@ -46,28 +46,30 @@ function Home() {
       fetchFeed();
       loadFeed.current = true;
     }
+
     if (sessionStorage.getItem('scrollPosition') !== 'null') {
       setTimeout(() => {
         window.scrollTo(0, sessionStorage.getItem('scrollPosition'));
-      }, 2);
+      }, 1);
 
       // Not a good idea, but can work
       setTimeout(() => {
         setTimeout(sessionStorage.setItem('scrollPosition', null));
-      }, 2000);
+      }, 1000);
     }
 
     const interval = setInterval(async () => {
       const latestPost = await checkNewFeed(userID);
-      if (latestPost.createdTime > latestFeed.current.createdTime) {
-        latestFeed.current = latestPost;
-        fetchFeed();
-        setHasMoreData(true);
-        setPage(1);
-        message.info('New posts in your feed');
-      } else {
-        latestFeed.current = latestPost;
+      if (window.pageYOffset > 100) {
+        sessionStorage.setItem('scrollPosition', window.pageYOffset);
       }
+      if (latestPost.createdTime > latestFeed.current.createdTime) {
+        message.info('New posts in your feed');
+      }
+      latestFeed.current = latestPost;
+      fetchFeed();
+      setHasMoreData(true);
+      setPage(1);
     }, 5000);
     return () => clearInterval(interval);
   });
@@ -82,7 +84,7 @@ function Home() {
   };
 
   const fetchNextDelayed = async () => {
-    setTimeout(fetchNext, 1000);
+    setTimeout(fetchNext, 10);
   };
 
   return (
