@@ -21,7 +21,7 @@ useEffect(() => {
 */
 // mockAPI URL
 // const rootURL = 'https://63446bd6dcae733e8fdeff41.mockapi.io/api';
-const rootURL = 'http://localhost:8080';
+const rootURL = !process.env.NODE_ENV || process.env.NODE_ENV === 'development' ? 'http://localhost:8080' : '';
 const selfId = 'selfId';
 
 // Add the token to all HTTP request
@@ -177,7 +177,7 @@ export const getFollowings = async (userID) => {
 export const getPostByID = async (postID) => {
   try {
     setHeaders();
-    const response = await axios.get(`${rootURL}/post/${postID}`);
+    const response = await axios.get(`${rootURL}/api/post/${postID}`);
     reAuthenticate(response.status);
     return response.data.data;
   } catch (err) {
@@ -191,7 +191,7 @@ export const getPostByID = async (postID) => {
 export const getPostsByUserID = async (ownerID, viewerID) => {
   try {
     setHeaders();
-    const response = await axios.get(`${rootURL}/post?owner=${ownerID}`);
+    const response = await axios.get(`${rootURL}/api/post?owner=${ownerID}`);
     const postList = response.data.data;
     reAuthenticate(response.status);
     if (ownerID === viewerID) {
@@ -253,7 +253,7 @@ export const updatePost = async (postID, field, value) => {
   try {
     setHeaders();
     const response = await axios.put(
-      `${rootURL}/post/${postID}`,
+      `${rootURL}/api/post/${postID}`,
       payload,
     );
     reAuthenticate(response.status);
@@ -279,7 +279,7 @@ export const updatePost = async (postID, field, value) => {
 export const createPost = async (postObject) => {
   try {
     setHeaders();
-    const response = await axios.post(`${rootURL}/post`, postObject);
+    const response = await axios.post(`${rootURL}/api/post`, postObject);
     reAuthenticate(response.status);
     return response.data.data;
   } catch (err) {
@@ -292,7 +292,7 @@ export const createPost = async (postObject) => {
 export const deletePost = async (postID) => {
   try {
     setHeaders();
-    const response = await axios.delete(`${rootURL}/post/${postID}`);
+    const response = await axios.delete(`${rootURL}/api/post/${postID}`);
     reAuthenticate(response.status);
     return response.data.data;
   } catch (err) {
@@ -421,16 +421,18 @@ export const getFollowers = async (userID) => {
 
 export const getSuggestedFollowings = async (userID) => {
   try {
+    if (userID === selfId) {
+      return [];
+    }
     setHeaders();
     const users = await getUsers();
     const myFollowings = await getFollowings(userID);
     const suggestedList = [];
-
     for (let i = 0; i < users.length; i += 1) {
       if (users[i].followings.length > 0 && users[i]._id !== userID) {
         const intersection = myFollowings.filter((x) => users[i].followings.includes(x));
-        // include users with >=3 common followings, exclude already followed users
-        if (intersection.length >= 3 && !myFollowings.includes(users[i].id)) {
+        // include users with >=2 common followings, exclude already followed users
+        if (intersection.length >= 2 && !myFollowings.includes(users[i]._id)) {
           suggestedList.push(users[i]);
         }
       }
@@ -438,6 +440,6 @@ export const getSuggestedFollowings = async (userID) => {
     return suggestedList;
   } catch (err) {
     reAuthenticate(401);
-    throw new Error(err);
+    throw new Error(err.response.data.message);
   }
 };

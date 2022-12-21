@@ -7,6 +7,8 @@ const jwt = require('jsonwebtoken');
 
 const dotenv = require('dotenv');
 
+const path = require('path');
+const favicon = require('serve-favicon');
 // get config vars
 dotenv.config();
 
@@ -21,6 +23,8 @@ const webapp = express();
 webapp.use(cors());
 webapp.use(express.urlencoded({ extended: true }));
 webapp.use(express.json());
+webapp.use(express.static(path.join(__dirname, '../../dots/build')));
+webapp.use(favicon(path.join(__dirname, '../../dots/build', 'favicon.ico')));
 const userDBLib = require('../mongodb/userDBFunctions');
 const postDBLib = require('../mongodb/postDBFunctions');
 
@@ -40,11 +44,6 @@ const authenticateUser = async (token, key) => {
     return null;
   }
 };
-
-// root endpoint / route
-webapp.get('/', (req, resp) => {
-  resp.json({ message: 'welcome to our backend!!!' });
-});
 
 // implement the GET /students endpoint
 webapp.get('/users', async (req, res) => {
@@ -67,6 +66,10 @@ webapp.post('/login', async (req, res) => {
   const frozenMinutes = 1;
   try {
     const results = await userDBLib.getUserByEmail(req.body.email);
+    if (!results) {
+      res.status(401).json({ message: 'the user is not in the database' });
+      return;
+    }
     if (results._id) {
       if ('limitLoginTime' in results) { // If we record, then first check it
         if (results.limitLoginTime >= Date.now()) {
@@ -172,6 +175,7 @@ webapp.post('/user', async (req, res) => {
   }
 });
 
+
 webapp.get('/followings/:id', async (req, res) => {
   const userId = await authenticateUser(req.headers.authorization, secret);
   if (userId) {
@@ -183,6 +187,19 @@ webapp.get('/followings/:id', async (req, res) => {
     }
   } else {
     res.status(401).json({ message: 'failed authentication' });
+  }
+});
+
+webapp.delete('/test/user', async (req, res) => {
+  try {
+    const results = await userDBLib.deleteTestUser();
+    if (!results) {
+      res.status(404).json({ message: 'no such user' });
+      return;
+    }
+    res.status(200).json({ data: results });
+  } catch (err) {
+    res.status(404).json({ message: 'there is an error' });
   }
 });
 
@@ -200,7 +217,7 @@ webapp.get('/followers/:id', async (req, res) => {
   }
 });
 
-webapp.get('/post/:id', async (req, res) => {
+webapp.get('/api/post/:id', async (req, res) => {
   if (await authenticateUser(req.headers.authorization, secret)) {
     try {
       const results = await postDBLib.getPostByID(req.params.id);
@@ -213,7 +230,7 @@ webapp.get('/post/:id', async (req, res) => {
   }
 });
 
-webapp.get('/post', async (req, res) => {
+webapp.get('/api/post', async (req, res) => {
   if (await authenticateUser(req.headers.authorization, secret)) {
     if (!req.query) {
       res.status(404).json({ message: 'get post without queryByText}' });
@@ -230,7 +247,7 @@ webapp.get('/post', async (req, res) => {
   }
 });
 
-webapp.put('/post/:id', async (req, res) => {
+webapp.put('/api/post/:id', async (req, res) => {
   if (await authenticateUser(req.headers.authorization, secret)) {
     try {
       const results = await postDBLib.updatePost(req.params.id, req.body);
@@ -243,7 +260,7 @@ webapp.put('/post/:id', async (req, res) => {
   }
 });
 
-webapp.post('/post', async (req, res) => {
+webapp.post('/api/post', async (req, res) => {
   if (await authenticateUser(req.headers.authorization, secret)) {
     if (!req.body) {
       res.status(404).json({ message: 'missing post body' });
@@ -260,7 +277,7 @@ webapp.post('/post', async (req, res) => {
   }
 });
 
-webapp.delete('/post/:id', async (req, res) => {
+webapp.delete('/api/post/:id', async (req, res) => {
   if (await authenticateUser(req.headers.authorization, secret)) {
     try {
       const results = await postDBLib.deletePost(req.params.id);
@@ -271,6 +288,12 @@ webapp.delete('/post/:id', async (req, res) => {
   } else {
     res.status(401).json({ message: 'failed authentication' });
   }
+});
+
+// root endpoint / route
+webapp.get('*', (req, resp) => {
+  // resp.json({ message: 'welcome to our backend!!!' });
+  resp.sendFile(path.join(__dirname, '../../dots/build/index.html'));
 });
 
 module.exports = webapp;
