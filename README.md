@@ -60,3 +60,5 @@ run `npx cypress open` to open the test page. Click on E2E Testing and run the 2
 - In the **gallery** component, if there is a post with no picture, we generate random picture as its thumbnail.
 
 - We use UTC / GMT time in our app
+
+- Due to some reason, the app deployment bases on https://github.com/cis557/project---design-hw1-group21, which you may not authorize to read/write.
