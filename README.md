@@ -3,6 +3,35 @@
 ## Deployment
 visit **https://deployment-dots.herokuapp.com/** for our deployment app.
 
+## Specifications
+1. User registration
+
+2. Login/Auth
+
+3. User profile page
+
+4. Create post / Photo / Video upload
+
+5. Activity feed
+
+6. Photo/ Videos likes & unliking
+
+7. Follow/unfollow users
+
+8. Comments
+
+9. Editing/Deleting Posts (photo/videos) & Comments
+
+10. Follower suggestions
+
+11. Tagging photos/videos / @mentions in comments
+
+12. Live update
+
+13. Privacy / Visibility control on photos/ videos
+
+14. infinite scroll
+
 ## MongoDB Credentials
 To access MongoDB, create a `.env` file inside `backend/` and add `DBURL = "url we sent in the credentials form"`, or see the comment in the code. 
 Then you are able to run our app by:
