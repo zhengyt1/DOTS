@@ -49,9 +49,9 @@ run `npx cypress open` to open the test page. Click on E2E Testing and run the 2
 ## Tips: 
 - We have many users already, you can test `zhengyt1@gmail.com` and password 222, or `zhengyt1@gmail.co` and password 222 for sample user.
 
-- If you want to see the project locally(.evn file is needed), cd our file dots/ and run `npm start` to start.
+- If you want to see the project locally(.evn file is needed, ask the owner for that), cd our file dots/ and run `npm start` to start.
 
-- We don't use redux except to get the logged in userID. Every interaction makes a request to the mockAPI. So it may take some a few seconds to load the correct data. (Store user token in sessionStorage now)
+- We don't use redux except to get the logged in userID. Every interaction makes a request to the backend. So it may take some a few seconds to load the correct data. (Store user token in sessionStorage now)
 
 - Sometimes data fails to load, it's mostly because you make to many requrest to remote resource. Just slow your operation and `wait`, or re-login. In this case, console will print "Failed to load resource: the server responded with a status of 429 (Too Many Requests)"
 
